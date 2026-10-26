@@ -19,7 +19,7 @@
   <!-- Custom Styles for Mobile/iPad and Aesthetic Elements -->
   <style>
     * {
-      -webkit-tap-highlight-color: transparent; /* ป้องกันแถบสีเทาเวลาจิ้มบน iPad/iPhone */
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -27,7 +27,7 @@
       background-color: #f3efe6;
       background-image: radial-gradient(#e0d8c8 1px, transparent 1px);
       background-size: 20px 20px;
-      touch-action: manipulation; /* ป้องกันการขยายหน้าจอผิดปกติเวลาเล่นเกม */
+      touch-action: manipulation;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -73,11 +73,12 @@
       user-select: none;
       -webkit-user-select: none;
       cursor: pointer;
-      animation: floatUp 5s linear infinite;
-      z-index: 30;
+      animation: floatUp 6.5s linear infinite;
+      z-index: 50 !important;
+      pointer-events: auto !important;
       filter: drop-shadow(0 2px 4px rgba(255,105,180,0.5));
       transition: transform 0.1s ease;
-      padding: 12px; /* ขยายพื้นที่จิ้มสัมผัสให้ติดง่ายขึ้นบนมือถือ */
+      padding: 18px;
       touch-action: none;
     }
 
@@ -171,11 +172,6 @@
                 <source src="cover.mp4" type="video/mp4">
               </video>
               <img id="cover-img-fallback" src="cover.jpg" alt="Cover Memory" class="hidden w-full h-full object-cover" onerror="this.src='https://placehold.co/400x533/fbcfe8/be185d?text=Happy+Birthday+My+Love'">
-              
-              <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded-full flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
-                <span>Congrats! มาแล้วแคล่</span>
-              </div>
             </div>
 
             <div class="mt-2 sm:mt-3 text-center">
@@ -242,7 +238,8 @@
           </div>
         </div>
 
-        <div id="hearts-container" class="absolute inset-0 pointer-events-auto overflow-hidden"></div>
+        <!-- Floating Hearts Container -->
+        <div id="hearts-container" class="absolute inset-0 pointer-events-none overflow-hidden z-30"></div>
 
         <!-- Completion Modal Popup -->
         <div id="game-complete-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -408,13 +405,12 @@
       const heartTypes = ['💖', '💕', '💗', '🌸', '💖'];
       const randomType = heartTypes[Math.floor(Math.random() * heartTypes.length)];
       
-      heart.className = 'floating-heart text-3xl sm:text-4xl';
+      heart.className = 'floating-heart text-4xl sm:text-5xl';
       heart.innerText = randomType;
       heart.style.left = Math.random() * 80 + 5 + '%';
-      heart.style.bottom = '-50px';
-      heart.style.animationDuration = (Math.random() * 2.5 + 3.5) + 's';
+      heart.style.bottom = '-20px';
+      heart.style.animationDuration = (Math.random() * 2 + 4.5) + 's';
 
-      // เพิ่มระบบ Touch Event สำหรับ iPad / iPhone ให้ตอบสนองเร็วขึ้น
       let isPopped = false;
       const handleTouchOrClick = (e) => {
         if (isPopped) return;
@@ -436,7 +432,7 @@
 
       setTimeout(() => {
         if (heart.parentNode) heart.remove();
-      }, 6000);
+      }, 7000);
     }
 
     function addFlowerProgress(amount) {
@@ -509,7 +505,6 @@
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // ปลดล็อก AudioContext เมื่อมีการแตะหน้าจอครั้งแรกบน iOS
         const unlockAudio = () => {
           if (audioContext.state === 'suspended') {
             audioContext.resume();
