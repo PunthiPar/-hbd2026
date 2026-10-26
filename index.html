@@ -166,12 +166,14 @@
           <div class="tape absolute -bottom-3 right-6 sm:right-10 w-20 sm:w-24 h-5 sm:h-6 z-20"></div>
 
           <div class="relative z-10 bg-white p-2.5 sm:p-4 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[240px] sm:max-w-sm w-full border border-gray-200">
-            <div class="relative aspect-[3/4] bg-gray-900 rounded overflow-hidden flex items-center justify-center group">
-              <!-- Video Player (iOS/iPad & Android Optimized) -->
-              <video id="cover-video" class="w-full h-full object-cover" autoplay loop muted playsinline webkit-playsinline poster="cover.jpg" onerror="this.style.display='none'; document.getElementById('cover-img-fallback').style.display='block';">
+            <div class="relative aspect-[3/4] bg-[#fbcfe8] rounded overflow-hidden flex items-center justify-center group">
+              <!-- รูปปกที่แสดงทันทีโดยไม่ต้องรอโหลดวิดีโอ -->
+              <img id="cover-img-placeholder" src="cover.jpg" alt="Cover Memory" class="absolute inset-0 w-full h-full object-cover z-0" onerror="this.src='https://placehold.co/400x533/fbcfe8/be185d?text=Happy+Birthday+My+Love'">
+              
+              <!-- วิดีโอที่พรีโหลดอัตโนมัติ -->
+              <video id="cover-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="cover.mp4" type="video/mp4">
               </video>
-              <img id="cover-img-fallback" src="cover.jpg" alt="Cover Memory" class="hidden w-full h-full object-cover" onerror="this.src='https://placehold.co/400x533/fbcfe8/be185d?text=Happy+Birthday+My+Love'">
             </div>
 
             <div class="mt-2 sm:mt-3 text-center">
@@ -221,7 +223,7 @@
             <img id="flower-img" src="Image.webp" alt="Flower Bouquet" 
                  class="w-full h-auto max-h-[260px] sm:max-h-[320px] object-contain transition-all duration-500 ease-out select-none"
                  style="filter: grayscale(100%) opacity(0.3) blur(1px);"
-                 onerror="this.src='https://placehold.co/400x500/ffd1dc/be185d?text=Rose+Bouquet'">
+                 onerror="this.src='https://placehold.co/400x533/fbcfe8/be185d?text=Rose+Bouquet'">
             
             <div id="flower-glow" class="absolute inset-0 rounded-2xl bg-pink-400/0 blur-2xl transition-all duration-500 pointer-events-none -z-10"></div>
           </div>
