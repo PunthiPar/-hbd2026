@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Happy Birthday! 🎂</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Prompt', sans-serif;
+      background-color: #f3f4f6;
+      touch-action: manipulation;
+    }
+    .serif-title {
+      font-family: 'Playfair Display', serif;
+    }
+    /* Floating hearts animation */
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(0.8);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-80vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+    .floating-heart {
+      position: absolute;
+      font-size: 2.8rem; /* ขนาดใหญ่ขึ้นกดง่ายบนมือถือ */
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      animation: floatUp 3.5s linear infinite;
+      z-index: 30;
+      padding: 10px; /* เพิ่มพื้นที่กด */
+    }
+    /* Candle flame flicker */
+    @keyframes flicker {
+      0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
+      50% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+    }
+    .flame {
+      animation: flicker 0.6s ease-in-out infinite alternate;
+      transform-origin: center bottom;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4 bg-slate-100">
+
+  <!-- Main Browser Mockup Container -->
+  <div class="w-full max-w-2xl md:max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+    
+    <!-- Browser Top Bar (Screenshot style) -->
+    <div class="bg-gray-200 px-3 py-2.5 sm:px-4 sm:py-3 flex items-center border-b border-gray-300">
+      <!-- Window Controls -->
+      <div class="flex space-x-1.5 sm:space-x-2">
+        <div class="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-red-500 rounded-full"></div>
+        <div class="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-yellow-400 rounded-full"></div>
+        <div class="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-green-500 rounded-full"></div>
+      </div>
+
+      <!-- Navigation Bar / Tabs -->
+      <div class="flex-1 flex justify-center space-x-1 sm:space-x-3">
+        <button onclick="switchTab('2024')" id="tab-2024" class="px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-white shadow text-pink-600">
+          2024
+        </button>
+        <button onclick="switchTab('2025')" id="tab-2025" class="px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition hover:bg-white/50 text-gray-600">
+          2025 🌸
+        </button>
+        <button onclick="switchTab('2026')" id="tab-2026" class="px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition hover:bg-white/50 text-gray-400 cursor-not-allowed" disabled>
+          2026 🔒
+        </button>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="relative min-h-[480px] sm:min-h-[560px] bg-slate-50 p-4 sm:p-6 flex flex-col justify-center items-center overflow-hidden">
+
+      <!-- ================= TAB 2024 (Scrapbook Cover & Video) ================= -->
+      <div id="content-2024" class="w-full flex flex-col items-center">
+        <div class="text-center mb-4 sm:mb-6">
+          <h1 class="serif-title text-3xl sm:text-5xl md:text-6xl italic text-gray-900 tracking-wide">Happy Birthday</h1>
+          <p class="serif-title text-lg sm:text-2xl text-gray-700 underline underline-offset-4 mt-1">25 October</p>
+        </div>
+
+        <!-- Video Container (Mobile Optimized) -->
+        <div class="relative w-full max-w-[280px] sm:max-w-md bg-amber-50 p-2.5 sm:p-4 rounded-xl shadow-lg border-2 border-dashed border-amber-200">
+          <div class="relative rounded-lg overflow-hidden aspect-[9/16] max-h-[380px] sm:max-h-[420px] mx-auto bg-black">
+            <video autoplay loop muted playsinline webkit-playsinline class="w-full h-full object-cover">
+              <source src="cover.mp4" type="video/mp4">
+              <img src="cover.jpg" alt="HBD Cover" class="w-full h-full object-cover" />
+            </video>
+          </div>
+          <div class="mt-2.5 text-center">
+            <span class="inline-block bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
+              ✨ Our Special Memories ✨
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 2025 (Flower Fill Game) ================= -->
+      <div id="content-2025" class="hidden w-full flex flex-col items-center relative">
+        <div class="text-center mb-3 sm:mb-4 z-10">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-800">เกมเติมความรักให้ดอกไม้ 🌸</h2>
+          <p class="text-xs sm:text-sm text-gray-600 px-2">แตะที่หัวใจสีชมพูที่ลอยขึ้นมาเพื่อเติมสีสันให้ดอกไม้ครบ 100%!</p>
+          
+          <!-- Progress Bar -->
+          <div class="w-56 sm:w-64 bg-gray-200 rounded-full h-3.5 sm:h-4 mt-3 mx-auto overflow-hidden border">
+            <div id="flower-progress" class="bg-pink-500 h-full w-0 transition-all duration-300"></div>
+          </div>
+          <p id="progress-text" class="text-xs sm:text-sm font-bold text-pink-600 mt-1">0%</p>
+        </div>
+
+        <!-- Flower Image Container -->
+        <div class="relative w-60 h-80 sm:w-72 sm:h-96 flex items-center justify-center my-1">
+          <img 
+            id="flower-img" 
+            src="Image.webp" 
+            alt="Flower" 
+            class="max-h-full max-w-full object-contain transition-all duration-300 filter grayscale opacity-40"
+          />
+        </div>
+
+        <!-- Heart Spawner Container -->
+        <div id="heart-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+      </div>
+
+      <!-- ================= TAB 2026 (Cake & Candles) ================= -->
+      <div id="content-2026" class="hidden w-full flex flex-col items-center text-center px-2">
+        <h2 class="text-2xl sm:text-3xl font-bold text-pink-600 mb-1 sm:mb-2">🎉 Happy 25th Birthday! 🎂</h2>
+        <p class="text-xs sm:text-base text-gray-600 mb-4 sm:mb-6">ขอให้มีความสุขมากๆ นะคะคนเก่ง มาเป่าเทียนกัน!</p>
+
+        <!-- Cake & Candles Graphic -->
+        <div class="relative my-2 sm:my-4 flex flex-col items-center">
+          <!-- Flames -->
+          <div id="flames" class="flex space-x-6 mb-1">
+            <div class="flame text-2xl sm:text-3xl">🔥</div>
+            <div class="flame text-2xl sm:text-3xl">🔥</div>
+          </div>
+
+          <!-- Candle Numbers -->
+          <div class="flex space-x-4 text-2xl sm:text-3xl font-black text-pink-600 z-10">
+            <span>2</span>
+            <span>5</span>
+          </div>
+
+          <!-- Cake -->
+          <div class="w-40 h-24 sm:w-48 sm:h-28 bg-pink-200 rounded-t-3xl border-4 border-pink-300 relative shadow-inner flex items-center justify-center">
+            <div class="w-full h-3 sm:h-4 bg-white absolute top-5 opacity-70"></div>
+            <span class="text-3xl sm:text-4xl">🎂</span>
+          </div>
+          <div class="w-48 h-7 sm:w-56 sm:h-8 bg-amber-100 border-4 border-amber-200 rounded-b-xl shadow-md"></div>
+        </div>
+
+        <!-- Action Button -->
+        <button 
+          id="blow-btn" 
+          onclick="blowCandles()" 
+          class="mt-4 sm:mt-6 px-6 py-3 bg-pink-500 active:bg-pink-700 text-white font-bold rounded-full shadow-lg transition transform active:scale-95 flex items-center space-x-2 text-sm sm:text-base"
+        >
+          <span>พัด / เป่าเทียน 🌬️</span>
+        </button>
+
+        <!-- Birthday Wish Card -->
+        <div id="wish-card" class="hidden mt-4 sm:mt-6 p-4 sm:p-6 bg-pink-50 border border-pink-200 rounded-xl max-w-sm sm:max-w-md shadow-md">
+          <h3 class="text-base sm:text-lg font-bold text-pink-700 mb-2">💖 คำอวยพรสุดพิเศษ 💖</h3>
+          <p class="text-gray-700 text-xs sm:text-sm leading-relaxed">
+            ขอบคุณสำหรับทุกรอยยิ้มและความสุขที่มอบให้กันนะคะ ขอให้ปีที่ 25 นี้เป็นปีที่ใจดี มีแต่ความสดใส สมหวังในทุกเรื่อง และน่ารักแบบนี้ตลอดไปเลยน้า! รักนะคะ 💕
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function switchTab(year) {
+      const tabs = ['2024', '2025', '2026'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        const content = document.getElementById(`content-${t}`);
+        if (t === year) {
+          btn.className = "px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-white shadow text-pink-600";
+          content.classList.remove('hidden');
+        } else {
+          btn.className = "px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition hover:bg-white/50 text-gray-600";
+          content.classList.add('hidden');
+        }
+      });
+
+      if (year === '2025') {
+        startHeartSpawner();
+      } else {
+        stopHeartSpawner();
+      }
+    }
+
+    let progress = 0;
+    let heartInterval = null;
+
+    function startHeartSpawner() {
+      if (heartInterval) return;
+      const container = document.getElementById('heart-container');
+      const hearts = ['💖', '💕', '💗', '🌸', '❤️'];
+
+      heartInterval = setInterval(() => {
+        if (progress >= 100) return;
+
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart pointer-events-auto';
+        heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.left = Math.random() * 75 + 10 + '%';
+        heart.style.bottom = '-60px';
+        heart.style.animationDuration = (Math.random() * 1.5 + 2.5) + 's';
+
+        // รองรับทั้งคลิกและแตะสัมผัสบนมือถือ/iPad
+        const handleTap = (e) => {
+          e.preventDefault();
+          if (progress < 100) {
+            progress += 10;
+            updateFlowerProgress();
+            heart.remove();
+          }
+        };
+
+        heart.addEventListener('touchstart', handleTap, { passive: false });
+        heart.addEventListener('click', handleTap);
+
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+      }, 500);
+    }
+
+    function stopHeartSpawner() {
+      clearInterval(heartInterval);
+      heartInterval = null;
+    }
+
+    function updateFlowerProgress() {
+      const progressBar = document.getElementById('flower-progress');
+      const progressText = document.getElementById('progress-text');
+      const flowerImg = document.getElementById('flower-img');
+      const tab2026 = document.getElementById('tab-2026');
+
+      progressBar.style.width = `${progress}%`;
+      progressText.innerText = `${progress}%`;
+
+      const grayscaleValue = 100 - progress;
+      const opacityValue = 0.4 + (progress / 100) * 0.6;
+      flowerImg.style.filter = `grayscale(${grayscaleValue}%)`;
+      flowerImg.style.opacity = opacityValue;
+
+      if (progress >= 100) {
+        progressText.innerText = "100% สำเร็จแล้ว! ปลดล็อกปี 2026 🎉";
+        tab2026.disabled = false;
+        tab2026.innerText = "2026 🎂";
+        tab2026.classList.remove('text-gray-400', 'cursor-not-allowed');
+        tab2026.classList.add('text-pink-600', 'hover:bg-white');
+        
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      }
+    }
+
+    function blowCandles() {
+      const flames = document.getElementById('flames');
+      const blowBtn = document.getElementById('blow-btn');
+      const wishCard = document.getElementById('wish-card');
+
+      flames.style.display = 'none';
+      blowBtn.innerText = 'เป่าเทียนแล้ว ✨';
+      blowBtn.disabled = true;
+      blowBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 }
+      });
+
+      wishCard.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
