@@ -1,297 +1,554 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Happy Birthday! 🎂</title>
-  <!-- Tailwind CSS CDN -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Happy Birthday My Love 💖</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Canvas Confetti CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500;1,700&family=Prompt:ital,wght@0,300;0,400;0,600;1,300&family=Sacramento&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+  <!-- Custom Styles for Mobile/iPad and Aesthetic Elements -->
   <style>
     * {
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color: transparent; /* ป้องกันแถบสีเทาเวลาจิ้มบน iPad/iPhone */
     }
+
     body {
       font-family: 'Prompt', sans-serif;
-      background-color: #f3f4f6;
-      touch-action: manipulation;
+      background-color: #f3efe6;
+      background-image: radial-gradient(#e0d8c8 1px, transparent 1px);
+      background-size: 20px 20px;
+      touch-action: manipulation; /* ป้องกันการขยายหน้าจอผิดปกติเวลาเล่นเกม */
+      -webkit-overflow-scrolling: touch;
     }
-    .serif-title {
+
+    .font-serif-italic {
       font-family: 'Playfair Display', serif;
+      font-style: italic;
     }
-    /* Floating hearts animation */
+
+    .font-handwriting {
+      font-family: 'Sacramento', cursive;
+    }
+
+    /* Tape effect for Scrapbook polaroids */
+    .tape {
+      background-color: rgba(255, 255, 255, 0.65);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      backdrop-filter: blur(2px);
+      transform: rotate(-3deg);
+    }
+
+    /* Sticker Drop Shadow */
+    .sticker-shadow {
+      filter: drop-shadow(3px 5px 3px rgba(0,0,0,0.25));
+    }
+
+    /* Heart animation for Tab 2025 */
     @keyframes floatUp {
       0% {
-        transform: translateY(0) scale(0.8);
+        transform: translateY(0) scale(0.8) rotate(0deg);
         opacity: 1;
       }
+      50% {
+        transform: translateY(-45vh) scale(1.1) rotate(15deg);
+      }
       100% {
-        transform: translateY(-80vh) scale(1.2);
+        transform: translateY(-85vh) scale(0.9) rotate(-15deg);
         opacity: 0;
       }
     }
+
     .floating-heart {
       position: absolute;
-      font-size: 2.8rem; /* ขนาดใหญ่ขึ้นกดง่ายบนมือถือ */
-      cursor: pointer;
       user-select: none;
       -webkit-user-select: none;
-      animation: floatUp 3.5s linear infinite;
+      cursor: pointer;
+      animation: floatUp 5s linear infinite;
       z-index: 30;
-      padding: 10px; /* เพิ่มพื้นที่กด */
+      filter: drop-shadow(0 2px 4px rgba(255,105,180,0.5));
+      transition: transform 0.1s ease;
+      padding: 12px; /* ขยายพื้นที่จิ้มสัมผัสให้ติดง่ายขึ้นบนมือถือ */
+      touch-action: none;
     }
-    /* Candle flame flicker */
+
+    .floating-heart:active {
+      transform: scale(1.4) !important;
+    }
+
+    /* Candle Flame Animation */
     @keyframes flicker {
       0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
-      50% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+      50% { transform: scale(1.15) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 12px #ff9d00); }
     }
+
     .flame {
-      animation: flicker 0.6s ease-in-out infinite alternate;
+      animation: flicker 0.6s infinite alternate ease-in-out;
       transform-origin: center bottom;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #dba2b7;
+      border-radius: 4px;
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-2 sm:p-4 bg-slate-100">
+<body class="min-h-screen text-gray-800 flex flex-col items-center justify-start p-2 sm:p-6">
 
-  <!-- Main Browser Mockup Container -->
-  <div class="w-full max-w-2xl md:max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+  <!-- Main Browser Window Container -->
+  <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl border border-gray-300 overflow-hidden my-auto flex flex-col min-h-[92vh] sm:min-h-[90vh]">
     
-    <!-- Browser Top Bar (Screenshot style) -->
-    <div class="bg-gray-200 px-3 py-2.5 sm:px-4 sm:py-3 flex items-center border-b border-gray-300">
-      <!-- Window Controls -->
-      <div class="flex space-x-1.5 sm:space-x-2">
-        <div class="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-red-500 rounded-full"></div>
-        <div class="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-yellow-400 rounded-full"></div>
-        <div class="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-green-500 rounded-full"></div>
+    <!-- Browser Top Bar -->
+    <div class="bg-[#e8e6e1] px-3 sm:px-4 py-2 sm:py-2.5 border-b border-gray-300 flex items-center justify-between gap-2 sm:gap-4 select-none">
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <div class="w-3 h-3 rounded-full bg-red-400 border border-red-500"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-400 border border-yellow-500"></div>
+        <div class="w-3 h-3 rounded-full bg-green-400 border border-green-500"></div>
+      </div>
+      
+      <!-- Address Bar Mockup -->
+      <div class="flex-1 max-w-md bg-white text-gray-500 text-xs sm:text-sm px-3 py-1 rounded-md border border-gray-300 text-center truncate tracking-wide flex items-center justify-center gap-1.5">
+        <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.39-2.823-1.07-4"></path></svg>
+        <span class="truncate">https://our-memories.love/hbd-special</span>
       </div>
 
-      <!-- Navigation Bar / Tabs -->
-      <div class="flex-1 flex justify-center space-x-1 sm:space-x-3">
-        <button onclick="switchTab('2024')" id="tab-2024" class="px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-white shadow text-pink-600">
-          2024
-        </button>
-        <button onclick="switchTab('2025')" id="tab-2025" class="px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition hover:bg-white/50 text-gray-600">
-          2025 🌸
-        </button>
-        <button onclick="switchTab('2026')" id="tab-2026" class="px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition hover:bg-white/50 text-gray-400 cursor-not-allowed" disabled>
-          2026 🔒
-        </button>
-      </div>
+      <div class="text-gray-400 text-xs hidden sm:block">VSCode Aesthetic</div>
     </div>
 
-    <!-- Content Area -->
-    <div class="relative min-h-[480px] sm:min-h-[560px] bg-slate-50 p-4 sm:p-6 flex flex-col justify-center items-center overflow-hidden">
+    <!-- Navigation Tabs Bar -->
+    <div class="bg-[#f4efe6] border-b border-gray-300 px-2 sm:px-4 pt-2 sm:pt-3 flex items-center justify-around sm:justify-start space-x-1 sm:space-x-2 text-xs sm:text-sm font-medium">
+      <button onclick="switchTab('2024')" id="tab-btn-2024" class="tab-btn px-3 sm:px-5 py-2 rounded-t-lg bg-white border-t-2 border-pink-400 text-pink-600 font-semibold shadow-sm flex items-center gap-1 sm:gap-2 transition-all">
+        <span>📸 2024</span>
+      </button>
+      <button onclick="switchTab('2025')" id="tab-btn-2025" class="tab-btn px-3 sm:px-5 py-2 rounded-t-lg text-gray-600 hover:text-pink-500 hover:bg-white/60 transition-all flex items-center gap-1 sm:gap-2">
+        <span>🌸 2025</span>
+        <span class="text-[10px] sm:text-xs bg-pink-100 text-pink-600 px-1.5 py-0.5 rounded-full font-normal hidden sm:inline">เกมเติมรัก</span>
+      </button>
+      <button onclick="switchTab('2026')" id="tab-btn-2026" class="tab-btn px-3 sm:px-5 py-2 rounded-t-lg text-gray-400 hover:text-gray-600 transition-all flex items-center gap-1 sm:gap-2 relative">
+        <span>🎂 2026</span>
+        <span id="lock-icon-2026" class="text-[10px] sm:text-xs bg-gray-200 text-gray-600 px-1 py-0.5 rounded-full">🔒</span>
+      </button>
+    </div>
 
-      <!-- ================= TAB 2024 (Scrapbook Cover & Video) ================= -->
-      <div id="content-2024" class="w-full flex flex-col items-center">
-        <div class="text-center mb-4 sm:mb-6">
-          <h1 class="serif-title text-3xl sm:text-5xl md:text-6xl italic text-gray-900 tracking-wide">Happy Birthday</h1>
-          <p class="serif-title text-lg sm:text-2xl text-gray-700 underline underline-offset-4 mt-1">25 October</p>
-        </div>
+    <!-- MAIN CONTENT CONTAINER -->
+    <div class="flex-1 bg-[#fbf9f5] relative overflow-hidden flex flex-col">
 
-        <!-- Video Container (Mobile Optimized) -->
-        <div class="relative w-full max-w-[280px] sm:max-w-md bg-amber-50 p-2.5 sm:p-4 rounded-xl shadow-lg border-2 border-dashed border-amber-200">
-          <div class="relative rounded-lg overflow-hidden aspect-[9/16] max-h-[380px] sm:max-h-[420px] mx-auto bg-black">
-            <video autoplay loop muted playsinline webkit-playsinline class="w-full h-full object-cover">
-              <source src="cover.mp4" type="video/mp4">
-              <img src="cover.jpg" alt="HBD Cover" class="w-full h-full object-cover" />
-            </video>
-          </div>
-          <div class="mt-2.5 text-center">
-            <span class="inline-block bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
-              ✨ Our Special Memories ✨
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ================= TAB 2025 (Flower Fill Game) ================= -->
-      <div id="content-2025" class="hidden w-full flex flex-col items-center relative">
-        <div class="text-center mb-3 sm:mb-4 z-10">
-          <h2 class="text-xl sm:text-2xl font-bold text-gray-800">เกมเติมความรักให้ดอกไม้ 🌸</h2>
-          <p class="text-xs sm:text-sm text-gray-600 px-2">แตะที่หัวใจสีชมพูที่ลอยขึ้นมาเพื่อเติมสีสันให้ดอกไม้ครบ 100%!</p>
-          
-          <!-- Progress Bar -->
-          <div class="w-56 sm:w-64 bg-gray-200 rounded-full h-3.5 sm:h-4 mt-3 mx-auto overflow-hidden border">
-            <div id="flower-progress" class="bg-pink-500 h-full w-0 transition-all duration-300"></div>
-          </div>
-          <p id="progress-text" class="text-xs sm:text-sm font-bold text-pink-600 mt-1">0%</p>
-        </div>
-
-        <!-- Flower Image Container -->
-        <div class="relative w-60 h-80 sm:w-72 sm:h-96 flex items-center justify-center my-1">
-          <img 
-            id="flower-img" 
-            src="Image.webp" 
-            alt="Flower" 
-            class="max-h-full max-w-full object-contain transition-all duration-300 filter grayscale opacity-40"
-          />
-        </div>
-
-        <!-- Heart Spawner Container -->
-        <div id="heart-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
-      </div>
-
-      <!-- ================= TAB 2026 (Cake & Candles) ================= -->
-      <div id="content-2026" class="hidden w-full flex flex-col items-center text-center px-2">
-        <h2 class="text-2xl sm:text-3xl font-bold text-pink-600 mb-1 sm:mb-2">🎉 Happy 25th Birthday! 🎂</h2>
-        <p class="text-xs sm:text-base text-gray-600 mb-4 sm:mb-6">ขอให้มีความสุขมากๆ นะคะคนเก่ง มาเป่าเทียนกัน!</p>
-
-        <!-- Cake & Candles Graphic -->
-        <div class="relative my-2 sm:my-4 flex flex-col items-center">
-          <!-- Flames -->
-          <div id="flames" class="flex space-x-6 mb-1">
-            <div class="flame text-2xl sm:text-3xl">🔥</div>
-            <div class="flame text-2xl sm:text-3xl">🔥</div>
-          </div>
-
-          <!-- Candle Numbers -->
-          <div class="flex space-x-4 text-2xl sm:text-3xl font-black text-pink-600 z-10">
-            <span>2</span>
-            <span>5</span>
-          </div>
-
-          <!-- Cake -->
-          <div class="w-40 h-24 sm:w-48 sm:h-28 bg-pink-200 rounded-t-3xl border-4 border-pink-300 relative shadow-inner flex items-center justify-center">
-            <div class="w-full h-3 sm:h-4 bg-white absolute top-5 opacity-70"></div>
-            <span class="text-3xl sm:text-4xl">🎂</span>
-          </div>
-          <div class="w-48 h-7 sm:w-56 sm:h-8 bg-amber-100 border-4 border-amber-200 rounded-b-xl shadow-md"></div>
-        </div>
-
-        <!-- Action Button -->
-        <button 
-          id="blow-btn" 
-          onclick="blowCandles()" 
-          class="mt-4 sm:mt-6 px-6 py-3 bg-pink-500 active:bg-pink-700 text-white font-bold rounded-full shadow-lg transition transform active:scale-95 flex items-center space-x-2 text-sm sm:text-base"
-        >
-          <span>พัด / เป่าเทียน 🌬️</span>
-        </button>
-
-        <!-- Birthday Wish Card -->
-        <div id="wish-card" class="hidden mt-4 sm:mt-6 p-4 sm:p-6 bg-pink-50 border border-pink-200 rounded-xl max-w-sm sm:max-w-md shadow-md">
-          <h3 class="text-base sm:text-lg font-bold text-pink-700 mb-2">💖 คำอวยพรสุดพิเศษ 💖</h3>
-          <p class="text-gray-700 text-xs sm:text-sm leading-relaxed">
-            ขอบคุณสำหรับทุกรอยยิ้มและความสุขที่มอบให้กันนะคะ ขอให้ปีที่ 25 นี้เป็นปีที่ใจดี มีแต่ความสดใส สมหวังในทุกเรื่อง และน่ารักแบบนี้ตลอดไปเลยน้า! รักนะคะ 💕
+      <!-- ================= TAB 2024 ================= -->
+      <div id="tab-2024" class="tab-content p-3 sm:p-8 flex-1 flex flex-col justify-between">
+        <div class="text-center my-2 sm:my-4 select-none relative">
+          <h1 class="text-3xl sm:text-6xl font-serif-italic text-gray-800 tracking-tight leading-none mb-1">
+            Happt Birth day
+          </h1>
+          <p class="text-base sm:text-xl font-serif-italic underline decoration-1 underline-offset-4 text-gray-700">
+            25 October
           </p>
         </div>
+
+        <div class="relative w-full max-w-2xl mx-auto my-3 sm:my-6 p-3 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0]/50 shadow-inner min-h-[360px] sm:min-h-[420px] flex items-center justify-center">
+          <div class="tape absolute -top-3 left-6 sm:left-10 w-20 sm:w-24 h-5 sm:h-6 z-20"></div>
+          <div class="tape absolute -bottom-3 right-6 sm:right-10 w-20 sm:w-24 h-5 sm:h-6 z-20"></div>
+
+          <div class="relative z-10 bg-white p-2.5 sm:p-4 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[240px] sm:max-w-sm w-full border border-gray-200">
+            <div class="relative aspect-[3/4] bg-gray-900 rounded overflow-hidden flex items-center justify-center group">
+              <!-- Video Player (iOS/iPad & Android Optimized) -->
+              <video id="cover-video" class="w-full h-full object-cover" autoplay loop muted playsinline webkit-playsinline poster="cover.jpg" onerror="this.style.display='none'; document.getElementById('cover-img-fallback').style.display='block';">
+                <source src="cover.mp4" type="video/mp4">
+              </video>
+              <img id="cover-img-fallback" src="cover.jpg" alt="Cover Memory" class="hidden w-full h-full object-cover" onerror="this.src='https://placehold.co/400x533/fbcfe8/be185d?text=Happy+Birthday+My+Love'">
+              
+              <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded-full flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                <span>Congrats! มาแล้วแคล่</span>
+              </div>
+            </div>
+
+            <div class="mt-2 sm:mt-3 text-center">
+              <span class="font-handwriting text-xl sm:text-2xl text-pink-600 font-bold">Special Day with You ❤️</span>
+            </div>
+          </div>
+
+          <!-- Scrapbook Stickers -->
+          <div class="absolute top-2 right-2 sm:right-6 text-3xl sm:text-6xl text-gray-700 transform rotate-12 sticker-shadow cursor-pointer">🎧</div>
+          <div class="absolute right-1 sm:right-4 bottom-12 sm:bottom-16 text-3xl sm:text-5xl transform -rotate-12 sticker-shadow cursor-pointer">🌹</div>
+          <div class="absolute -bottom-3 right-8 sm:right-12 text-3xl sm:text-5xl transform rotate-12 sticker-shadow">💋</div>
+          
+          <div class="absolute right-1 sm:right-8 top-1/4 sm:top-1/3 bg-yellow-400 text-black font-extrabold text-xs sm:text-base px-2 sm:px-3 py-0.5 sm:py-1 uppercase tracking-wider transform rotate-6 shadow-md border border-black rounded">
+            OCTOBER
+            <span class="block text-red-600 text-xl sm:text-3xl text-center leading-none">25</span>
+          </div>
+
+          <div class="absolute left-1 sm:left-4 top-4 sm:top-8 flex flex-col space-y-1 z-20 pointer-events-none">
+            <span class="bg-pink-500 text-white font-black text-[10px] sm:text-base px-1.5 sm:px-2 py-0.5 rounded shadow transform -rotate-6 w-max">HAPPY</span>
+            <span class="bg-blue-400 text-white font-black text-[10px] sm:text-base px-1.5 sm:px-2 py-0.5 rounded shadow transform rotate-3 w-max">BIRTHDAY</span>
+          </div>
+
+          <div class="absolute top-2 left-2 text-2xl sm:text-4xl text-blue-400 transform -rotate-45 sticker-shadow">🌸</div>
+        </div>
+
+        <div class="text-center my-2">
+          <button onclick="switchTab('2025')" class="inline-flex items-center gap-2 bg-pink-500 active:bg-pink-600 text-white text-xs sm:text-base font-medium px-5 py-2.5 rounded-full shadow-lg transition transform active:scale-95">
+            <span>ไปสุ่มเก็บหัวใจหน้าปี 2025 กันเลย</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= TAB 2025 ================= -->
+      <div id="tab-2025" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col items-center justify-between relative overflow-hidden min-h-[480px]">
+        <div class="text-center max-w-md z-10 px-2">
+          <h2 class="text-xl sm:text-3xl font-bold text-gray-800 mb-1 flex items-center justify-center gap-1.5">
+            <span>เติมดอกไม้ให้เต็มช่อ</span> 💖
+          </h2>
+          <p class="text-[11px] sm:text-sm text-gray-600 bg-white/90 px-3 py-1 rounded-full border border-pink-200 inline-block">
+            แตะที่ <span class="text-pink-500 font-bold">หัวใจสีชมพู</span> เพื่อสะสมความรักให้ช่อดอกไม้!
+          </p>
+        </div>
+
+        <div class="relative my-auto flex flex-col items-center justify-center z-10 w-full max-w-[260px] sm:max-w-sm">
+          <div class="relative rounded-2xl p-3 sm:p-4 bg-white/80 backdrop-blur border border-pink-100 shadow-xl transition-all duration-300">
+            <img id="flower-img" src="Image.webp" alt="Flower Bouquet" 
+                 class="w-full h-auto max-h-[260px] sm:max-h-[320px] object-contain transition-all duration-500 ease-out select-none"
+                 style="filter: grayscale(100%) opacity(0.3) blur(1px);"
+                 onerror="this.src='https://placehold.co/400x500/ffd1dc/be185d?text=Rose+Bouquet'">
+            
+            <div id="flower-glow" class="absolute inset-0 rounded-2xl bg-pink-400/0 blur-2xl transition-all duration-500 pointer-events-none -z-10"></div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full mt-4 bg-white/90 p-2.5 sm:p-3 rounded-xl border border-pink-200 shadow-md">
+            <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+              <span>ความรักช่อดอกไม้</span>
+              <span id="progress-text" class="text-pink-600 font-bold">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 h-3.5 sm:h-4 rounded-full overflow-hidden p-0.5">
+              <div id="progress-bar" class="bg-gradient-to-r from-pink-400 to-rose-500 h-full rounded-full transition-all duration-300 w-0"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="hearts-container" class="absolute inset-0 pointer-events-auto overflow-hidden"></div>
+
+        <!-- Completion Modal Popup -->
+        <div id="game-complete-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl border-2 border-pink-300">
+            <div class="text-4xl sm:text-5xl mb-2 sm:mb-3">💐✨</div>
+            <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">ยินดีด้วยค่ะคนเก่ง!</h3>
+            <p class="text-xs sm:text-sm text-gray-600 mb-5">
+              คุณเติมเต็มความรักให้ดอกไม้จนเบ่งบาน 100% แล้ว! ปลดล็อกหน้า <span class="font-bold text-pink-600">2026</span> เรียบร้อยแล้วค่ะ 💕
+            </p>
+            <button onclick="unlockAndGo2026()" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 px-5 rounded-xl shadow-lg active:scale-95 transition text-sm sm:text-base">
+              ไปเป่าเทียนวันเกิดหน้า 2026 กันเล๊ย 🎉
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 2026 ================= -->
+      <div id="tab-2026" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col items-center justify-between relative min-h-[480px]">
+        
+        <div id="tab-2026-locked-overlay" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 flex flex-col items-center justify-center p-6 text-center">
+          <div class="w-14 h-14 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center text-2xl mb-3 shadow-inner">🔒</div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">หน้านี้ถูกล็อกอยู่</h3>
+          <p class="text-xs sm:text-sm text-gray-600 max-w-xs mb-5">
+            คุณต้องไปเล่นเกมเติมดอกไม้ให้เต็ม 100% ในแท็บ <span class="text-pink-600 font-bold">2025</span> ก่อนนะเพื่อปลดล็อก!
+          </p>
+          <button onclick="switchTab('2025')" class="bg-pink-500 text-white text-xs sm:text-sm font-medium px-5 py-2.5 rounded-full shadow active:scale-95 transition">
+            ไปเล่นเกมที่แท็บ 2025 🌸
+          </button>
+        </div>
+
+        <div class="text-center z-10">
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-pink-600 font-serif-italic">Happy 25th Birthday!</h2>
+          <p class="text-xs sm:text-sm text-gray-500 mt-1">ตั้งจิตอธิษฐานแล้วเป่าเทียนบนเค้กได้เลยนะ ✨</p>
+        </div>
+
+        <!-- Cake & Candles -->
+        <div class="relative my-auto flex flex-col items-center justify-center scale-90 sm:scale-100">
+          <div class="relative flex flex-col items-center">
+            
+            <div class="flex space-x-5 z-20 -mb-2">
+              <div class="relative flex flex-col items-center">
+                <div id="flame-1" class="flame w-3.5 h-5 bg-gradient-to-t from-yellow-500 via-orange-400 to-red-500 rounded-full blur-[1px] mb-0.5"></div>
+                <div class="text-xl sm:text-2xl font-black text-pink-500 bg-white px-2.5 py-0.5 rounded-t-md border-2 border-pink-300 shadow">2</div>
+              </div>
+              <div class="relative flex flex-col items-center">
+                <div id="flame-2" class="flame w-3.5 h-5 bg-gradient-to-t from-yellow-500 via-orange-400 to-red-500 rounded-full blur-[1px] mb-0.5"></div>
+                <div class="text-xl sm:text-2xl font-black text-pink-500 bg-white px-2.5 py-0.5 rounded-t-md border-2 border-pink-300 shadow">5</div>
+              </div>
+            </div>
+
+            <div class="w-40 sm:w-48 h-14 sm:h-16 bg-pink-200 border-2 border-pink-300 rounded-t-2xl relative overflow-hidden shadow-inner flex items-center justify-center">
+              <div class="absolute top-0 w-full h-3 sm:h-4 bg-white/70 rounded-b-xl"></div>
+              <span class="text-[10px] sm:text-xs text-pink-500 font-bold tracking-widest uppercase">Make a Wish</span>
+            </div>
+
+            <div class="w-52 sm:w-64 h-16 sm:h-20 bg-rose-300 border-2 border-rose-400 rounded-b-2xl relative overflow-hidden shadow-lg flex items-center justify-center">
+              <div class="absolute top-0 w-full h-4 sm:h-5 bg-pink-100 rounded-b-xl"></div>
+              <div class="flex space-x-3 text-xs">
+                <span>🍓</span><span>🍓</span><span>🍓</span><span>🍓</span>
+              </div>
+            </div>
+
+            <div class="w-64 sm:w-80 h-3.5 sm:h-4 bg-gray-200 rounded-full border border-gray-300 shadow-md -mt-1"></div>
+          </div>
+        </div>
+
+        <div class="text-center z-10 my-2 sm:my-4">
+          <button id="blow-btn" onclick="blowCandles()" class="bg-gradient-to-r from-red-400 via-pink-500 to-rose-500 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-xl active:scale-95 transition-all flex items-center gap-2 mx-auto">
+            <span>กดเพื่อเป่าเทียนวันเกิด 🌬️</span>
+          </button>
+          <p class="text-[10px] sm:text-xs text-gray-400 mt-1.5">(หรือส่งเสียงเป่าใส่ไมโครโฟนได้เช่นกัน)</p>
+        </div>
+
+        <!-- Sweet Birthday Letter Modal -->
+        <div id="letter-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div class="bg-[#fefcf8] border-4 border-pink-200 rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-2xl relative text-left">
+            <button onclick="closeLetter()" class="absolute top-3 right-4 text-gray-400 active:text-gray-600 text-xl font-bold">✕</button>
+
+            <div class="text-center mb-3">
+              <span class="text-2xl sm:text-3xl">💌</span>
+              <h3 class="text-xl sm:text-2xl font-bold text-pink-600 font-serif-italic">ถึงเธอที่รักที่สุดในโลก</h3>
+            </div>
+
+            <div class="space-y-2.5 text-xs sm:text-base text-gray-700 leading-relaxed font-light max-h-[55vh] overflow-y-auto pr-1">
+              <p>สุขสันต์วันเกิดอายุครบ 25 ปีนะคะคนเก่ง! 💖</p>
+              <p>ขอบคุณที่ก้าวเข้ามาเป็นเรื่องราวที่ดีที่สุดในทุกๆ วัน ขอบคุณรอยยิ้ม ความสดใส และความน่ารักที่เติมเต็มโลกใบนี้ให้น่าอยู่เสมอ</p>
+              <p>ขอให้ปีนี้เป็นปีที่มีแต่ความสุข สมหวังในทุกๆ สิ่งที่ตั้งใจไว้ มีสุขภาพร่างกายที่แข็งแรง ไม่ปวดหลัง ไม่เหนื่อยเกินไปนะ!</p>
+              <p class="font-semibold text-pink-600 text-right mt-3">
+                รักเธอที่สุดเลยนะ 💕<br>
+                25 ตุลาคม
+              </p>
+            </div>
+
+            <div class="mt-5 text-center">
+              <button onclick="triggerConfetti()" class="bg-pink-100 active:bg-pink-200 text-pink-700 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm transition">
+                โปรยฉลองอีกรอบ! 🎉
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
+
+    <!-- Browser Footer Bar -->
+    <div class="bg-[#e8e6e1] px-4 py-1.5 border-t border-gray-300 text-[10px] sm:text-xs text-gray-500 flex justify-between items-center select-none">
+      <span>Made with ❤️ for You</span>
+      <span>HBD 25 Oct</span>
+    </div>
+
   </div>
 
+  <!-- JavaScript Logic Optimization for Touch Screen -->
   <script>
-    function switchTab(year) {
-      const tabs = ['2024', '2025', '2026'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tab-${t}`);
-        const content = document.getElementById(`content-${t}`);
-        if (t === year) {
-          btn.className = "px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-white shadow text-pink-600";
-          content.classList.remove('hidden');
-        } else {
-          btn.className = "px-3 py-1 sm:px-5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition hover:bg-white/50 text-gray-600";
-          content.classList.add('hidden');
-        }
+    let currentTab = '2024';
+    let flowerProgress = 0;
+    let is2026Unlocked = false;
+    let isCandleBlown = false;
+    let heartInterval = null;
+
+    function switchTab(tabId) {
+      if (tabId === '2026' && !is2026Unlocked) {
+        document.getElementById('tab-2026-locked-overlay').classList.remove('hidden');
+      }
+
+      currentTab = tabId;
+
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'border-t-2', 'border-pink-400', 'text-pink-600', 'font-semibold', 'shadow-sm');
+        btn.classList.add('text-gray-600');
       });
 
-      if (year === '2025') {
-        startHeartSpawner();
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      activeBtn.classList.add('bg-white', 'border-t-2', 'border-pink-400', 'text-pink-600', 'font-semibold', 'shadow-sm');
+
+      if (tabId === '2025') {
+        startHeartSpawning();
       } else {
-        stopHeartSpawner();
+        stopHeartSpawning();
       }
     }
 
-    let progress = 0;
-    let heartInterval = null;
-
-    function startHeartSpawner() {
+    function startHeartSpawning() {
       if (heartInterval) return;
-      const container = document.getElementById('heart-container');
-      const hearts = ['💖', '💕', '💗', '🌸', '❤️'];
-
       heartInterval = setInterval(() => {
-        if (progress >= 100) return;
-
-        const heart = document.createElement('div');
-        heart.className = 'floating-heart pointer-events-auto';
-        heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
-        heart.style.left = Math.random() * 75 + 10 + '%';
-        heart.style.bottom = '-60px';
-        heart.style.animationDuration = (Math.random() * 1.5 + 2.5) + 's';
-
-        // รองรับทั้งคลิกและแตะสัมผัสบนมือถือ/iPad
-        const handleTap = (e) => {
-          e.preventDefault();
-          if (progress < 100) {
-            progress += 10;
-            updateFlowerProgress();
-            heart.remove();
-          }
-        };
-
-        heart.addEventListener('touchstart', handleTap, { passive: false });
-        heart.addEventListener('click', handleTap);
-
-        container.appendChild(heart);
-        setTimeout(() => heart.remove(), 4000);
-      }, 500);
+        createFloatingHeart();
+      }, 600);
     }
 
-    function stopHeartSpawner() {
+    function stopHeartSpawning() {
       clearInterval(heartInterval);
       heartInterval = null;
     }
 
-    function updateFlowerProgress() {
-      const progressBar = document.getElementById('flower-progress');
-      const progressText = document.getElementById('progress-text');
-      const flowerImg = document.getElementById('flower-img');
-      const tab2026 = document.getElementById('tab-2026');
+    function createFloatingHeart() {
+      const container = document.getElementById('hearts-container');
+      if (!container || currentTab !== '2025') return;
 
-      progressBar.style.width = `${progress}%`;
-      progressText.innerText = `${progress}%`;
+      const heart = document.createElement('div');
+      const heartTypes = ['💖', '💕', '💗', '🌸', '💖'];
+      const randomType = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+      
+      heart.className = 'floating-heart text-3xl sm:text-4xl';
+      heart.innerText = randomType;
+      heart.style.left = Math.random() * 80 + 5 + '%';
+      heart.style.bottom = '-50px';
+      heart.style.animationDuration = (Math.random() * 2.5 + 3.5) + 's';
 
-      const grayscaleValue = 100 - progress;
-      const opacityValue = 0.4 + (progress / 100) * 0.6;
-      flowerImg.style.filter = `grayscale(${grayscaleValue}%)`;
-      flowerImg.style.opacity = opacityValue;
-
-      if (progress >= 100) {
-        progressText.innerText = "100% สำเร็จแล้ว! ปลดล็อกปี 2026 🎉";
-        tab2026.disabled = false;
-        tab2026.innerText = "2026 🎂";
-        tab2026.classList.remove('text-gray-400', 'cursor-not-allowed');
-        tab2026.classList.add('text-pink-600', 'hover:bg-white');
+      // เพิ่มระบบ Touch Event สำหรับ iPad / iPhone ให้ตอบสนองเร็วขึ้น
+      let isPopped = false;
+      const handleTouchOrClick = (e) => {
+        if (isPopped) return;
+        isPopped = true;
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
         
-        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+        addFlowerProgress(10);
+        
+        heart.style.transform = 'scale(1.8)';
+        heart.style.opacity = '0';
+        setTimeout(() => heart.remove(), 150);
+      };
+
+      heart.addEventListener('touchstart', handleTouchOrClick, { passive: false });
+      heart.addEventListener('click', handleTouchOrClick);
+
+      container.appendChild(heart);
+
+      setTimeout(() => {
+        if (heart.parentNode) heart.remove();
+      }, 6000);
+    }
+
+    function addFlowerProgress(amount) {
+      if (flowerProgress >= 100) return;
+
+      flowerProgress = Math.min(100, flowerProgress + amount);
+      
+      document.getElementById('progress-text').innerText = `${flowerProgress}%`;
+      document.getElementById('progress-bar').style.width = `${flowerProgress}%`;
+
+      const flowerImg = document.getElementById('flower-img');
+      const flowerGlow = document.getElementById('flower-glow');
+      
+      const grayscaleVal = 100 - flowerProgress;
+      const opacityVal = 0.3 + (flowerProgress * 0.007);
+      
+      flowerImg.style.filter = `grayscale(${grayscaleVal}%) opacity(${opacityVal})`;
+      flowerGlow.style.backgroundColor = `rgba(244, 114, 182, ${flowerProgress / 200})`;
+
+      if (flowerProgress >= 100) {
+        setTimeout(() => {
+          document.getElementById('game-complete-modal').classList.remove('hidden');
+          triggerConfetti();
+        }, 300);
       }
     }
 
+    function unlockAndGo2026() {
+      is2026Unlocked = true;
+      document.getElementById('game-complete-modal').classList.add('hidden');
+      document.getElementById('lock-icon-2026').innerText = '✨';
+      document.getElementById('lock-icon-2026').className = 'text-[10px] sm:text-xs bg-green-100 text-green-600 px-1 py-0.5 rounded-full';
+      document.getElementById('tab-2026-locked-overlay').classList.add('hidden');
+      switchTab('2026');
+    }
+
     function blowCandles() {
-      const flames = document.getElementById('flames');
+      if (isCandleBlown) return;
+
+      isCandleBlown = true;
+      document.getElementById('flame-1').style.display = 'none';
+      document.getElementById('flame-2').style.display = 'none';
+
+      triggerConfetti();
+
       const blowBtn = document.getElementById('blow-btn');
-      const wishCard = document.getElementById('wish-card');
+      blowBtn.innerText = 'เป่าเทียนเรียบร้อยแล้ว ✨';
+      blowBtn.className = 'bg-gray-400 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full cursor-default mx-auto';
 
-      flames.style.display = 'none';
-      blowBtn.innerText = 'เป่าเทียนแล้ว ✨';
-      blowBtn.disabled = true;
-      blowBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      setTimeout(() => {
+        document.getElementById('letter-modal').classList.remove('hidden');
+      }, 800);
+    }
 
+    function closeLetter() {
+      document.getElementById('letter-modal').classList.add('hidden');
+    }
+
+    function triggerConfetti() {
       confetti({
-        particleCount: 150,
-        spread: 100,
+        particleCount: 100,
+        spread: 70,
         origin: { y: 0.6 }
       });
-
-      wishCard.classList.remove('hidden');
     }
+
+    // Microphone Blow Detection Optimized for iOS Safari / Mobile
+    async function initMicrophone() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // ปลดล็อก AudioContext เมื่อมีการแตะหน้าจอครั้งแรกบน iOS
+        const unlockAudio = () => {
+          if (audioContext.state === 'suspended') {
+            audioContext.resume();
+          }
+          document.removeEventListener('touchstart', unlockAudio);
+          document.removeEventListener('click', unlockAudio);
+        };
+        document.addEventListener('touchstart', unlockAudio);
+        document.addEventListener('click', unlockAudio);
+
+        const analyser = audioContext.createAnalyser();
+        const microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        analyser.fftSize = 256;
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        function checkBlow() {
+          if (isCandleBlown) return;
+          analyser.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+          }
+          let average = sum / dataArray.length;
+          
+          if (average > 65 && currentTab === '2026') {
+            blowCandles();
+          }
+          requestAnimationFrame(checkBlow);
+        }
+        checkBlow();
+      } catch (err) {
+        // หากผู้ใช้ปฏิเสธไมโครโฟน ระบบจะรองรับการกดปุ่มแทน
+      }
+    }
+
+    window.onload = function() {
+      initMicrophone();
+    };
   </script>
 </body>
 </html>
