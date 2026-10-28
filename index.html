@@ -110,7 +110,18 @@
     }
   </style>
 </head>
-<body class="min-h-screen text-gray-800 flex flex-col items-center justify-start p-2 sm:p-6">
+<body class="min-h-screen text-gray-800 flex flex-col items-center justify-start p-2 sm:p-6 relative">
+
+  <!-- Audio Element (ไฟล์เพลงหลัก) -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+    <source src="music.m4a" type="audio/mp4">
+  </audio>
+
+  <!-- Floating Music Toggle Button (ปุ่มเปิด-ปิดเพลงลอยมุมขวาบน) -->
+  <button id="music-btn" onclick="toggleMusic(event)" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 bg-white/90 backdrop-blur border border-pink-200 text-pink-500 p-2.5 sm:p-3 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+    <span id="music-icon" class="text-lg sm:text-xl">🎵</span>
+  </button>
 
   <!-- Main Browser Window Container -->
   <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl border border-gray-300 overflow-hidden my-auto flex flex-col min-h-[92vh] sm:min-h-[90vh]">
@@ -221,10 +232,8 @@
           </p>
         </div>
 
-        <!-- Scrapbook Photo Cards Container -->
         <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/30 rounded-2xl border border-[#d6c7b0]/40 shadow-inner flex flex-wrap items-center justify-center gap-4 sm:gap-6 min-h-[340px]">
           
-          <!-- Polaroid Photo 1 (Video Sweet Moment) -->
           <div class="bg-white p-2.5 rounded-lg shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[4/5] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
@@ -235,7 +244,6 @@
             <div class="mt-2 text-center font-handwriting text-lg text-pink-600">Sweet Moment ✨</div>
           </div>
 
-          <!-- Polaroid Photo 2 (hbd2024.JPG Image) -->
           <div class="bg-white p-2.5 rounded-lg shadow-lg transform rotate-2 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[4/5] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
@@ -244,7 +252,6 @@
             <div class="mt-2 text-center font-handwriting text-lg text-pink-600">Always Together 💕</div>
           </div>
 
-          <!-- Cute Decorative Stickers -->
           <div class="absolute -top-2 left-2 text-2xl sm:text-3xl sticker-shadow">🎀</div>
           <div class="absolute bottom-2 right-3 text-2xl sm:text-3xl sticker-shadow">✨</div>
         </div>
@@ -257,7 +264,7 @@
         </div>
       </div>
 
-      <!-- ================= TAB 💫2025 (เล่นวิดีโอ 2025.mp4) ================= -->
+      <!-- ================= TAB 💫2025 ================= -->
       <div id="tab-2025_mem" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col justify-between">
         <div class="text-center my-2 sm:my-3 select-none">
           <h2 class="text-2xl sm:text-4xl font-serif-italic text-gray-800 tracking-tight leading-none mb-1">
@@ -268,10 +275,8 @@
           </p>
         </div>
 
-        <!-- Scrapbook Single Video Card Container -->
         <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/30 rounded-2xl border border-[#d6c7b0]/40 shadow-inner flex items-center justify-center min-h-[340px]">
           
-          <!-- Single Polaroid Video Frame -->
           <div class="bg-white p-2.5 sm:p-3 rounded-lg shadow-lg transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[210px] sm:max-w-[250px] w-full border border-gray-200 relative">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
@@ -282,7 +287,6 @@
             <div class="mt-2 text-center font-handwriting text-xl text-pink-600 font-bold">Special Moment ✨</div>
           </div>
 
-          <!-- Cute Decorative Stickers -->
           <div class="absolute top-2 left-4 text-2xl sm:text-3xl sticker-shadow">🌸</div>
           <div class="absolute bottom-2 right-4 text-2xl sm:text-3xl sticker-shadow">💖</div>
         </div>
@@ -424,7 +428,7 @@
             </div>
 
             <div class="mt-5 text-center">
-              <button onclick="triggerConfetti()" class="bg-pink-100 active:bg-pink-200 text-pink-700 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm transition">
+              <button onclick="triggerConfetti()" class="bg-[#fbcfe8] active:bg-pink-200 text-pink-700 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm transition">
                 โปรยฉลองอีกรอบ! 🎉
               </button>
             </div>
@@ -443,13 +447,49 @@
 
   </div>
 
-  <!-- JavaScript Logic Optimization for Touch Screen -->
+  <!-- JavaScript Logic -->
   <script>
     let currentTab = '31oct';
     let flowerProgress = 0;
     let is2026Unlocked = false;
     let isCandleBlown = false;
     let heartInterval = null;
+    let isMusicPlaying = false;
+
+    // Background Music Controller Logic
+    function startMusicOnFirstTouch() {
+      const audio = document.getElementById('bg-music');
+      if (audio && !isMusicPlaying) {
+        audio.play().then(() => {
+          isMusicPlaying = true;
+          document.getElementById('music-icon').innerText = '🎵';
+        }).catch(() => {
+          // หากบราวเซอร์บล็อกการเล่นอัตโนมัติ จะให้ผู้ใช้กดปุ่มเอง
+        });
+      }
+      document.removeEventListener('click', startMusicOnFirstTouch);
+      document.removeEventListener('touchstart', startMusicOnFirstTouch);
+    }
+
+    document.addEventListener('click', startMusicOnFirstTouch);
+    document.addEventListener('touchstart', startMusicOnFirstTouch);
+
+    function toggleMusic(e) {
+      if (e) e.stopPropagation();
+      const audio = document.getElementById('bg-music');
+      const icon = document.getElementById('music-icon');
+      
+      if (isMusicPlaying) {
+        audio.pause();
+        isMusicPlaying = false;
+        icon.innerText = '🔇';
+      } else {
+        audio.play().then(() => {
+          isMusicPlaying = true;
+          icon.innerText = '🎵';
+        });
+      }
+    }
 
     function switchTab(tabId) {
       if (tabId === '2026' && !is2026Unlocked) {
