@@ -112,7 +112,7 @@
 </head>
 <body class="min-h-screen text-gray-800 flex flex-col items-center justify-start p-2 sm:p-6 relative">
 
-  <!-- Welcome / Start Overlay (หน้าต่างต้อนรับเพื่อให้เริ่มเปิดเสียงทันที) -->
+  <!-- Welcome / Start Overlay (หน้าต่างต้อนรับเพื่อเริ่มเปิดเพลงทันทีที่แตะ) -->
   <div id="welcome-overlay" class="fixed inset-0 bg-[#f3efe6]/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4 text-center">
     <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border-2 border-pink-200 flex flex-col items-center space-y-4">
       <div class="text-5xl sm:text-6xl animate-bounce">💌</div>
@@ -126,13 +126,13 @@
     </div>
   </div>
 
-  <!-- Audio Element (ดึงเสียงจากวิดีโอ me.mov หรือ me.mp4) -->
-  <audio id="bg-music" loop preload="auto">
+  <!-- Hidden Video Element for Background Audio (เล่นเสียงจากไฟล์ me.mov ได้สมบูรณ์แบบ) -->
+  <video id="bg-music" loop playsinline webkit-playsinline preload="auto" class="hidden">
     <source src="me.mov" type="video/quicktime">
-    <source src="me.mp4" type="audio/mp4">
-  </audio>
+    <source src="me.mp4" type="video/mp4">
+  </video>
 
-  <!-- Floating Music Toggle Button (ปุ่มเปิด-ปิดเพลงลอยมุมขวาบน) -->
+  <!-- Floating Music Toggle Button -->
   <button id="music-btn" onclick="toggleMusic(event)" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 bg-white/90 backdrop-blur border border-pink-200 text-pink-500 p-2.5 sm:p-3 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
     <span id="music-icon" class="text-lg sm:text-xl">🎵</span>
   </button>
@@ -148,7 +148,6 @@
         <div class="w-3 h-3 rounded-full bg-green-400 border border-green-500"></div>
       </div>
       
-      <!-- Address Bar Mockup -->
       <div class="flex-1 max-w-md bg-white text-gray-500 text-xs sm:text-sm px-3 py-1 rounded-md border border-gray-300 text-center truncate tracking-wide flex items-center justify-center gap-1.5">
         <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.39-2.823-1.07-4"></path></svg>
         <span class="truncate">https://our-memories.love/hbd-special</span>
@@ -415,4 +414,278 @@
         </div>
 
         <div class="text-center z-10 my-2 sm:my-4">
-          <button id="blow-btn" onclick="blowCandles()" class="bg-gradient-to-r from-red-400 via-pink-500 to-rose-500 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-xl active:
+          <button id="blow-btn" onclick="blowCandles()" class="bg-gradient-to-r from-red-400 via-pink-500 to-rose-500 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-xl active:scale-95 transition-all flex items-center gap-2 mx-auto">
+            <span>กดเพื่อเป่าเทียนวันเกิด 🌬️</span>
+          </button>
+          <p class="text-[10px] sm:text-xs text-gray-400 mt-1.5">(หรือส่งเสียงเป่าใส่ไมโครโฟนได้เช่นกัน)</p>
+        </div>
+
+        <!-- Sweet Birthday Letter Modal -->
+        <div id="letter-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div class="bg-[#fefcf8] border-4 border-pink-200 rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-2xl relative text-left">
+            <button onclick="closeLetter()" class="absolute top-3 right-4 text-gray-400 active:text-gray-600 text-xl font-bold">✕</button>
+
+            <div class="text-center mb-3">
+              <span class="text-2xl sm:text-3xl">💌</span>
+              <h3 class="text-xl sm:text-2xl font-bold text-pink-600 font-serif-italic">ถึงเธอที่รักที่สุดในโลก</h3>
+            </div>
+
+            <div class="space-y-2.5 text-xs sm:text-base text-gray-700 leading-relaxed font-light max-h-[55vh] overflow-y-auto pr-1">
+              <p>สุขสันต์วันเกิดอายุครบ 25 ปีนะคะคนเก่ง! 💖</p>
+              <p>ขอบคุณที่ก้าวเข้ามาเป็นเรื่องราวที่ดีที่สุดในทุกๆ วัน ขอบคุณรอยยิ้ม ความสดใส และความน่ารักที่เติมเต็มโลกใบนี้ให้น่าอยู่เสมอ</p>
+              <p>ขอให้ปีนี้เป็นปีที่มีแต่ความสุข สมหวังในทุกๆ สิ่งที่ตั้งใจไว้ มีสุขภาพร่างกายที่แข็งแรง ไม่ปวดหลัง ไม่เหนื่อยเกินไปนะ!</p>
+              <p class="font-semibold text-pink-600 text-right mt-3">
+                รักเธอที่สุดเลยนะ 💕<br>
+                31 ตุลาคม
+              </p>
+            </div>
+
+            <div class="mt-5 text-center">
+              <button onclick="triggerConfetti()" class="bg-[#fbcfe8] active:bg-pink-200 text-pink-700 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm transition">
+                โปรยฉลองอีกรอบ! 🎉
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Browser Footer Bar -->
+    <div class="bg-[#e8e6e1] px-4 py-1.5 border-t border-gray-300 text-[10px] sm:text-xs text-gray-500 flex justify-between items-center select-none">
+      <span>Made with ❤️ for You</span>
+      <span>HBD 31 Oct</span>
+    </div>
+
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    let currentTab = '31oct';
+    let flowerProgress = 0;
+    let is2026Unlocked = false;
+    let isCandleBlown = false;
+    let heartInterval = null;
+    let isMusicPlaying = false;
+
+    // ฟังก์ชันเข้าสู่เว็บและสั่งเล่นเสียงจากวิดีโอ me.mov ทันที
+    function enterSite() {
+      const videoAudio = document.getElementById('bg-music');
+      if (videoAudio) {
+        videoAudio.play().then(() => {
+          isMusicPlaying = true;
+          document.getElementById('music-icon').innerText = '🎵';
+        }).catch((err) => {
+          console.log("Audio Play Error:", err);
+        });
+      }
+      document.getElementById('welcome-overlay').style.display = 'none';
+    }
+
+    function toggleMusic(e) {
+      if (e) e.stopPropagation();
+      const videoAudio = document.getElementById('bg-music');
+      const icon = document.getElementById('music-icon');
+      
+      if (isMusicPlaying) {
+        videoAudio.pause();
+        isMusicPlaying = false;
+        icon.innerText = '🔇';
+      } else {
+        videoAudio.play().then(() => {
+          isMusicPlaying = true;
+          icon.innerText = '🎵';
+        });
+      }
+    }
+
+    function switchTab(tabId) {
+      if (tabId === '2026' && !is2026Unlocked) {
+        document.getElementById('tab-2026-locked-overlay').classList.remove('hidden');
+      }
+
+      currentTab = tabId;
+
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'border-t-2', 'border-pink-400', 'text-pink-600', 'font-semibold', 'shadow-sm');
+        btn.classList.add('text-gray-600');
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-white', 'border-t-2', 'border-pink-400', 'text-pink-600', 'font-semibold', 'shadow-sm');
+        activeBtn.classList.remove('text-gray-600');
+      }
+
+      if (tabId === '2025') {
+        startHeartSpawning();
+      } else {
+        stopHeartSpawning();
+      }
+    }
+
+    function startHeartSpawning() {
+      if (heartInterval) return;
+      heartInterval = setInterval(() => {
+        createFloatingHeart();
+      }, 600);
+    }
+
+    function stopHeartSpawning() {
+      clearInterval(heartInterval);
+      heartInterval = null;
+    }
+
+    function createFloatingHeart() {
+      const container = document.getElementById('hearts-container');
+      if (!container || currentTab !== '2025') return;
+
+      const heart = document.createElement('div');
+      const heartTypes = ['💖', '💕', '💗', '🌸', '💖'];
+      const randomType = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+      
+      heart.className = 'floating-heart text-4xl sm:text-5xl';
+      heart.innerText = randomType;
+      heart.style.left = Math.random() * 80 + 5 + '%';
+      heart.style.bottom = '-20px';
+      heart.style.animationDuration = (Math.random() * 2 + 4.5) + 's';
+
+      let isPopped = false;
+      const handleTouchOrClick = (e) => {
+        if (isPopped) return;
+        isPopped = true;
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+        
+        addFlowerProgress(10);
+        
+        heart.style.transform = 'scale(1.8)';
+        heart.style.opacity = '0';
+        setTimeout(() => heart.remove(), 150);
+      };
+
+      heart.addEventListener('touchstart', handleTouchOrClick, { passive: false });
+      heart.addEventListener('click', handleTouchOrClick);
+
+      container.appendChild(heart);
+
+      setTimeout(() => {
+        if (heart.parentNode) heart.remove();
+      }, 7000);
+    }
+
+    function addFlowerProgress(amount) {
+      if (flowerProgress >= 100) return;
+
+      flowerProgress = Math.min(100, flowerProgress + amount);
+      
+      document.getElementById('progress-text').innerText = `${flowerProgress}%`;
+      document.getElementById('progress-bar').style.width = `${flowerProgress}%`;
+
+      const flowerImg = document.getElementById('flower-img');
+      const flowerGlow = document.getElementById('flower-glow');
+      
+      const grayscaleVal = 100 - flowerProgress;
+      const opacityVal = 0.3 + (flowerProgress * 0.007);
+      
+      flowerImg.style.filter = `grayscale(${grayscaleVal}%) opacity(${opacityVal})`;
+      flowerGlow.style.backgroundColor = `rgba(244, 114, 182, ${flowerProgress / 200})`;
+
+      if (flowerProgress >= 100) {
+        setTimeout(() => {
+          document.getElementById('game-complete-modal').classList.remove('hidden');
+          triggerConfetti();
+        }, 300);
+      }
+    }
+
+    function unlockAndGo2026() {
+      is2026Unlocked = true;
+      document.getElementById('game-complete-modal').classList.add('hidden');
+      document.getElementById('lock-icon-2026').innerText = '✨';
+      document.getElementById('lock-icon-2026').className = 'text-[10px] sm:text-xs bg-green-100 text-green-600 px-1 py-0.5 rounded-full';
+      document.getElementById('tab-2026-locked-overlay').classList.add('hidden');
+      switchTab('2026');
+    }
+
+    function blowCandles() {
+      if (isCandleBlown) return;
+
+      isCandleBlown = true;
+      document.getElementById('flame-1').style.display = 'none';
+      document.getElementById('flame-2').style.display = 'none';
+
+      triggerConfetti();
+
+      const blowBtn = document.getElementById('blow-btn');
+      blowBtn.innerText = 'เป่าเทียนเรียบร้อยแล้ว ✨';
+      blowBtn.className = 'bg-gray-400 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full cursor-default mx-auto';
+
+      setTimeout(() => {
+        document.getElementById('letter-modal').classList.remove('hidden');
+      }, 800);
+    }
+
+    function closeLetter() {
+      document.getElementById('letter-modal').classList.add('hidden');
+    }
+
+    function triggerConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
+
+    // Microphone Blow Detection
+    async function initMicrophone() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        const unlockAudio = () => {
+          if (audioContext.state === 'suspended') {
+            audioContext.resume();
+          }
+          document.removeEventListener('touchstart', unlockAudio);
+          document.removeEventListener('click', unlockAudio);
+        };
+        document.addEventListener('touchstart', unlockAudio);
+        document.addEventListener('click', unlockAudio);
+
+        const analyser = audioContext.createAnalyser();
+        const microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        analyser.fftSize = 256;
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        function checkBlow() {
+          if (isCandleBlown) return;
+          analyser.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+          }
+          let average = sum / dataArray.length;
+          
+          if (average > 65 && currentTab === '2026') {
+            blowCandles();
+          }
+          requestAnimationFrame(checkBlow);
+        }
+        checkBlow();
+      } catch (err) {
+        // หากผู้ใช้ปฏิเสธไมโครโฟน ระบบจะรองรับการกดปุ่มแทน
+      }
+    }
+
+    window.onload = function() {
+      initMicrophone();
+    };
+  </script>
+</body>
+</html>
