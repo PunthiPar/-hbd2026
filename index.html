@@ -112,10 +112,10 @@
 </head>
 <body class="min-h-screen text-gray-800 flex flex-col items-center justify-start p-2 sm:p-6 relative">
 
-  <!-- Audio Element (ไฟล์เพลงหลัก) -->
+  <!-- Audio Element (ดึงเสียงจากวิดีโอ me.mp4 หรือ me.mov) -->
   <audio id="bg-music" loop preload="auto">
-    <source src="music.mp3" type="audio/mpeg">
-    <source src="music.m4a" type="audio/mp4">
+    <source src="me.mp4" type="audio/mp4">
+    <source src="me.mov" type="video/quicktime">
   </audio>
 
   <!-- Floating Music Toggle Button (ปุ่มเปิด-ปิดเพลงลอยมุมขวาบน) -->
@@ -464,7 +464,7 @@
           isMusicPlaying = true;
           document.getElementById('music-icon').innerText = '🎵';
         }).catch(() => {
-          // หากบราวเซอร์บล็อกการเล่นอัตโนมัติ จะให้ผู้ใช้กดปุ่มเอง
+          // หากบราวเซอร์บล็อกการเล่นอัตโนมัติ จะให้ผู้ใช้กดปุ่มเปิดเอง
         });
       }
       document.removeEventListener('click', startMusicOnFirstTouch);
@@ -632,7 +632,7 @@
       });
     }
 
-    // Microphone Blow Detection Optimized for iOS Safari / Mobile
+    // Microphone Blow Detection
     async function initMicrophone() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
