@@ -540,7 +540,7 @@
 
         <!-- Expanded Sticker Palette Tray (Active in Sticker Mode) -->
         <div id="sticker-toolbar" class="w-full bg-white/90 backdrop-blur rounded-2xl p-2 sm:p-2.5 border-2 border-pink-200 shadow-md my-1 z-10">
-          <div class="text-[10px] sm:text-[11px] font-bold text-gray-500 mb-1 font-cute text-center">แตะสติ๊กเกอร์เพิ่มลงกระดาน (เลื่อนดูได้) 👇</div>
+          <div class="text-[10px] sm:text-[11px] font-bold text-gray-500 mb-1 font-cute text-center">แตะสติ๊กเกอร์เพิ่มลงกระดาน (แตะสติ๊กเกอร์บนกระดานเพื่อย่อ/ขยาย/ลบ) 👇</div>
           <div class="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-1 px-1 text-2xl sm:text-3xl">
             <button onclick="spawnSticker('👻')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">👻</button>
             <button onclick="spawnSticker('🎃')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🎃</button>
@@ -1100,6 +1100,7 @@
       }
       const imgElem = document.getElementById('diy-frame-img');
       const vidElem = document.getElementById('diy-frame-video');
+      const bgElem = document.getElementById('diy-frame-bg');
 
       if (vidElem && !vidElem.classList.contains('hidden') && vidElem.src) {
         const select = document.getElementById('diy-photo-select');
@@ -1110,6 +1111,11 @@
         else if (val === '2025') overlay = localStorage.getItem('hbd_2025_overlay');
 
         openLightbox(vidElem.src, true, overlay);
+      } else if (bgElem && !bgElem.classList.contains('hidden') && bgElem.style.backgroundImage) {
+        const urlMatch = bgElem.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/);
+        if (urlMatch && urlMatch[1]) {
+          openLightbox(urlMatch[1], false);
+        }
       } else if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
         openLightbox(imgElem.src, false);
       }
@@ -1290,7 +1296,7 @@
         if (emptyElem) emptyElem.classList.add('hidden');
         if (vid) { vid.classList.add('hidden'); vid.pause(); vid.src = ''; }
         if (bg) {
-          bg.style.backgroundImage = `url("${src.replace(/"/g, '\"')}")`;
+          bg.style.backgroundImage = `url("${src.replace(/"/g, '\\"')}")`;
           bg.classList.remove('hidden');
         }
         if (img) {
@@ -1366,6 +1372,8 @@
 
       openPinModal(() => {
         showLoading("🎨 กำลังประมวลผลรูปตกแต่ง...");
+        document.querySelectorAll('.sticker-controls').forEach(c => c.classList.add('hidden'));
+
         setTimeout(() => {
           const photoAreaElem = document.getElementById('diy-photo-area');
           const overlayLayer = document.getElementById('diy-overlay-layer');
@@ -1474,8 +1482,8 @@
       }, "ยืนยันการรีเซ็ตกลับเป็นรูปภาพเดิมใช่ไหมคะ?");
     }
 
-    // DIY Drag & Drop Stickers Logic
-        function spawnSticker(emoji) {
+    // DIY Drag & Drop Stickers Logic with Resizing Controls
+    function spawnSticker(emoji) {
       const container = document.getElementById('stickers-container');
       if (!container) return;
 
