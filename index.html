@@ -19,6 +19,10 @@
   <!-- html2canvas for Saving Decorated Canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+  <!-- Firebase SDK (v8 Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <!-- Dynamic Theme Styles -->
   <style>
     * {
@@ -248,8 +252,7 @@
       </div>
 
       <div class="text-xs opacity-70 hidden sm:block font-cute">
-        <span class="normal-only">Scrapbook Edition</span>
-        <span class="halloween-only">🎃 Kawaii Spooky Edition</span>
+        <span>Cloud Sync Active ☁️✨</span>
       </div>
     </div>
 
@@ -438,13 +441,13 @@
             Our Memory Album 📸🎃
           </h2>
           <p class="text-xs sm:text-sm text-pink-600 font-medium">
-            แตะช่องว่างเพื่อเลือกและเซฟความทรงจำได้เลยนะ (สูงสุด 5 ไฟล์) ✨
+            แตะช่องว่างเพื่อเลือกและเซฟความทรงจำ (บันทึกลง Cloud ถาวร ทุกคนเห็นเหมือนกัน) ✨
           </p>
         </div>
 
         <div class="relative w-full max-w-3xl mx-auto my-3 p-4 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0] shadow-inner min-h-[360px]">
           <div id="custom-photos-grid" class="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-            <!-- Dynamic Media Slots -->
+            <!-- Dynamic Media Slots Synced Realtime via Firebase Cloud -->
           </div>
         </div>
 
@@ -892,6 +895,24 @@
 
   <!-- JavaScript Logic -->
   <script>
+    // =============================================================
+    // 1. FIREBASE CONFIGURATION (Connected to 'flimflim-hbd' Project)
+    // =============================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSy_YOUR_API_KEY_HERE", // หากมี API Key จาก Firebase สามารถนำมาวางตรงนี้ได้ครับ
+      authDomain: "flimflim-hbd.firebaseapp.com",
+      databaseURL: "https://flimflim-hbd-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "flimflim-hbd",
+      storageBucket: "flimflim-hbd.appspot.com",
+      messagingSenderId: "590509102920",
+      appId: "1:590509102920:web:flimflim"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
     let currentTab = '31oct';
     let flowerProgress = 0;
     let is2026Unlocked = false;
@@ -906,14 +927,47 @@
     let currentTheme = 'normal';
 
     let pendingAction = null;
+    let userPhotos = [null, null, null, null, null];
 
     // DIY Freehand Drawing Engine
-    let currentToolMode = 'sticker'; // 'sticker' or 'draw'
+    let currentToolMode = 'sticker';
     let isDrawing = false;
     let brushColor = '#ec4899';
     let brushSize = 8;
     let drawCanvas, drawCtx;
     let isCanvasInited = false;
+
+    // =============================================================
+    // 2. FIREBASE REALTIME CLOUD SYNC ENGINE
+    // =============================================================
+    function initCloudSync() {
+      db.ref('user_photos').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          userPhotos = Array.isArray(data) ? data : [null, null, null, null, null];
+          if (!Array.isArray(data)) {
+            Object.keys(data).forEach(key => {
+              userPhotos[parseInt(key)] = data[key];
+            });
+          }
+        } else {
+          userPhotos = [null, null, null, null, null];
+        }
+        renderUserPhotos();
+      });
+    }
+
+    function savePhotoToCloud(index, mediaData) {
+      db.ref(`user_photos/${index}`).set(mediaData)
+        .then(() => alert("🎉 บันทึกรูปภาพลงระบบ Cloud เรียบร้อยแล้ว ทุกเครื่องจะเห็นรูปนี้ทันที!"))
+        .catch(err => alert("เกิดข้อผิดพลาดในการบันทึก: " + err.message));
+    }
+
+    function removePhotoFromCloud(index) {
+      db.ref(`user_photos/${index}`).remove()
+        .then(() => alert("🗑️ ลบความทรงจำออกจากระบบ Cloud เรียบร้อยแล้ว"))
+        .catch(err => alert("เกิดข้อผิดพลาดในการลบ: " + err.message));
+    }
 
     // Lightbox Fullscreen Popup Engine
     function openLightbox(mediaSrc, isVideo = false, overlaySrc = null) {
@@ -987,7 +1041,7 @@
     function handleDiyFrameClick(event) {
       if (currentToolMode === 'draw') return;
       if (event.target.closest('#stickers-container') && event.target !== document.getElementById('stickers-container')) {
-        return; // Clicked on sticker
+        return;
       }
       const imgElem = document.getElementById('diy-frame-img');
       const vidElem = document.getElementById('diy-frame-video');
@@ -1255,20 +1309,17 @@
             } else if (targetVal.startsWith('slot_')) {
               const idx = parseInt(targetVal.replace('slot_', ''));
               const currentMedia = userPhotos[idx] || {};
-              userPhotos[idx] = {
+              savePhotoToCloud(idx, {
                 type: 'video',
                 data: vidElem.src || (currentMedia.data || ''),
                 overlay: overlayDataUrl
-              };
-              saveMediaToDB();
-              renderUserPhotos();
+              });
             }
 
             applyOverrides();
             clearStickers();
             clearDrawingCanvas();
             changeDiyPhotoSource();
-            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! สติ๊กเกอร์และเส้นวาดจะแปะทับใสแจ๋วไม่บังวิดีโอแล้วนะ ✨");
           });
         } else {
           html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
@@ -1276,13 +1327,10 @@
 
             if (targetVal.startsWith('slot_')) {
               const idx = parseInt(targetVal.replace('slot_', ''));
-              userPhotos[idx] = {
+              savePhotoToCloud(idx, {
                 type: 'image',
                 data: dataUrl
-              };
-              saveMediaToDB();
-              renderUserPhotos();
-              alert(`🎉 บันทึกรูปตกแต่งเรียบร้อยแล้วใน อัลบั้มความทรงจำ #${idx + 1} ค่ะ!`);
+              });
             } else if (targetVal === 'cover') {
               localStorage.setItem('hbd_cover_override', dataUrl);
               localStorage.removeItem('hbd_cover_overlay');
@@ -1331,16 +1379,13 @@
           localStorage.removeItem('hbd_2025_overlay');
         } else if (targetVal.startsWith('slot_')) {
           const idx = parseInt(targetVal.replace('slot_', ''));
-          userPhotos[idx] = null;
-          saveMediaToDB();
+          removePhotoFromCloud(idx);
         }
 
         clearStickers();
         clearDrawingCanvas();
         applyOverrides();
-        renderUserPhotos();
         changeDiyPhotoSource();
-        alert("🔄 รีเซ็ตกลับเป็นวิดีโอ/รูปภาพเดิมเรียบร้อยแล้วค่ะ!");
       }, "ยืนยันการรีเซ็ตกลับเป็นรูปภาพเดิมใช่ไหมคะ?");
     }
 
@@ -1448,47 +1493,6 @@
       pendingAction = null;
     }
 
-    // IndexedDB for Storing Photos & Videos
-    let db;
-    let userPhotos = [null, null, null, null, null];
-
-    function initIndexedDB() {
-      const request = indexedDB.open('HbdMemoriesDB', 1);
-      request.onupgradeneeded = function(e) {
-        db = e.target.result;
-        if (!db.objectStoreNames.contains('media')) {
-          db.createObjectStore('media');
-        }
-      };
-      request.onsuccess = function(e) {
-        db = e.target.result;
-        loadMediaFromDB();
-      };
-      request.onerror = function() {
-        renderUserPhotos();
-      };
-    }
-
-    function loadMediaFromDB() {
-      if (!db) return;
-      const tx = db.transaction('media', 'readonly');
-      const store = tx.objectStore('media');
-      const req = store.get('user_photos');
-      req.onsuccess = function() {
-        if (req.result) {
-          userPhotos = req.result;
-        }
-        renderUserPhotos();
-      };
-    }
-
-    function saveMediaToDB() {
-      if (!db) return;
-      const tx = db.transaction('media', 'readwrite');
-      const store = tx.objectStore('media');
-      store.put(userPhotos, 'user_photos');
-    }
-
     function renderUserPhotos() {
       const grid = document.getElementById('custom-photos-grid');
       if (!grid) return;
@@ -1511,7 +1515,7 @@
           }
 
           card.innerHTML = `
-            <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20"></div>
+            <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20 bg-white/70"></div>
             <button onclick="requestRemovePhoto(event, ${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md z-30 font-bold active:scale-95">✕</button>
             <div class="aspect-[4/5] bg-pink-50 rounded overflow-hidden flex items-center justify-center relative cursor-pointer" onclick="openLightbox('${media.data}', ${media.type === 'video'}, '${media.overlay || ''}')">
               ${mediaHtml}
@@ -1520,7 +1524,7 @@
           `;
         } else {
           card.innerHTML = `
-            <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20"></div>
+            <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20 bg-white/70"></div>
             <button onclick="triggerFileInput(${index})" class="aspect-[4/5] bg-pink-50/70 hover:bg-pink-100/80 border-2 border-dashed border-pink-300 rounded flex flex-col items-center justify-center cursor-pointer transition-colors p-2 text-center group w-full">
               <span class="text-2xl text-pink-400 group-hover:scale-125 transition-transform mb-1">➕</span>
               <span class="text-[11px] text-pink-500 font-medium font-cute">เพิ่มรูป/วิดีโอที่ ${index + 1}</span>
@@ -1542,32 +1546,49 @@
       const file = event.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
       const isVideo = file.type.startsWith('video/');
 
-      reader.onload = function(e) {
-        const mediaData = e.target.result;
-        openPinModal(() => {
-          userPhotos[index] = {
-            type: isVideo ? 'video' : 'image',
-            data: mediaData
-          };
-          saveMediaToDB();
-          renderUserPhotos();
-        }, `ยืนยันการเพิ่มไฟล์ในช่องความทรงจำที่ ${index + 1} ใช่ไหมคะ?`);
-      };
+      if (isVideo) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          openPinModal(() => {
+            savePhotoToCloud(index, { type: 'video', data: e.target.result });
+          }, `ยืนยันการเพิ่มวิดีโอลงในช่องที่ ${index + 1} ใช่ไหมคะ? (จะอัปเดตลง Cloud ให้ทุกคนเห็นตรงกัน)`);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const maxDim = 1000;
+            if (w > maxDim || h > maxDim) {
+              if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+              else { w = Math.round((w * maxDim) / h); h = maxDim; }
+            }
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            const compressedData = canvas.toDataURL('image/jpeg', 0.8);
 
-      reader.readAsDataURL(file);
+            openPinModal(() => {
+              savePhotoToCloud(index, { type: 'image', data: compressedData });
+            }, `ยืนยันการเพิ่มรูปภาพในช่องที่ ${index + 1} ใช่ไหมคะ? (จะบันทึกลงระบบ Cloud ให้ทุกคนเห็นตรงกัน)`);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
       event.target.value = '';
     }
 
     function requestRemovePhoto(e, index) {
       if (e) e.stopPropagation();
       openPinModal(() => {
-        userPhotos[index] = null;
-        saveMediaToDB();
-        renderUserPhotos();
-      }, `ยืนยันการลบความทรงจำที่ ${index + 1} ใช่ไหมคะ?`);
+        removePhotoFromCloud(index);
+      }, `ยืนยันการลบรูปความทรงจำที่ ${index + 1} ออกจากระบบ Cloud ใช่ไหมคะ?`);
     }
 
     function playPopSound() {
@@ -1811,7 +1832,6 @@
           const cakeTarget = document.getElementById('cake-drop-target');
           if (cakeTarget) {
             const rect = cakeTarget.getBoundingClientRect();
-            // If dropped over/near the cake zone
             if (clientX >= rect.left - 50 && clientX <= rect.right + 50 && clientY >= rect.top - 80 && clientY <= rect.bottom + 50) {
               placeCandleDirect(num);
             }
@@ -2024,8 +2044,8 @@
       setTheme(savedTheme);
       applyOverrides();
       initMicrophone();
-      initIndexedDB();
       initCandleDrag();
+      initCloudSync(); // Initialize Firebase Realtime Cloud Sync
     };
   </script>
 </body>
