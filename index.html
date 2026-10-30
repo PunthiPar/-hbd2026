@@ -164,7 +164,7 @@
       <div class="relative max-w-full max-h-[80vh] flex items-center justify-center overflow-hidden rounded-2xl border-4 border-white/90 shadow-2xl">
         <img id="lightbox-img" class="max-w-full max-h-[80vh] object-contain hidden" alt="Expanded View">
         <video id="lightbox-video" class="max-w-full max-h-[80vh] object-contain hidden" controls autoplay loop muted playsinline></video>
-        <img id="lightbox-overlay" class="absolute inset-0 w-full h-full object-contain pointer-events-none hidden z-20" alt="Overlay">
+        <img id="lightbox-overlay" class="absolute inset-0 w-full h-full object-cover pointer-events-none hidden z-20" alt="Overlay">
       </div>
       <p class="text-white/80 font-cute text-xs sm:text-sm mt-3 text-center">แตะบริเวณด้านนอกเพื่อปิด ✕</p>
     </div>
@@ -1153,13 +1153,21 @@
         if (!photoAreaElem) return;
 
         if (isVideoActive) {
-          // Hide video temporarily to capture transparent overlay (stickers + drawings)
+          // Hide video AND remove bg-pink-100 temporarily to ensure 100% transparent PNG
           const origVidDisplay = vidElem.style.display;
+          const origBgClass = photoAreaElem.className;
+
           vidElem.style.display = 'none';
+          photoAreaElem.classList.remove('bg-pink-100');
+          photoAreaElem.style.backgroundColor = 'transparent';
 
           html2canvas(photoAreaElem, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(canvas => {
             const overlayDataUrl = canvas.toDataURL('image/png');
+            
+            // Restore original classes and video
             vidElem.style.display = origVidDisplay;
+            photoAreaElem.className = origBgClass;
+            photoAreaElem.style.backgroundColor = '';
 
             if (targetVal === 'cover') {
               localStorage.setItem('hbd_cover_overlay', overlayDataUrl);
@@ -1186,7 +1194,7 @@
             clearStickers();
             clearDrawingCanvas();
             changeDiyPhotoSource();
-            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! วิดีโอจะยังคงเล่นตามปกติพร้อมสติ๊กเกอร์แปะทับ ✨");
+            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! วิดีโอจะเล่นวนลูปโดยมีสติ๊กเกอร์แปะทับใสแจ๋ว ✨");
           });
         } else {
           // Capture full image with background
