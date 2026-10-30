@@ -181,37 +181,6 @@
     <div class="absolute bottom-1/3 left-8 text-2xl sm:text-4xl anim-star opacity-80" style="animation-delay: -1s;">🌟</div>
   </div>
 
-  <!-- Welcome / Password Lock Overlay -->
-  <div id="welcome-overlay" class="fixed inset-0 bg-[#170e24]/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4 text-center">
-    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border-4 border-pink-200 flex flex-col items-center space-y-4 text-gray-800 relative overflow-hidden">
-      
-      <div class="halloween-only absolute -top-2 -right-2 text-4xl anim-ghost">👻</div>
-      
-      <div class="text-5xl sm:text-6xl animate-bounce flex items-center gap-1">
-        <span class="normal-only">🔐</span>
-        <span class="halloween-only anim-pumpkin">🎃</span>
-        <span class="halloween-only">🔐</span>
-        <span class="halloween-only anim-ghost">👻</span>
-      </div>
-
-      <h2 class="text-2xl sm:text-3xl font-bold text-pink-600 font-serif-italic">Happy Birthday!</h2>
-      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium">
-        กรุณาใส่รหัสผ่านเพื่อเข้าสู่การ์ดวันเกิดสุดพิเศษ ✨
-      </p>
-
-      <div class="w-full space-y-2">
-        <input type="password" id="site-pass-input" placeholder="พิมพ์รหัสผ่านเข้าเว็บ..." 
-               class="w-full text-center text-lg font-bold px-3 py-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:border-purple-500 bg-white" 
-               onkeyup="if(event.key==='Enter') enterSite()">
-        <p id="site-pass-error" class="text-xs text-red-500 hidden font-semibold">❌ รหัสผ่านไม่ถูกต้อง ลองอีกครั้งนะ!</p>
-      </div>
-
-      <button onclick="enterSite()" class="w-full bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg active:scale-95 transition text-sm sm:text-base flex items-center justify-center gap-2 font-cute">
-        <span>ปลดล็อกเข้าสู่หน้าเว็บ 💖✨</span>
-      </button>
-    </div>
-  </div>
-
   <!-- Confirmation Modal -->
   <div id="pin-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl border-2 border-pink-300 relative">
@@ -795,9 +764,6 @@
     let sharedAudioCtx = null;
     let currentTheme = 'normal';
 
-    // Website Entry Password Configuration
-    const SITE_PASSWORD = 'toropakdee';
-
     let pendingAction = null;
 
     // DIY Freehand Drawing Engine
@@ -896,30 +862,6 @@
         openLightbox(vidElem.src, true, overlay);
       } else if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
         openLightbox(imgElem.src, false);
-      }
-    }
-
-    function enterSite() {
-      const inputPass = document.getElementById('site-pass-input').value.trim();
-      const errorMsg = document.getElementById('site-pass-error');
-
-      if (inputPass === SITE_PASSWORD) {
-        errorMsg.classList.add('hidden');
-        const audio = document.getElementById('bg-music');
-        if (audio) {
-          audio.muted = false;
-          audio.play().then(() => {
-            isMusicPlaying = true;
-            document.getElementById('music-icon').innerText = '🎵';
-          }).catch((err) => {
-            console.log("Audio Play Error:", err);
-          });
-        }
-        document.getElementById('welcome-overlay').style.display = 'none';
-      } else {
-        errorMsg.classList.remove('hidden');
-        document.getElementById('site-pass-input').value = '';
-        document.getElementById('site-pass-input').focus();
       }
     }
 
@@ -1799,7 +1741,6 @@
       applyOverrides();
       initMicrophone();
       initIndexedDB();
-      setTimeout(() => document.getElementById('site-pass-input').focus(), 300);
     };
   </script>
 </body>
