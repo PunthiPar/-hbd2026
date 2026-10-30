@@ -320,13 +320,11 @@
 
           <div class="relative z-10 bg-white p-2.5 sm:p-4 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[240px] sm:max-w-sm w-full border border-gray-200">
             <div class="relative aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center group cursor-pointer" onclick="handleCoverClick()">
-              <!-- Image placeholder (shown when user decorates and saves a custom cover) -->
               <img id="cover-img-placeholder" class="hidden absolute inset-0 w-full h-full object-cover z-10">
-              
-              <!-- Cover Video (Default) -->
               <video id="cover-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="cover.mp4" type="video/mp4">
               </video>
+              <img id="cover-video-overlay" class="hidden absolute inset-0 w-full h-full object-cover z-20 pointer-events-none">
             </div>
 
             <div class="mt-2 sm:mt-3 text-center">
@@ -384,6 +382,7 @@
               <video id="tab-2024-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="hhbd.mp4" type="video/mp4">
               </video>
+              <img id="tab-2024-vid-overlay" class="hidden absolute inset-0 w-full h-full object-cover z-20 pointer-events-none">
             </div>
             <div class="mt-2 text-center font-handwriting text-lg text-pink-600 font-bold">Sweet Moment ✨</div>
           </div>
@@ -430,6 +429,7 @@
               <video id="tab-2025-video" class="w-full h-full object-cover rounded z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="2025.mp4" type="video/mp4">
               </video>
+              <img id="tab-2025-video-overlay" class="hidden absolute inset-0 w-full h-full object-cover rounded z-30 pointer-events-none">
             </div>
             <div class="mt-2 text-center font-handwriting text-xl text-pink-600 font-bold">Special Moment ✨</div>
           </div>
@@ -1020,7 +1020,6 @@
         drawingToolbar.classList.remove('hidden');
         stickerToolbar.classList.add('hidden');
         
-        // Move canvas to TOP layer for drawing
         if (drawCanvasElem) {
           drawCanvasElem.style.zIndex = '40';
           drawCanvasElem.style.pointerEvents = 'auto';
@@ -1031,7 +1030,6 @@
         stickerToolbar.classList.remove('hidden');
         drawingToolbar.classList.add('hidden');
 
-        // Move canvas to BOTTOM layer for sticker dragging
         if (drawCanvasElem) {
           drawCanvasElem.style.zIndex = '20';
           drawCanvasElem.style.pointerEvents = 'none';
@@ -1155,67 +1153,86 @@
       openPinModal(() => {
         const photoAreaElem = document.getElementById('diy-photo-area');
         const vidElem = document.getElementById('diy-frame-video');
-        const imgElem = document.getElementById('diy-frame-img');
+        const isVideoActive = vidElem && !vidElem.classList.contains('hidden');
 
         if (!photoAreaElem) return;
 
-        // If video is currently displayed, capture its current frame to imgElem for html2canvas
-        let restoredVideo = false;
-        if (vidElem && !vidElem.classList.contains('hidden') && vidElem.videoWidth > 0) {
-          try {
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = vidElem.videoWidth;
-            tempCanvas.height = vidElem.videoHeight;
-            const ctx = tempCanvas.getContext('2d');
-            ctx.drawImage(vidElem, 0, 0, tempCanvas.width, tempCanvas.height);
-            imgElem.src = tempCanvas.toDataURL('image/png');
-            imgElem.classList.remove('hidden');
-            vidElem.classList.add('hidden');
-            restoredVideo = true;
-          } catch(e) {
-            console.log("Video frame capture error:", e);
-          }
+        if (isVideoActive) {
+          // Hide video temporarily to capture transparent overlay (stickers + drawings)
+          const origVidDisplay = vidElem.style.display;
+          vidElem.style.display = 'none';
+
+          html2canvas(photoAreaElem, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(canvas => {
+            const overlayDataUrl = canvas.toDataURL('image/png');
+            vidElem.style.display = origVidDisplay;
+
+            if (targetVal === 'cover') {
+              localStorage.setItem('hbd_cover_overlay', overlayDataUrl);
+              localStorage.removeItem('hbd_cover_override');
+            } else if (targetVal === '2024_vid') {
+              localStorage.setItem('hbd_2024_vid_overlay', overlayDataUrl);
+              localStorage.removeItem('hbd_2024_vid_override');
+            } else if (targetVal === '2025') {
+              localStorage.setItem('hbd_2025_overlay', overlayDataUrl);
+              localStorage.removeItem('hbd_2025_override');
+            } else if (targetVal.startsWith('slot_')) {
+              const idx = parseInt(targetVal.replace('slot_', ''));
+              const currentMedia = userPhotos[idx] || {};
+              userPhotos[idx] = {
+                type: 'video',
+                data: vidElem.src || (currentMedia.data || ''),
+                overlay: overlayDataUrl
+              };
+              saveMediaToDB();
+              renderUserPhotos();
+            }
+
+            applyOverrides();
+            clearStickers();
+            clearDrawingCanvas();
+            changeDiyPhotoSource();
+            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! วิดีโอจะยังคงเล่นตามปกติพร้อมสติ๊กเกอร์แปะทับ ✨");
+          });
+        } else {
+          // Capture full image with background
+          html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+            const dataUrl = canvas.toDataURL('image/png');
+
+            if (targetVal.startsWith('slot_')) {
+              const idx = parseInt(targetVal.replace('slot_', ''));
+              userPhotos[idx] = {
+                type: 'image',
+                data: dataUrl
+              };
+              saveMediaToDB();
+              renderUserPhotos();
+              alert(`🎉 บันทึกรูปตกแต่งเรียบร้อยแล้วใน อัลบั้มความทรงจำ #${idx + 1} ค่ะ!`);
+            } else if (targetVal === 'cover') {
+              localStorage.setItem('hbd_cover_override', dataUrl);
+              localStorage.removeItem('hbd_cover_overlay');
+              applyOverrides();
+              alert("🎉 บันทึกรูปตกแต่งลงหน้าปก (31oct) เรียบร้อยแล้วค่ะ!");
+            } else if (targetVal === '2024_vid') {
+              localStorage.setItem('hbd_2024_vid_override', dataUrl);
+              localStorage.removeItem('hbd_2024_vid_overlay');
+              applyOverrides();
+              alert("🎉 บันทึกรูปตกแต่งเรียบร้อยแล้วค่ะ!");
+            } else if (targetVal === '2024_img' || targetVal === '2024') {
+              localStorage.setItem('hbd_2024_img_override', dataUrl);
+              applyOverrides();
+              alert("🎉 บันทึกรูปตกแต่งลงรูปภาพปี 2024 เรียบร้อยแล้วค่ะ!");
+            } else if (targetVal === '2025') {
+              localStorage.setItem('hbd_2025_override', dataUrl);
+              localStorage.removeItem('hbd_2025_overlay');
+              applyOverrides();
+              alert("🎉 บันทึกรูปตกแต่งลงหน้าความทรงจำปี 2025 เรียบร้อยแล้วค่ะ!");
+            }
+
+            clearStickers();
+            clearDrawingCanvas();
+            changeDiyPhotoSource();
+          });
         }
-
-        html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
-          const dataUrl = canvas.toDataURL('image/png');
-
-          if (targetVal.startsWith('slot_')) {
-            const idx = parseInt(targetVal.replace('slot_', ''));
-            userPhotos[idx] = {
-              type: 'image',
-              data: dataUrl
-            };
-            saveMediaToDB();
-            renderUserPhotos();
-            alert(`🎉 บันทึกรูปตกแต่งเรียบร้อยแล้วใน อัลบั้มความทรงจำ #${idx + 1} ค่ะ!`);
-          } else if (targetVal === 'cover') {
-            localStorage.setItem('hbd_cover_override', dataUrl);
-            applyOverrides();
-            alert("🎉 บันทึกรูปตกแต่งลงหน้าปก (31oct) เรียบร้อยแล้วค่ะ!");
-          } else if (targetVal === '2024_vid') {
-            localStorage.setItem('hbd_2024_vid_override', dataUrl);
-            applyOverrides();
-            alert("🎉 บันทึกรูปตกแต่งลงวิดีโอปี 2024 เรียบร้อยแล้วค่ะ!");
-          } else if (targetVal === '2024_img' || targetVal === '2024') {
-            localStorage.setItem('hbd_2024_img_override', dataUrl);
-            applyOverrides();
-            alert("🎉 บันทึกรูปตกแต่งลงรูปภาพปี 2024 เรียบร้อยแล้วค่ะ!");
-          } else if (targetVal === '2025') {
-            localStorage.setItem('hbd_2025_override', dataUrl);
-            applyOverrides();
-            alert("🎉 บันทึกรูปตกแต่งลงหน้าความทรงจำปี 2025 เรียบร้อยแล้วค่ะ!");
-          }
-
-          if (restoredVideo) {
-            imgElem.classList.add('hidden');
-            vidElem.classList.remove('hidden');
-          }
-
-          clearStickers();
-          clearDrawingCanvas();
-          changeDiyPhotoSource();
-        });
       });
     }
 
@@ -1227,12 +1244,15 @@
       openPinModal(() => {
         if (targetVal === 'cover') {
           localStorage.removeItem('hbd_cover_override');
+          localStorage.removeItem('hbd_cover_overlay');
         } else if (targetVal === '2024_vid') {
           localStorage.removeItem('hbd_2024_vid_override');
+          localStorage.removeItem('hbd_2024_vid_overlay');
         } else if (targetVal === '2024_img' || targetVal === '2024') {
           localStorage.removeItem('hbd_2024_img_override');
         } else if (targetVal === '2025') {
           localStorage.removeItem('hbd_2025_override');
+          localStorage.removeItem('hbd_2025_overlay');
         } else if (targetVal.startsWith('slot_')) {
           const idx = parseInt(targetVal.replace('slot_', ''));
           userPhotos[idx] = null;
@@ -1415,6 +1435,9 @@
           let mediaHtml = '';
           if (media.type === 'video') {
             mediaHtml = `<video src="${media.data}" autoplay loop muted playsinline class="w-full h-full object-cover rounded"></video>`;
+            if (media.overlay) {
+              mediaHtml += `<img src="${media.overlay}" class="absolute inset-0 w-full h-full object-cover rounded pointer-events-none z-20">`;
+            }
           } else {
             mediaHtml = `<img src="${media.data}" class="w-full h-full object-cover rounded" alt="Memory Photo ${index + 1}">`;
           }
@@ -1676,36 +1699,61 @@
     }
 
     function applyOverrides() {
-      // 1. Cover Override
+      // 1. Cover
+      const coverOverlay = localStorage.getItem('hbd_cover_overlay');
       const coverOverride = localStorage.getItem('hbd_cover_override');
       const coverImg = document.getElementById('cover-img-placeholder');
       const coverVid = document.getElementById('cover-video');
+      const coverVidOverlay = document.getElementById('cover-video-overlay');
 
-      if (coverOverride && coverImg && coverVid) {
+      if (coverOverlay && coverVid) {
+        coverImg.classList.add('hidden');
+        coverVid.classList.remove('hidden');
+        coverVid.play().catch(e => console.log(e));
+        if (coverVidOverlay) {
+          coverVidOverlay.src = coverOverlay;
+          coverVidOverlay.classList.remove('hidden');
+        }
+      } else if (coverOverride && coverImg && coverVid) {
         coverImg.src = coverOverride;
         coverImg.classList.remove('hidden');
         coverVid.classList.add('hidden');
+        if (coverVidOverlay) coverVidOverlay.classList.add('hidden');
       } else if (coverImg && coverVid) {
         coverImg.classList.add('hidden');
         coverVid.classList.remove('hidden');
         coverVid.play().catch(e => console.log(e));
+        if (coverVidOverlay) coverVidOverlay.classList.add('hidden');
       }
 
-      // 2. 2024 Vid Override (Card 1)
+      // 2. 2024 Vid
+      const vid2024Overlay = localStorage.getItem('hbd_2024_vid_overlay');
       const vid2024Override = localStorage.getItem('hbd_2024_vid_override');
       const vid2024Img = document.getElementById('tab-2024-vid-placeholder');
       const vid2024Vid = document.getElementById('tab-2024-video');
-      if (vid2024Override && vid2024Img && vid2024Vid) {
+      const vid2024VidOverlay = document.getElementById('tab-2024-vid-overlay');
+
+      if (vid2024Overlay && vid2024Vid) {
+        vid2024Img.classList.add('hidden');
+        vid2024Vid.classList.remove('hidden');
+        vid2024Vid.play().catch(e => console.log(e));
+        if (vid2024VidOverlay) {
+          vid2024VidOverlay.src = vid2024Overlay;
+          vid2024VidOverlay.classList.remove('hidden');
+        }
+      } else if (vid2024Override && vid2024Img && vid2024Vid) {
         vid2024Img.src = vid2024Override;
         vid2024Img.classList.remove('hidden');
         vid2024Vid.classList.add('hidden');
+        if (vid2024VidOverlay) vid2024VidOverlay.classList.add('hidden');
       } else if (vid2024Img && vid2024Vid) {
         vid2024Img.classList.add('hidden');
         vid2024Vid.classList.remove('hidden');
         vid2024Vid.play().catch(e => console.log(e));
+        if (vid2024VidOverlay) vid2024VidOverlay.classList.add('hidden');
       }
 
-      // 3. 2024 Img Override (Card 2)
+      // 3. 2024 Img
       const img2024Override = localStorage.getItem('hbd_2024_img_override');
       const img2024 = document.getElementById('tab-2024-img');
       if (img2024Override && img2024) {
@@ -1714,19 +1762,32 @@
         img2024.src = 'hbd2024.JPG';
       }
 
-      // 4. 2025 Override
+      // 4. 2025 Vid
+      const vid2025Overlay = localStorage.getItem('hbd_2025_overlay');
       const img2025Override = localStorage.getItem('hbd_2025_override');
       const img2025 = document.getElementById('tab-2025-img-placeholder');
       const vid2025 = document.getElementById('tab-2025-video');
-      if (img2025Override && img2025 && vid2025) {
+      const vid2025OverlayElem = document.getElementById('tab-2025-video-overlay');
+
+      if (vid2025Overlay && vid2025) {
+        img2025.classList.add('hidden');
+        vid2025.classList.remove('hidden');
+        vid2025.play().catch(e => console.log(e));
+        if (vid2025OverlayElem) {
+          vid2025OverlayElem.src = vid2025Overlay;
+          vid2025OverlayElem.classList.remove('hidden');
+        }
+      } else if (img2025Override && img2025 && vid2025) {
         img2025.src = img2025Override;
         img2025.classList.remove('hidden');
         vid2025.classList.add('hidden');
+        if (vid2025OverlayElem) vid2025OverlayElem.classList.add('hidden');
       } else if (img2025 && vid2025) {
         img2025.src = '';
         img2025.classList.add('hidden');
         vid2025.classList.remove('hidden');
         vid2025.play().catch(e => console.log(e));
+        if (vid2025OverlayElem) vid2025OverlayElem.classList.add('hidden');
       }
     }
 
