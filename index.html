@@ -154,6 +154,18 @@
       transform: scale(1.25);
       box-shadow: 0 0 0 3px #ec4899;
     }
+
+    .candle-draggable {
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .candle-draggable:active {
+      cursor: grabbing;
+      transform: scale(1.15);
+      filter: drop-shadow(0 8px 15px rgba(236,72,153,0.4));
+    }
   </style>
 </head>
 <body class="theme-normal min-h-screen flex flex-col items-center justify-start p-2 sm:p-6 relative overflow-x-hidden">
@@ -657,8 +669,8 @@
         </div>
       </div>
 
-      <!-- ================= TAB 2026 (UPDATED LIGHT-HINT SPACING) ================= -->
-      <div id="tab-2026" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col items-center justify-between relative min-h-[500px]">
+      <!-- ================= TAB 2026 (INTERACTIVE CANDLE PLACING) ================= -->
+      <div id="tab-2026" class="tab-content hidden p-3 sm:p-6 flex-1 flex flex-col items-center justify-between relative min-h-[520px]">
         
         <div id="tab-2026-locked-overlay" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 flex flex-col items-center justify-center p-6 text-center">
           <div class="w-14 h-14 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center text-2xl mb-3 shadow-inner anim-ghost">🔒👻</div>
@@ -673,47 +685,57 @@
 
         <div class="text-center z-10">
           <h2 class="text-2xl sm:text-4xl font-extrabold text-pink-600 font-serif-italic drop-shadow-sm">Happy 25th Birthday!</h2>
-          <p class="text-xs sm:text-sm text-pink-800/80 mt-1 font-cute">จุดไฟที่เทียน ตั้งจิตอธิษฐานแล้วเป่าเทียนได้เลยนะ ✨🎃</p>
+          <p class="text-xs sm:text-sm text-pink-800/80 mt-1 font-cute">ลากหรือแตะเทียนเลข 2 และ 5 มาปักบนเค้ก แล้วจุดไฟเป่าได้เลยนะ ✨🎃</p>
         </div>
 
-        <!-- HIGH-QUALITY CAKE DESIGN WITH ADJUSTED BANNER MARGIN -->
-        <div class="relative my-auto flex flex-col items-center justify-center scale-100 sm:scale-110 py-4">
-          
-          <!-- Candle Light Hint Banner (Moved higher up with mb-10 sm:mb-12 to not cover flames) -->
-          <div id="light-hint" onclick="handleCandleAction()" class="mb-10 sm:mb-12 bg-amber-100/90 backdrop-blur border-2 border-amber-300 text-amber-800 text-xs font-bold font-cute px-4 py-1.5 rounded-full shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 animate-pulse z-30">
-            <span>🔥 แตะที่นี่หรือที่เทียนเพื่อจุดไฟก่อนเป่า!</span>
-          </div>
+        <!-- Hint Banner Moved Higher Up to Avoid Flames -->
+        <div id="light-hint" onclick="handleCandleAction()" class="my-2 bg-amber-100/95 backdrop-blur border-2 border-amber-300 text-amber-800 text-xs sm:text-sm font-bold font-cute px-5 py-2 rounded-full shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 animate-pulse z-30">
+          <span id="hint-text">🕯️ ลากหรือแตะเทียนเลข 2 และ 5 ด้านล่างมาปักบนเค้กก่อนน้า!</span>
+        </div>
 
-          <!-- Number Candles (2 & 5) with Glowing Flames -->
-          <div class="flex space-x-5 z-20 -mb-2 items-end justify-center cursor-pointer group" onclick="lightCandles()" title="แตะเพื่อจุดไฟเทียน 🕯️">
+        <!-- HIGH-QUALITY CAKE DESIGN WITH CANDLE DROP SLOTS -->
+        <div id="cake-drop-target" class="relative my-auto flex flex-col items-center justify-center scale-100 sm:scale-110 py-2">
+          
+          <!-- Placed Candles Target Area on Top Tier -->
+          <div class="flex space-x-6 z-20 -mb-2 items-end justify-center min-h-[60px]">
             
-            <!-- Candle Number 2 -->
-            <div class="relative flex flex-col items-center hover:scale-110 transition-transform">
-              <!-- Flame 1 -->
-              <div id="flame-1" class="flame-real hidden absolute -top-8 w-6 h-8 bg-gradient-to-t from-yellow-300 via-amber-500 to-red-500 rounded-full z-30">
-                <div class="w-2 h-3 bg-white rounded-full mx-auto mt-3 opacity-90 blur-[0.5px]"></div>
-              </div>
-              <!-- Wick -->
-              <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
-              <!-- 3D Number Candle 2 -->
-              <div class="w-9 h-13 bg-gradient-to-tr from-pink-400 via-rose-300 to-pink-200 rounded-2xl border-2 border-white shadow-[0_4px_10px_rgba(236,72,153,0.3)] flex items-center justify-center font-black text-white text-2xl font-cute select-none relative overflow-hidden">
-                <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
-                <span class="z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.2)]">2</span>
+            <!-- Candle Slot 2 Slot Area -->
+            <div id="slot-candle-2" class="relative w-10 h-16 flex flex-col items-center justify-end border-2 border-dashed border-pink-300/60 rounded-xl transition-all">
+              <span id="slot-placeholder-2" class="text-[10px] text-pink-400 font-bold font-cute absolute top-1/2 -translate-y-1/2 pointer-events-none opacity-70">ปัก 2</span>
+              
+              <!-- Candle 2 Container on Cake -->
+              <div id="cake-candle-2" class="hidden relative flex-col items-center hover:scale-110 transition-transform">
+                <!-- Flame 1 -->
+                <div id="flame-1" class="flame-real hidden absolute -top-8 w-6 h-8 bg-gradient-to-t from-yellow-300 via-amber-500 to-red-500 rounded-full z-30">
+                  <div class="w-2 h-3 bg-white rounded-full mx-auto mt-3 opacity-90 blur-[0.5px]"></div>
+                </div>
+                <!-- Wick -->
+                <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
+                <!-- 3D Number Candle 2 -->
+                <div class="w-9 h-13 bg-gradient-to-tr from-pink-400 via-rose-300 to-pink-200 rounded-2xl border-2 border-white shadow-[0_4px_10px_rgba(236,72,153,0.3)] flex items-center justify-center font-black text-white text-2xl font-cute select-none relative overflow-hidden">
+                  <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
+                  <span class="z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.2)]">2</span>
+                </div>
               </div>
             </div>
-            
-            <!-- Candle Number 5 -->
-            <div class="relative flex flex-col items-center hover:scale-110 transition-transform">
-              <!-- Flame 2 -->
-              <div id="flame-2" class="flame-real hidden absolute -top-8 w-6 h-8 bg-gradient-to-t from-yellow-300 via-amber-500 to-red-500 rounded-full z-30">
-                <div class="w-2 h-3 bg-white rounded-full mx-auto mt-3 opacity-90 blur-[0.5px]"></div>
-              </div>
-              <!-- Wick -->
-              <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
-              <!-- 3D Number Candle 5 -->
-              <div class="w-9 h-13 bg-gradient-to-tr from-purple-400 via-fuchsia-300 to-purple-200 rounded-2xl border-2 border-white shadow-[0_4px_10px_rgba(168,85,247,0.3)] flex items-center justify-center font-black text-white text-2xl font-cute select-none relative overflow-hidden">
-                <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
-                <span class="z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.2)]">5</span>
+
+            <!-- Candle Slot 5 Slot Area -->
+            <div id="slot-candle-5" class="relative w-10 h-16 flex flex-col items-center justify-end border-2 border-dashed border-purple-300/60 rounded-xl transition-all">
+              <span id="slot-placeholder-5" class="text-[10px] text-purple-400 font-bold font-cute absolute top-1/2 -translate-y-1/2 pointer-events-none opacity-70">ปัก 5</span>
+              
+              <!-- Candle 5 Container on Cake -->
+              <div id="cake-candle-5" class="hidden relative flex-col items-center hover:scale-110 transition-transform">
+                <!-- Flame 2 -->
+                <div id="flame-2" class="flame-real hidden absolute -top-8 w-6 h-8 bg-gradient-to-t from-yellow-300 via-amber-500 to-red-500 rounded-full z-30">
+                  <div class="w-2 h-3 bg-white rounded-full mx-auto mt-3 opacity-90 blur-[0.5px]"></div>
+                </div>
+                <!-- Wick -->
+                <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
+                <!-- 3D Number Candle 5 -->
+                <div class="w-9 h-13 bg-gradient-to-tr from-purple-400 via-fuchsia-300 to-purple-200 rounded-2xl border-2 border-white shadow-[0_4px_10px_rgba(168,85,247,0.3)] flex items-center justify-center font-black text-white text-2xl font-cute select-none relative overflow-hidden">
+                  <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
+                  <span class="z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.2)]">5</span>
+                </div>
               </div>
             </div>
 
@@ -793,11 +815,40 @@
           </div>
         </div>
 
-        <div class="text-center z-10 my-2 sm:my-4">
+        <!-- CANDLE PICKUP TRAY AREA FOR DRAGGING OR TAPPING -->
+        <div id="candle-tray" class="my-2 bg-white/90 backdrop-blur border-2 border-pink-200 rounded-2xl p-3 shadow-md flex flex-col items-center z-30">
+          <span class="text-xs font-bold text-gray-600 font-cute mb-2 flex items-center gap-1">
+            <span>ถาดเทียนวันเกิด (ลากหรือแตะเพื่อนำไปปักบนเค้ก)</span> 🕯️
+          </span>
+
+          <div class="flex items-center gap-8">
+            <!-- Draggable Candle 2 Tray Item -->
+            <div id="tray-candle-2" onclick="placeCandleDirect('2')" class="candle-draggable flex flex-col items-center group relative cursor-pointer" title="แตะหรือลากไปปักที่เค้ก">
+              <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
+              <div class="w-9 h-12 bg-gradient-to-tr from-pink-400 via-rose-300 to-pink-200 rounded-2xl border-2 border-white shadow flex items-center justify-center font-black text-white text-xl font-cute select-none relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
+                <span class="z-10">2</span>
+              </div>
+              <span class="text-[10px] text-pink-500 font-bold font-cute mt-1">แตะเพื่อปัก 2</span>
+            </div>
+
+            <!-- Draggable Candle 5 Tray Item -->
+            <div id="tray-candle-5" onclick="placeCandleDirect('5')" class="candle-draggable flex flex-col items-center group relative cursor-pointer" title="แตะหรือลากไปปักที่เค้ก">
+              <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
+              <div class="w-9 h-12 bg-gradient-to-tr from-purple-400 via-fuchsia-300 to-purple-200 rounded-2xl border-2 border-white shadow flex items-center justify-center font-black text-white text-xl font-cute select-none relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
+                <span class="z-10">5</span>
+              </div>
+              <span class="text-[10px] text-purple-500 font-bold font-cute mt-1">แตะเพื่อปัก 5</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center z-10 my-2">
           <button id="action-candle-btn" onclick="handleCandleAction()" class="bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-xl active:scale-95 transition-all flex items-center gap-2 mx-auto font-cute">
-            <span>แตะเพื่อจุดไฟเทียนวันเกิด 🕯️🔥</span>
+            <span id="action-btn-text">แตะนำเทียนไปปักให้ครบก่อนน้า 🕯️</span>
           </button>
-          <p class="text-[10px] sm:text-xs text-gray-500 mt-1.5 font-cute">(จุดไฟเรียบร้อยแล้วสามารถเป่า หรือส่งเสียงเป่าใส่ไมโครโฟนได้นะ)</p>
+          <p class="text-[10px] sm:text-xs text-gray-500 mt-1.5 font-cute">(เมื่อปักเทียนและจุดไฟเรียบร้อย สามารถเป่า หรือส่งเสียงเป่าใส่ไมโครโฟนได้เลย)</p>
         </div>
 
         <!-- Sweet Birthday Letter Modal -->
@@ -846,6 +897,9 @@
     let is2026Unlocked = false;
     let isCandleLit = false;
     let isCandleBlown = false;
+    let isCandle2Placed = false;
+    let isCandle5Placed = false;
+
     let heartInterval = null;
     let isMusicPlaying = false;
     let sharedAudioCtx = null;
@@ -1186,7 +1240,6 @@
         if (!photoAreaElem || !overlayLayer) return;
 
         if (isVideoActive) {
-          // Capture ONLY the dedicated overlay layer for 100% transparent PNG output
           html2canvas(overlayLayer, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(canvas => {
             const overlayDataUrl = canvas.toDataURL('image/png');
 
@@ -1218,7 +1271,6 @@
             alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! สติ๊กเกอร์และเส้นวาดจะแปะทับใสแจ๋วไม่บังวิดีโอแล้วนะ ✨");
           });
         } else {
-          // Capture full image with background for static photo
           html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
             const dataUrl = canvas.toDataURL('image/png');
 
@@ -1396,7 +1448,7 @@
       pendingAction = null;
     }
 
-    // IndexedDB for Storing Photos & Videos locally
+    // IndexedDB for Storing Photos & Videos
     let db;
     let userPhotos = [null, null, null, null, null];
 
@@ -1681,30 +1733,141 @@
       switchTab('2026');
     }
 
+    // CANDLE PLACING INTERACTIVITY (TAP OR DRAG & DROP)
+    function placeCandleDirect(num) {
+      if (num === '2') {
+        if (isCandle2Placed) return;
+        isCandle2Placed = true;
+        document.getElementById('cake-candle-2').classList.remove('hidden');
+        document.getElementById('cake-candle-2').classList.add('flex');
+        document.getElementById('slot-placeholder-2').classList.add('hidden');
+        document.getElementById('slot-candle-2').classList.remove('border-dashed');
+        document.getElementById('tray-candle-2').classList.add('opacity-30', 'pointer-events-none');
+      } else if (num === '5') {
+        if (isCandle5Placed) return;
+        isCandle5Placed = true;
+        document.getElementById('cake-candle-5').classList.remove('hidden');
+        document.getElementById('cake-candle-5').classList.add('flex');
+        document.getElementById('slot-placeholder-5').classList.add('hidden');
+        document.getElementById('slot-candle-5').classList.remove('border-dashed');
+        document.getElementById('tray-candle-5').classList.add('opacity-30', 'pointer-events-none');
+      }
+
+      playPopSound();
+      checkAllCandlesPlaced();
+    }
+
+    function checkAllCandlesPlaced() {
+      const hintText = document.getElementById('hint-text');
+      const lightHint = document.getElementById('light-hint');
+      const actionBtnText = document.getElementById('action-btn-text');
+
+      if (isCandle2Placed && isCandle5Placed) {
+        if (trayContainer = document.getElementById('candle-tray')) {
+          trayContainer.classList.add('hidden');
+        }
+
+        if (!isCandleLit) {
+          if (hintText) hintText.innerHTML = "🔥 ปักเทียนเรียบร้อยแล้ว! แตะที่นี่หรือกดปุ่มด้านล่างเพื่อจุดไฟนะคะ";
+          if (lightHint) lightHint.className = "my-2 bg-amber-100/95 backdrop-blur border-2 border-amber-300 text-amber-800 text-xs sm:text-sm font-bold font-cute px-5 py-2 rounded-full shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 animate-bounce z-30";
+          if (actionBtnText) actionBtnText.innerText = "แตะเพื่อจุดไฟเทียนวันเกิด 🕯️🔥";
+        }
+      } else {
+        const remaining = !isCandle2Placed && !isCandle5Placed ? "เลข 2 และ 5" : (!isCandle2Placed ? "เลข 2" : "เลข 5");
+        if (hintText) hintText.innerText = `🕯️ ลากหรือแตะเทียน${remaining} มาปักบนเค้กให้ครบนะ!`;
+      }
+    }
+
+    // Candle Drag and Drop Event Setup for Touch & Mouse
+    function initCandleDrag() {
+      ['2', '5'].forEach(num => {
+        const trayItem = document.getElementById(`tray-candle-${num}`);
+        if (!trayItem) return;
+
+        let isDragging = false;
+        let startX, startY;
+
+        const startDrag = (e) => {
+          if ((num === '2' && isCandle2Placed) || (num === '5' && isCandle5Placed)) return;
+          isDragging = true;
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+          startX = clientX;
+          startY = clientY;
+        };
+
+        const doDrag = (e) => {
+          if (!isDragging) return;
+          if (e.cancelable) e.preventDefault();
+        };
+
+        const stopDrag = (e) => {
+          if (!isDragging) return;
+          isDragging = false;
+          
+          const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+          const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+          const cakeTarget = document.getElementById('cake-drop-target');
+          if (cakeTarget) {
+            const rect = cakeTarget.getBoundingClientRect();
+            // If dropped over/near the cake zone
+            if (clientX >= rect.left - 50 && clientX <= rect.right + 50 && clientY >= rect.top - 80 && clientY <= rect.bottom + 50) {
+              placeCandleDirect(num);
+            }
+          }
+        };
+
+        trayItem.addEventListener('mousedown', startDrag);
+        window.addEventListener('mousemove', doDrag);
+        window.addEventListener('mouseup', stopDrag);
+
+        trayItem.addEventListener('touchstart', startDrag, { passive: false });
+        trayItem.addEventListener('touchmove', doDrag, { passive: false });
+        trayItem.addEventListener('touchend', stopDrag);
+      });
+    }
+
     // Candle Lighting & Blowing Logic
     function lightCandles() {
+      if (!isCandle2Placed || !isCandle5Placed) {
+        alert("🕯️ กรุณาปักเทียนเลข 2 และ 5 บนเค้กให้ครบก่อนนะคะ!");
+        return;
+      }
+
       if (isCandleLit || isCandleBlown) return;
 
       isCandleLit = true;
       document.getElementById('flame-1').classList.remove('hidden');
       document.getElementById('flame-2').classList.remove('hidden');
 
+      const hintText = document.getElementById('hint-text');
       const lightHint = document.getElementById('light-hint');
       if (lightHint) {
-        lightHint.className = "mb-10 sm:mb-12 bg-pink-100/90 backdrop-blur border-2 border-pink-300 text-pink-700 text-xs font-bold font-cute px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5 z-30";
-        lightHint.innerHTML = "<span>✨ เทียนถูกจุดแล้ว! เป่าเทียนได้เลยนะคะ 🌬️</span>";
+        lightHint.className = "my-2 bg-pink-100/95 backdrop-blur border-2 border-pink-300 text-pink-700 text-xs sm:text-sm font-bold font-cute px-5 py-2 rounded-full shadow-md flex items-center gap-1.5 z-30";
+      }
+      if (hintText) {
+        hintText.innerHTML = "<span>✨ เทียนถูกจุดเรียบร้อยแล้ว! เป่าเทียนได้เลยนะคะ 🌬️</span>";
       }
 
       const actionBtn = document.getElementById('action-candle-btn');
+      const actionBtnText = document.getElementById('action-btn-text');
       if (actionBtn) {
         actionBtn.className = "bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-xl active:scale-95 transition-all flex items-center gap-2 mx-auto font-cute";
-        actionBtn.innerHTML = "<span>กดเพื่อเป่าเทียนวันเกิด 🌬️✨</span>";
+      }
+      if (actionBtnText) {
+        actionBtnText.innerText = "กดเพื่อเป่าเทียนวันเกิด 🌬️✨";
       }
 
       playPopSound();
     }
 
     function handleCandleAction() {
+      if (!isCandle2Placed || !isCandle5Placed) {
+        alert("🕯️ กรุณาปักเทียนเลข 2 และ 5 บนเค้กให้ครบก่อนนะคะ!");
+        return;
+      }
+
       if (!isCandleLit) {
         lightCandles();
       } else {
@@ -1721,9 +1884,10 @@
 
       triggerConfetti();
 
+      const actionBtnText = document.getElementById('action-btn-text');
       const actionBtn = document.getElementById('action-candle-btn');
+      if (actionBtnText) actionBtnText.innerText = 'เป่าเทียนเรียบร้อยแล้ว ✨';
       if (actionBtn) {
-        actionBtn.innerText = 'เป่าเทียนเรียบร้อยแล้ว ✨';
         actionBtn.className = 'bg-gray-400 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full cursor-default mx-auto font-cute';
       }
 
@@ -1861,6 +2025,7 @@
       applyOverrides();
       initMicrophone();
       initIndexedDB();
+      initCandleDrag();
     };
   </script>
 </body>
