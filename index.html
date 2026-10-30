@@ -588,7 +588,7 @@
             
             <!-- Photo/Video Capture Area -->
             <div id="diy-photo-area" class="aspect-[3/4] bg-pink-100 rounded overflow-hidden relative group cursor-pointer" onclick="handleDiyFrameClick(event)">
-              <img id="diy-frame-img" src="hbd2024.JPG" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0" onerror="this.src='hbd2024.JPG';">
+              <img id="diy-frame-img" src="" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0 hidden">
               <video id="diy-frame-video" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0 hidden" autoplay loop muted playsinline webkit-playsinline></video>
               
               <!-- Freehand Drawing Canvas Overlay -->
@@ -1096,7 +1096,7 @@
         if (userPhotos[idx] && userPhotos[idx].data) {
           setMediaSource(userPhotos[idx].type || 'image', userPhotos[idx].data);
         } else {
-          setMediaSource('image', 'hbd2024.JPG');
+          setMediaSource('video', 'cover.mp4');
         }
       }
     }
@@ -1217,7 +1217,7 @@
         applyOverrides();
         renderUserPhotos();
         changeDiyPhotoSource();
-        alert("🔄 รีเซ็ตกลับเป็นรูปภาพเดิมเรียบร้อยแล้วค่ะ!");
+        alert("🔄 รีเซ็ตกลับเป็นวิดีโอหน้าปก/รูปภาพเดิมเรียบร้อยแล้วค่ะ!");
       });
     }
 
