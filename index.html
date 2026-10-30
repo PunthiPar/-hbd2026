@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Happy Birthday 💖</title>
+  <title>Happy Birthday 💖🎃</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,61 +11,99 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500;1,700&family=Prompt:ital,wght@0,300;0,400;0,600;1,300&family=Sacramento&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Playfair+Display:ital,wght@1,500;1,700&family=Prompt:ital,wght@0,300;0,400;0,600;1,300&family=Sacramento&display=swap" rel="stylesheet">
   
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <!-- Custom Styles for Mobile/iPad and Aesthetic Elements -->
+  <!-- Theme Dynamic Styles -->
   <style>
     * {
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
+    /* Base Body Styling for Normal Theme */
+    body.theme-normal {
       font-family: 'Prompt', sans-serif;
       background-color: #f3efe6;
       background-image: radial-gradient(#e0d8c8 1px, transparent 1px);
       background-size: 20px 20px;
       touch-action: manipulation;
       -webkit-overflow-scrolling: touch;
+      color: #1f2937;
     }
 
-    .font-serif-italic {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
+    /* Base Body Styling for Halloween Theme */
+    body.theme-halloween {
+      font-family: 'Prompt', sans-serif;
+      background-color: #241937;
+      background-image: radial-gradient(#3a2955 1.5px, transparent 1.5px), radial-gradient(#312048 1.5px, #241937 1.5px);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+      touch-action: manipulation;
+      -webkit-overflow-scrolling: touch;
+      color: #333;
     }
 
-    .font-handwriting {
-      font-family: 'Sacramento', cursive;
+    /* Visibility Rules for Theme Elements */
+    body.theme-normal .halloween-only { display: none !important; }
+    body.theme-halloween .normal-only { display: none !important; }
+
+    /* Normal Theme Window Overrides */
+    body.theme-normal .win-container { background-color: #ffffff; border-color: #d1d5db; }
+    body.theme-normal .win-topbar { background-color: #e8e6e1; color: #6b7280; border-color: #d1d5db; }
+    body.theme-normal .win-url { background-color: #ffffff; color: #6b7280; border-color: #d1d5db; }
+    body.theme-normal .win-tabbar { background-color: #f4efe6; border-color: #d1d5db; }
+    body.theme-normal .tab-btn-active { background-color: #ffffff; color: #db2777; border-top-color: #f472b6; }
+    body.theme-normal .tab-btn-inactive { color: #4b5563; }
+    body.theme-normal .win-content { background-color: #fbf9f5; }
+    body.theme-normal .tape { background-color: rgba(255, 255, 255, 0.65); }
+
+    /* Halloween Theme Window Overrides */
+    body.theme-halloween .win-container { background-color: #fcf8f2; border-color: rgba(245, 158, 11, 0.4); }
+    body.theme-halloween .win-topbar { background-color: #1f1530; color: #fef3c7; border-color: rgba(88, 28, 135, 0.5); }
+    body.theme-halloween .win-url { background-color: #2b1e42; color: rgba(253, 230, 138, 0.8); border-color: rgba(126, 34, 206, 0.4); }
+    body.theme-halloween .win-tabbar { background-color: #281b3d; border-color: rgba(88, 28, 135, 0.4); }
+    body.theme-halloween .tab-btn-active { background-color: #fcf8f2; color: #3b0764; border-top-color: #fb923c; }
+    body.theme-halloween .tab-btn-inactive { color: rgba(253, 230, 138, 0.8); }
+    body.theme-halloween .win-content { background-color: #fcf8f2; }
+    body.theme-halloween .tape { background-color: rgba(255, 238, 210, 0.75); }
+
+    .font-cute { font-family: 'Fredoka', cursive; }
+    .font-serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
+    .font-handwriting { font-family: 'Sacramento', cursive; }
+
+    /* Floating Cartoon Animations for Halloween */
+    @keyframes floatGhost {
+      0%, 100% { transform: translateY(0px) rotate(-3deg); }
+      50% { transform: translateY(-15px) rotate(4deg); }
+    }
+    @keyframes bouncePumpkin {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.08) rotate(-5deg); }
+    }
+    @keyframes flyBat {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(10px, -12px) rotate(8deg); }
+      75% { transform: translate(-10px, -6px) rotate(-8deg); }
+    }
+    @keyframes floatCandy {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(180deg); }
     }
 
-    /* Tape effect for Scrapbook polaroids */
-    .tape {
-      background-color: rgba(255, 255, 255, 0.65);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-      backdrop-filter: blur(2px);
-      transform: rotate(-3deg);
-    }
+    .anim-ghost { animation: floatGhost 3.5s ease-in-out infinite; }
+    .anim-pumpkin { animation: bouncePumpkin 2.2s ease-in-out infinite; }
+    .anim-bat { animation: flyBat 4s ease-in-out infinite; }
+    .anim-candy { animation: floatCandy 5s ease-in-out infinite; }
 
-    /* Sticker Drop Shadow */
-    .sticker-shadow {
-      filter: drop-shadow(3px 5px 3px rgba(0,0,0,0.25));
-    }
+    .sticker-shadow { filter: drop-shadow(3px 5px 4px rgba(0,0,0,0.25)); }
 
-    /* Heart animation for Tab 2025 */
+    /* Floating Hearts Animation */
     @keyframes floatUp {
-      0% {
-        transform: translateY(0) scale(0.8) rotate(0deg);
-        opacity: 1;
-      }
-      50% {
-        transform: translateY(-45vh) scale(1.1) rotate(15deg);
-      }
-      100% {
-        transform: translateY(-85vh) scale(0.9) rotate(-15deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 1; }
+      50% { transform: translateY(-45vh) scale(1.1) rotate(15deg); }
+      100% { transform: translateY(-85vh) scale(0.9) rotate(-15deg); opacity: 0; }
     }
 
     .floating-heart {
@@ -76,69 +114,67 @@
       animation: floatUp 6.5s linear infinite;
       z-index: 50 !important;
       pointer-events: auto !important;
-      filter: drop-shadow(0 2px 4px rgba(255,105,180,0.5));
+      filter: drop-shadow(0 2px 5px rgba(255,105,180,0.5));
       transition: transform 0.1s ease;
       padding: 18px;
       touch-action: none;
     }
+    .floating-heart:active { transform: scale(1.4) !important; }
 
-    .floating-heart:active {
-      transform: scale(1.4) !important;
-    }
-
-    /* Candle Flame Animation */
+    /* Flame Animation */
     @keyframes flicker {
       0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
-      50% { transform: scale(1.15) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 12px #ff9d00); }
+      50% { transform: scale(1.15) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 12px #ff8800); }
     }
+    .flame { animation: flicker 0.6s infinite alternate ease-in-out; transform-origin: center bottom; }
 
-    .flame {
-      animation: flicker 0.6s infinite alternate ease-in-out;
-      transform-origin: center bottom;
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #dba2b7;
-      border-radius: 4px;
-    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 4px; }
   </style>
 </head>
-<body class="min-h-screen text-gray-800 flex flex-col items-center justify-start p-2 sm:p-6 relative">
+<body class="theme-normal min-h-screen flex flex-col items-center justify-start p-2 sm:p-6 relative overflow-x-hidden">
 
-  <!-- Welcome / Start Overlay -->
-  <div id="welcome-overlay" class="fixed inset-0 bg-[#f3efe6]/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4 text-center">
-    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border-2 border-pink-200 flex flex-col items-center space-y-4">
-      <div class="text-5xl sm:text-6xl animate-bounce">💌</div>
+  <!-- Floating Halloween Background Cartoons (Shown only in Halloween Theme) -->
+  <div class="halloween-only fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute top-6 left-4 sm:left-12 text-4xl sm:text-6xl anim-ghost opacity-80">👻</div>
+    <div class="absolute top-20 right-6 sm:right-16 text-3xl sm:text-5xl anim-bat opacity-80">🦇</div>
+    <div class="absolute bottom-12 left-6 sm:left-16 text-4xl sm:text-6xl anim-pumpkin opacity-80">🎃</div>
+    <div class="absolute bottom-20 right-8 sm:right-20 text-3xl sm:text-5xl anim-candy opacity-80">🍬</div>
+    <div class="absolute top-1/2 left-2 text-2xl sm:text-4xl anim-bat opacity-60">🕷️</div>
+    <div class="absolute top-1/3 right-3 text-3xl sm:text-5xl anim-ghost opacity-70" style="animation-delay: -1.5s;">🧙‍♀️</div>
+  </div>
+
+  <!-- Welcome Overlay -->
+  <div id="welcome-overlay" class="fixed inset-0 bg-[#1f1530]/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4 text-center">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border-2 border-pink-200 flex flex-col items-center space-y-4 text-gray-800 relative">
+      <div class="text-5xl sm:text-6xl animate-bounce">
+        <span class="normal-only">💌</span>
+        <span class="halloween-only">🎃</span>
+      </div>
       <h2 class="text-2xl sm:text-3xl font-bold text-pink-600 font-serif-italic">Happy Birthday!</h2>
       <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
         มีความทรงจำและเสียงเพลงพิเศษรอเธออยู่ข้างในนะ ✨
       </p>
-      <button onclick="enterSite()" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 px-6 rounded-2xl shadow-lg active:scale-95 transition text-sm sm:text-base flex items-center justify-center gap-2">
-        <span>แตะเพื่อเปิดการ์ดวันเกิด 💖</span>
+      <button onclick="enterSite()" class="w-full bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg active:scale-95 transition text-sm sm:text-base flex items-center justify-center gap-2">
+        <span>แตะเพื่อเปิดการ์ดวันเกิด 💖✨</span>
       </button>
     </div>
   </div>
 
   <!-- PIN Verification Modal -->
-  <div id="pin-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+  <div id="pin-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl border-2 border-pink-300 relative">
       <button onclick="closePinModal()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
       <div class="text-4xl mb-2">🔐</div>
       <h3 class="text-lg font-bold text-gray-800 mb-1">ยืนยันรหัสผ่าน 6 หลัก</h3>
       <p class="text-xs text-gray-500 mb-4">ใส่รหัสผ่านเพื่อบันทึกความทรงจำนี้ลงอัลบั้ม</p>
       
-      <input type="password" id="pin-input" maxlength="6" pattern="\d{6}" inputmode="numeric" placeholder="••••••" class="w-full text-center text-2xl font-bold tracking-[0.5em] px-3 py-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:border-pink-500 mb-3" onkeyup="if(event.key==='Enter') verifyPin()">
+      <input type="password" id="pin-input" maxlength="6" pattern="\d{6}" inputmode="numeric" placeholder="••••••" class="w-full text-center text-2xl font-bold tracking-[0.5em] px-3 py-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:border-pink-500 mb-3 bg-white" onkeyup="if(event.key==='Enter') verifyPin()">
       
       <p id="pin-error" class="text-xs text-red-500 hidden mb-3 font-semibold">❌ รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้งนะ!</p>
       
-      <button onclick="verifyPin()" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-2.5 rounded-xl shadow active:scale-95 transition text-sm">
+      <button onclick="verifyPin()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-2.5 rounded-xl shadow active:scale-95 transition text-sm">
         ยืนยันบันทึกรูปภาพ 💖
       </button>
     </div>
@@ -150,73 +186,91 @@
     <source src="me.mov" type="video/quicktime">
   </audio>
 
-  <!-- Floating Music Toggle Button -->
-  <button id="music-btn" onclick="toggleMusic(event)" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 bg-white/90 backdrop-blur border border-pink-200 text-pink-500 p-2.5 sm:p-3 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
-    <span id="music-icon" class="text-lg sm:text-xl">🎵</span>
-  </button>
+  <!-- Top Controls: Theme Switcher & Music Buttons -->
+  <div class="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 flex items-center gap-2">
+    <!-- Theme Switch Button -->
+    <button onclick="toggleTheme()" class="bg-white/90 backdrop-blur border border-pink-300 text-gray-800 px-3 py-2 rounded-full shadow-lg flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all text-xs sm:text-sm font-semibold">
+      <span id="theme-btn-icon">🎃</span>
+      <span id="theme-btn-text" class="hidden sm:inline">โหมดฮาโลวีน</span>
+    </button>
+
+    <!-- Music Toggle Button -->
+    <button id="music-btn" onclick="toggleMusic(event)" class="bg-white/90 backdrop-blur border border-pink-300 text-pink-500 p-2 sm:p-2.5 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+      <span id="music-icon" class="text-lg sm:text-xl">🎵</span>
+    </button>
+  </div>
 
   <!-- Main Browser Window Container -->
-  <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl border border-gray-300 overflow-hidden my-auto flex flex-col min-h-[92vh] sm:min-h-[90vh]">
+  <div class="win-container w-full max-w-4xl rounded-xl shadow-2xl border overflow-hidden my-auto flex flex-col min-h-[92vh] sm:min-h-[90vh] z-10 relative">
     
     <!-- Browser Top Bar -->
-    <div class="bg-[#e8e6e1] px-3 sm:px-4 py-2 sm:py-2.5 border-b border-gray-300 flex items-center justify-between gap-2 sm:gap-4 select-none">
+    <div class="win-topbar px-3 sm:px-4 py-2 sm:py-2.5 border-b flex items-center justify-between gap-2 sm:gap-4 select-none">
       <div class="flex items-center space-x-1.5 sm:space-x-2">
         <div class="w-3 h-3 rounded-full bg-red-400 border border-red-500"></div>
         <div class="w-3 h-3 rounded-full bg-yellow-400 border border-yellow-500"></div>
         <div class="w-3 h-3 rounded-full bg-green-400 border border-green-500"></div>
       </div>
       
-      <div class="flex-1 max-w-md bg-white text-gray-500 text-xs sm:text-sm px-3 py-1 rounded-md border border-gray-300 text-center truncate tracking-wide flex items-center justify-center gap-1.5">
-        <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.39-2.823-1.07-4"></path></svg>
+      <div class="win-url flex-1 max-w-md text-xs sm:text-sm px-3 py-1 rounded-md border text-center truncate tracking-wide flex items-center justify-center gap-1.5">
+        <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-60 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.39-2.823-1.07-4"></path></svg>
         <span class="truncate">https://our-memories.love/hbd-special</span>
       </div>
 
-      <div class="text-gray-400 text-xs hidden sm:block">VSCode Aesthetic</div>
+      <div class="text-xs opacity-60 hidden sm:block">
+        <span class="normal-only">Scrapbook Edition</span>
+        <span class="halloween-only">🎃 Spooky Cute Edition</span>
+      </div>
     </div>
 
     <!-- Navigation Tabs Bar -->
-    <div class="bg-[#f4efe6] border-b border-gray-300 px-2 sm:px-4 pt-2 sm:pt-3 flex items-center justify-around sm:justify-start space-x-1 sm:space-x-2 text-xs sm:text-sm font-medium overflow-x-auto">
-      <button onclick="switchTab('31oct')" id="tab-btn-31oct" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg bg-white border-t-2 border-pink-400 text-pink-600 font-semibold shadow-sm flex items-center gap-1 transition-all flex-shrink-0">
+    <div class="win-tabbar border-b px-2 sm:px-4 pt-2 sm:pt-3 flex items-center justify-around sm:justify-start space-x-1 sm:space-x-2 text-xs sm:text-sm font-medium overflow-x-auto">
+      <button onclick="switchTab('31oct')" id="tab-btn-31oct" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg tab-btn-active font-semibold shadow-sm flex items-center gap-1 transition-all flex-shrink-0">
         <span>📸 31oct</span>
+        <span class="halloween-only">🎃</span>
       </button>
-      <button onclick="switchTab('2024')" id="tab-btn-2024" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg text-gray-600 hover:text-pink-500 hover:bg-white/60 transition-all flex items-center gap-1 flex-shrink-0">
+      <button onclick="switchTab('2024')" id="tab-btn-2024" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg tab-btn-inactive transition-all flex items-center gap-1 flex-shrink-0">
         <span>💫2024</span>
       </button>
-      <button onclick="switchTab('2025_mem')" id="tab-btn-2025_mem" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg text-gray-600 hover:text-pink-500 hover:bg-white/60 transition-all flex items-center gap-1 flex-shrink-0">
+      <button onclick="switchTab('2025_mem')" id="tab-btn-2025_mem" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg tab-btn-inactive transition-all flex items-center gap-1 flex-shrink-0">
         <span>💫2025</span>
       </button>
-      <button onclick="switchTab('custom_photos')" id="tab-btn-custom_photos" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg text-gray-600 hover:text-pink-500 hover:bg-white/60 transition-all flex items-center gap-1 flex-shrink-0">
+      <button onclick="switchTab('custom_photos')" id="tab-btn-custom_photos" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg tab-btn-inactive transition-all flex items-center gap-1 flex-shrink-0">
         <span>🖼️ ความทรงจำ</span>
       </button>
-      <button onclick="switchTab('2025')" id="tab-btn-2025" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg text-gray-600 hover:text-pink-500 hover:bg-white/60 transition-all flex items-center gap-1 flex-shrink-0">
+      <button onclick="switchTab('2025')" id="tab-btn-2025" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg tab-btn-inactive transition-all flex items-center gap-1 flex-shrink-0">
         <span>💖 Next</span>
       </button>
-      <button onclick="switchTab('2026')" id="tab-btn-2026" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg text-gray-400 hover:text-gray-600 transition-all flex items-center gap-1 relative flex-shrink-0">
+      <button onclick="switchTab('2026')" id="tab-btn-2026" class="tab-btn px-3 sm:px-4 py-2 rounded-t-lg tab-btn-inactive transition-all flex items-center gap-1 relative flex-shrink-0">
         <span>🎂 2026</span>
         <span id="lock-icon-2026" class="text-[10px] sm:text-xs bg-gray-200 text-gray-600 px-1 py-0.5 rounded-full">🔒</span>
       </button>
     </div>
 
     <!-- MAIN CONTENT CONTAINER -->
-    <div class="flex-1 bg-[#fbf9f5] relative overflow-hidden flex flex-col">
+    <div class="win-content flex-1 relative overflow-hidden flex flex-col">
 
       <!-- ================= TAB 31oct ================= -->
       <div id="tab-31oct" class="tab-content p-3 sm:p-8 flex-1 flex flex-col justify-between">
         <div class="text-center my-2 sm:my-4 select-none relative">
-          <h1 class="text-3xl sm:text-6xl font-serif-italic text-gray-800 tracking-tight leading-none mb-1">
-            Happt Birth day
-          </h1>
-          <p class="text-base sm:text-xl font-serif-italic underline decoration-1 underline-offset-4 text-gray-700">
+          <div class="inline-flex items-center justify-center gap-2 mb-1">
+            <span class="halloween-only text-2xl sm:text-4xl anim-ghost">👻</span>
+            <h1 class="text-3xl sm:text-6xl font-serif-italic tracking-tight leading-none">
+              Happt Birth day
+            </h1>
+            <span class="halloween-only text-2xl sm:text-4xl anim-pumpkin">🎃</span>
+          </div>
+          <p class="text-base sm:text-xl font-serif-italic underline decoration-1 underline-offset-4 font-semibold">
             31 October
+            <span class="halloween-only">• Halloween Night 🎃</span>
           </p>
         </div>
 
-        <div class="relative w-full max-w-2xl mx-auto my-3 sm:my-6 p-3 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0]/50 shadow-inner min-h-[360px] sm:min-h-[420px] flex items-center justify-center">
+        <div class="relative w-full max-w-2xl mx-auto my-3 sm:my-6 p-3 sm:p-6 bg-[#eae1d0]/50 rounded-2xl border border-[#d6c7b0] shadow-inner min-h-[360px] sm:min-h-[420px] flex items-center justify-center">
           <div class="tape absolute -top-3 left-6 sm:left-10 w-20 sm:w-24 h-5 sm:h-6 z-20"></div>
           <div class="tape absolute -bottom-3 right-6 sm:right-10 w-20 sm:w-24 h-5 sm:h-6 z-20"></div>
 
           <div class="relative z-10 bg-white p-2.5 sm:p-4 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[240px] sm:max-w-sm w-full border border-gray-200">
-            <div class="relative aspect-[3/4] bg-[#fbcfe8] rounded overflow-hidden flex items-center justify-center group">
+            <div class="relative aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center group">
               <img id="cover-img-placeholder" src="cover.jpg" alt="Cover Memory" class="absolute inset-0 w-full h-full object-cover z-0" onerror="this.style.display='none';">
               
               <video id="cover-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
@@ -230,10 +284,14 @@
           </div>
 
           <!-- Scrapbook Stickers -->
-          <div class="absolute top-2 right-2 sm:right-6 text-3xl sm:text-6xl text-gray-700 transform rotate-12 sticker-shadow cursor-pointer">🎧</div>
-          <div class="absolute right-1 sm:right-4 bottom-12 sm:bottom-16 text-3xl sm:text-5xl transform -rotate-12 sticker-shadow cursor-pointer">🌹</div>
-          <div class="absolute -bottom-3 right-8 sm:right-12 text-3xl sm:text-5xl transform rotate-12 sticker-shadow">💋</div>
+          <div class="normal-only absolute top-2 right-2 sm:right-6 text-3xl sm:text-6xl text-gray-700 transform rotate-12 sticker-shadow cursor-pointer">🎧</div>
+          <div class="normal-only absolute right-1 sm:right-4 bottom-12 sm:bottom-16 text-3xl sm:text-5xl transform -rotate-12 sticker-shadow cursor-pointer">🌹</div>
+          <div class="normal-only absolute -bottom-3 right-8 sm:right-12 text-3xl sm:text-5xl transform rotate-12 sticker-shadow">💋</div>
           
+          <div class="halloween-only absolute top-2 right-2 sm:right-6 text-3xl sm:text-5xl anim-ghost sticker-shadow">👻</div>
+          <div class="halloween-only absolute right-1 sm:right-4 bottom-12 sm:bottom-16 text-3xl sm:text-5xl anim-pumpkin sticker-shadow">🎃</div>
+          <div class="halloween-only absolute -bottom-3 right-8 sm:right-12 text-3xl sm:text-5xl anim-bat sticker-shadow">🦇</div>
+
           <div class="absolute right-1 sm:right-8 top-1/4 sm:top-1/3 bg-yellow-400 text-black font-extrabold text-xs sm:text-base px-2 sm:px-3 py-0.5 sm:py-1 uppercase tracking-wider transform rotate-6 shadow-md border border-black rounded">
             OCTOBER
             <span class="block text-red-600 text-xl sm:text-3xl text-center leading-none">31</span>
@@ -258,7 +316,7 @@
       <!-- ================= TAB 💫2024 ================= -->
       <div id="tab-2024" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col justify-between">
         <div class="text-center my-2 sm:my-3 select-none">
-          <h2 class="text-2xl sm:text-4xl font-serif-italic text-gray-800 tracking-tight leading-none mb-1">
+          <h2 class="text-2xl sm:text-4xl font-serif-italic tracking-tight leading-none mb-1">
             Memories in 2024 💫
           </h2>
           <p class="text-xs sm:text-sm text-pink-600 font-light">
@@ -266,7 +324,7 @@
           </p>
         </div>
 
-        <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/30 rounded-2xl border border-[#d6c7b0]/40 shadow-inner flex flex-wrap items-center justify-center gap-4 sm:gap-6 min-h-[340px]">
+        <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0] shadow-inner flex flex-wrap items-center justify-center gap-4 sm:gap-6 min-h-[340px]">
           
           <div class="bg-white p-2.5 rounded-lg shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
@@ -275,7 +333,7 @@
                 <source src="hhbd.mp4" type="video/mp4">
               </video>
             </div>
-            <div class="mt-2 text-center font-handwriting text-lg text-pink-600">Sweet Moment ✨</div>
+            <div class="mt-2 text-center font-handwriting text-lg text-pink-600 font-bold">Sweet Moment ✨</div>
           </div>
 
           <div class="bg-white p-2.5 rounded-lg shadow-lg transform rotate-2 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative">
@@ -283,11 +341,12 @@
             <div class="aspect-[4/5] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
               <img src="hbd2024.JPG" alt="Memory 2024" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.src='hbd2024.jpg';">
             </div>
-            <div class="mt-2 text-center font-handwriting text-lg text-pink-600">Always Together 💕</div>
+            <div class="mt-2 text-center font-handwriting text-lg text-pink-600 font-bold">Always Together 💕</div>
           </div>
 
-          <div class="absolute -top-2 left-2 text-2xl sm:text-3xl sticker-shadow">🎀</div>
-          <div class="absolute bottom-2 right-3 text-2xl sm:text-3xl sticker-shadow">✨</div>
+          <div class="normal-only absolute -top-2 left-2 text-2xl sm:text-3xl sticker-shadow">🎀</div>
+          <div class="halloween-only absolute -top-2 left-2 text-2xl sm:text-3xl anim-ghost">👻</div>
+          <div class="halloween-only absolute bottom-2 right-3 text-2xl sm:text-3xl anim-pumpkin">🎃</div>
         </div>
 
         <div class="text-center my-2">
@@ -301,7 +360,7 @@
       <!-- ================= TAB 💫2025 ================= -->
       <div id="tab-2025_mem" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col justify-between">
         <div class="text-center my-2 sm:my-3 select-none">
-          <h2 class="text-2xl sm:text-4xl font-serif-italic text-gray-800 tracking-tight leading-none mb-1">
+          <h2 class="text-2xl sm:text-4xl font-serif-italic tracking-tight leading-none mb-1">
             Memories in 2025 💫
           </h2>
           <p class="text-xs sm:text-sm text-pink-600 font-light">
@@ -309,7 +368,7 @@
           </p>
         </div>
 
-        <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/30 rounded-2xl border border-[#d6c7b0]/40 shadow-inner flex items-center justify-center min-h-[340px]">
+        <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0] shadow-inner flex items-center justify-center min-h-[340px]">
           
           <div class="bg-white p-2.5 sm:p-3 rounded-lg shadow-lg transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[210px] sm:max-w-[250px] w-full border border-gray-200 relative">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
@@ -321,8 +380,10 @@
             <div class="mt-2 text-center font-handwriting text-xl text-pink-600 font-bold">Special Moment ✨</div>
           </div>
 
-          <div class="absolute top-2 left-4 text-2xl sm:text-3xl sticker-shadow">🌸</div>
-          <div class="absolute bottom-2 right-4 text-2xl sm:text-3xl sticker-shadow">💖</div>
+          <div class="normal-only absolute top-2 left-4 text-2xl sm:text-3xl sticker-shadow">🌸</div>
+          <div class="normal-only absolute bottom-2 right-4 text-2xl sm:text-3xl sticker-shadow">💖</div>
+          <div class="halloween-only absolute top-2 left-4 text-2xl sm:text-3xl anim-bat">🦇</div>
+          <div class="halloween-only absolute bottom-2 right-4 text-2xl sm:text-3xl anim-candy">🍬</div>
         </div>
 
         <div class="text-center my-2">
@@ -336,7 +397,7 @@
       <!-- ================= TAB 🖼️ ความทรงจำ ================= -->
       <div id="tab-custom_photos" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col justify-between">
         <div class="text-center my-2 select-none">
-          <h2 class="text-2xl sm:text-4xl font-serif-italic text-gray-800 tracking-tight leading-none mb-1">
+          <h2 class="text-2xl sm:text-4xl font-serif-italic tracking-tight leading-none mb-1">
             Our Memory Album 📸
           </h2>
           <p class="text-xs sm:text-sm text-pink-600 font-light">
@@ -344,7 +405,7 @@
           </p>
         </div>
 
-        <div class="relative w-full max-w-3xl mx-auto my-3 p-4 sm:p-6 bg-[#eae1d0]/30 rounded-2xl border border-[#d6c7b0]/40 shadow-inner min-h-[360px]">
+        <div class="relative w-full max-w-3xl mx-auto my-3 p-4 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0] shadow-inner min-h-[360px]">
           <div id="custom-photos-grid" class="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <!-- Dynamic Media Slots -->
           </div>
@@ -361,11 +422,11 @@
       <!-- ================= TAB 💖 Next ================= -->
       <div id="tab-2025" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col items-center justify-between relative overflow-hidden min-h-[480px]">
         <div class="text-center max-w-md z-10 px-2">
-          <h2 class="text-xl sm:text-3xl font-bold text-gray-800 mb-1 flex items-center justify-center gap-1.5">
+          <h2 class="text-xl sm:text-3xl font-bold mb-1 flex items-center justify-center gap-1.5">
             <span>เติมดอกไม้ให้เต็มช่อ</span> 💖
           </h2>
           <p class="text-[11px] sm:text-sm text-gray-600 bg-white/90 px-3 py-1 rounded-full border border-pink-200 inline-block">
-            แตะที่ <span class="text-pink-500 font-bold">หัวใจสีชมพู</span> เพื่อสะสมความรักให้ช่อดอกไม้!
+            แตะที่ <span class="text-pink-500 font-bold">หัวใจ/ฟักทอง</span> เพื่อสะสมความรักให้ช่อดอกไม้!
           </p>
         </div>
 
@@ -515,10 +576,37 @@
     let heartInterval = null;
     let isMusicPlaying = false;
     let sharedAudioCtx = null;
+    let currentTheme = 'normal';
 
     // PIN Security Configuration
     const SECRET_PIN = '013110';
     let pendingAction = null;
+
+    // Theme Switcher Logic
+    function toggleTheme() {
+      if (currentTheme === 'normal') {
+        setTheme('halloween');
+      } else {
+        setTheme('normal');
+      }
+    }
+
+    function setTheme(theme) {
+      currentTheme = theme;
+      localStorage.setItem('hbd_theme', theme);
+
+      if (theme === 'halloween') {
+        document.body.classList.remove('theme-normal');
+        document.body.classList.add('theme-halloween');
+        document.getElementById('theme-btn-icon').innerText = '💖';
+        document.getElementById('theme-btn-text').innerText = 'โหมดปกติ';
+      } else {
+        document.body.classList.remove('theme-halloween');
+        document.body.classList.add('theme-normal');
+        document.getElementById('theme-btn-icon').innerText = '🎃';
+        document.getElementById('theme-btn-text').innerText = 'โหมดฮาโลวีน';
+      }
+    }
 
     function openPinModal(actionCallback) {
       pendingAction = actionCallback;
@@ -668,7 +756,6 @@
       });
     }
 
-    // Web Audio Synthesizer Pop Sound Effect
     function playPopSound() {
       try {
         if (!sharedAudioCtx) {
@@ -738,15 +825,15 @@
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-white', 'border-t-2', 'border-pink-400', 'text-pink-600', 'font-semibold', 'shadow-sm');
-        btn.classList.add('text-gray-600');
+        btn.classList.remove('tab-btn-active', 'font-semibold', 'shadow-sm');
+        btn.classList.add('tab-btn-inactive');
       });
 
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
       const activeBtn = document.getElementById(`tab-btn-${tabId}`);
       if (activeBtn) {
-        activeBtn.classList.add('bg-white', 'border-t-2', 'border-pink-400', 'text-pink-600', 'font-semibold', 'shadow-sm');
-        activeBtn.classList.remove('text-gray-600');
+        activeBtn.classList.add('tab-btn-active', 'font-semibold', 'shadow-sm');
+        activeBtn.classList.remove('tab-btn-inactive');
       }
 
       if (tabId === '2025') {
@@ -773,7 +860,7 @@
       if (!container || currentTab !== '2025') return;
 
       const heart = document.createElement('div');
-      const heartTypes = ['💖', '💕', '💗', '🌸', '💖'];
+      const heartTypes = currentTheme === 'halloween' ? ['💖', '🎃', '👻', '💕', '🍬'] : ['💖', '💕', '💗', '🌸', '💖'];
       const randomType = heartTypes[Math.floor(Math.random() * heartTypes.length)];
       
       heart.className = 'floating-heart text-4xl sm:text-5xl';
@@ -909,11 +996,13 @@
         }
         checkBlow();
       } catch (err) {
-        // หากผู้ใช้ปฏิเสธไมโครโฟน ระบบจะรองรับการกดปุ่มแทน
+        // Microphone permission denied fallback
       }
     }
 
     window.onload = function() {
+      const savedTheme = localStorage.getItem('hbd_theme') || 'normal';
+      setTheme(savedTheme);
       initMicrophone();
       initIndexedDB();
     };
