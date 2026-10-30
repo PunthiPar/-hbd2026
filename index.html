@@ -212,7 +212,7 @@
     </div>
   </div>
 
-  <!-- Confirmation Modal (Simple Confirm Instead of Password) -->
+  <!-- Confirmation Modal -->
   <div id="pin-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl border-2 border-pink-300 relative">
       <button onclick="closePinModal()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
@@ -602,11 +602,13 @@
                 <span class="text-[10px] text-pink-400 mt-1">อัปเดตช่องนี้ที่หน้า "ความทรงจำ" หรือกดปุ่ม "📁 จากเครื่อง" ได้เลยนะ</span>
               </div>
 
-              <!-- Freehand Drawing Canvas Overlay -->
-              <canvas id="diy-drawing-canvas" class="absolute inset-0 w-full h-full z-20 pointer-events-none" style="touch-action: none;"></canvas>
-
-              <!-- Stickers Container (Overlaid inside photo area) -->
-              <div id="stickers-container" class="absolute inset-0 z-30 pointer-events-auto"></div>
+              <!-- Dedicated Transparent Overlay Layer (Stickers + Canvas) -->
+              <div id="diy-overlay-layer" class="absolute inset-0 z-20 pointer-events-none">
+                <!-- Freehand Drawing Canvas Overlay -->
+                <canvas id="diy-drawing-canvas" class="absolute inset-0 w-full h-full" style="touch-action: none;"></canvas>
+                <!-- Stickers Container -->
+                <div id="stickers-container" class="absolute inset-0 pointer-events-auto"></div>
+              </div>
             </div>
 
             <div class="mt-2 text-center font-handwriting text-xl text-pink-600 font-bold">Our Sweet Story 💕</div>
@@ -1030,7 +1032,6 @@
         stickerToolbar.classList.add('hidden');
         
         if (drawCanvasElem) {
-          drawCanvasElem.style.zIndex = '40';
           drawCanvasElem.style.pointerEvents = 'auto';
         }
       } else {
@@ -1040,7 +1041,6 @@
         drawingToolbar.classList.add('hidden');
 
         if (drawCanvasElem) {
-          drawCanvasElem.style.zIndex = '20';
           drawCanvasElem.style.pointerEvents = 'none';
         }
       }
@@ -1146,27 +1146,16 @@
 
       openPinModal(() => {
         const photoAreaElem = document.getElementById('diy-photo-area');
+        const overlayLayer = document.getElementById('diy-overlay-layer');
         const vidElem = document.getElementById('diy-frame-video');
         const isVideoActive = vidElem && !vidElem.classList.contains('hidden');
 
-        if (!photoAreaElem) return;
+        if (!photoAreaElem || !overlayLayer) return;
 
         if (isVideoActive) {
-          // Hide video AND remove bg-pink-100 temporarily to ensure 100% transparent PNG
-          const origVidDisplay = vidElem.style.display;
-          const origBgClass = photoAreaElem.className;
-
-          vidElem.style.display = 'none';
-          photoAreaElem.classList.remove('bg-pink-100');
-          photoAreaElem.style.backgroundColor = 'transparent';
-
-          html2canvas(photoAreaElem, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(canvas => {
+          // Capture ONLY the dedicated overlay layer for 100% transparent PNG output
+          html2canvas(overlayLayer, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(canvas => {
             const overlayDataUrl = canvas.toDataURL('image/png');
-            
-            // Restore original classes and video
-            vidElem.style.display = origVidDisplay;
-            photoAreaElem.className = origBgClass;
-            photoAreaElem.style.backgroundColor = '';
 
             if (targetVal === 'cover') {
               localStorage.setItem('hbd_cover_overlay', overlayDataUrl);
@@ -1193,10 +1182,10 @@
             clearStickers();
             clearDrawingCanvas();
             changeDiyPhotoSource();
-            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! วิดีโอจะเล่นวนลูปโดยมีสติ๊กเกอร์แปะทับใสแจ๋ว ✨");
+            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! สติ๊กเกอร์แปะทับใสแจ๋วไม่บังวิดีโอแล้วนะ ✨");
           });
         } else {
-          // Capture full image with background
+          // Capture full image with background for static photo
           html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
             const dataUrl = canvas.toDataURL('image/png');
 
@@ -1801,11 +1790,6 @@
     }
 
     window.onload = function() {
-      // Clear legacy static image overrides for videos
-      localStorage.removeItem('hbd_2024_vid_override');
-      localStorage.removeItem('hbd_cover_override');
-      localStorage.removeItem('hbd_2025_override');
-
       const savedTheme = localStorage.getItem('hbd_theme') || 'normal';
       setTheme(savedTheme);
       applyOverrides();
