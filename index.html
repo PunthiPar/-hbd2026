@@ -477,7 +477,7 @@
             <span>กระดานตกแต่งสติ๊กเกอร์ & วาดเขียน DIY</span> 🎨✨
           </h2>
           <p class="text-[11px] sm:text-xs text-pink-600 font-medium mt-0.5">
-            เลือกรูป แปะสติ๊กเกอร์ หรือสลับไปโหมดวาดรูปด้วยนิ้วมือเพื่อวาดได้ตามใจชอบ!
+            เลือกรูป/วิดีโอ แปะสติ๊กเกอร์ หรือสลับไปโหมดวาดรูปด้วยนิ้วมือเพื่อวาดได้ตามใจชอบ!
           </p>
         </div>
 
@@ -485,9 +485,10 @@
         <div class="flex flex-wrap items-center justify-center gap-2 my-1 font-cute text-xs sm:text-sm z-10">
           <label class="font-bold text-gray-700 flex items-center gap-1">🖼️ รูปที่จะแต่ง:</label>
           <select id="diy-photo-select" onchange="changeDiyPhotoSource()" class="px-2 py-1 border-2 border-pink-300 rounded-xl bg-white text-gray-800 font-bold focus:outline-none focus:border-purple-500 shadow-sm text-xs sm:text-sm">
-            <option value="cover">📸 รูปหน้าปก (31oct)</option>
-            <option value="2024">💫 รูปปี 2024</option>
-            <option value="2025">💫 รูปปี 2025</option>
+            <option value="cover">🎬 วิดีโอหน้าปก (31oct)</option>
+            <option value="2024_vid">🎬 วิดีโอปี 2024 (hhbd.mp4)</option>
+            <option value="2024_img">💫 รูปภาพปี 2024</option>
+            <option value="2025">🎬 วิดีโอปี 2025 (2025.mp4)</option>
             <option value="slot_0">🖼️ ความทรงจำ #1</option>
             <option value="slot_1">🖼️ ความทรงจำ #2</option>
             <option value="slot_2">🖼️ ความทรงจำ #3</option>
@@ -585,9 +586,10 @@
           <!-- Card Polaroid Frame -->
           <div class="relative z-10 bg-white p-3 rounded-xl shadow-xl transform -rotate-1 max-w-[220px] sm:max-w-xs w-full border border-gray-200 overflow-hidden">
             
-            <!-- Photo Capture Area -->
+            <!-- Photo/Video Capture Area -->
             <div id="diy-photo-area" class="aspect-[3/4] bg-pink-100 rounded overflow-hidden relative group cursor-pointer" onclick="handleDiyFrameClick(event)">
               <img id="diy-frame-img" src="hbd2024.JPG" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0" onerror="this.src='hbd2024.JPG';">
+              <video id="diy-frame-video" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0 hidden" autoplay loop muted playsinline webkit-playsinline></video>
               
               <!-- Freehand Drawing Canvas Overlay -->
               <canvas id="diy-drawing-canvas" class="absolute inset-0 w-full h-full z-20 pointer-events-none" style="touch-action: none;"></canvas>
@@ -857,7 +859,11 @@
         return; // Clicked on sticker
       }
       const imgElem = document.getElementById('diy-frame-img');
-      if (imgElem && imgElem.src) {
+      const vidElem = document.getElementById('diy-frame-video');
+
+      if (vidElem && !vidElem.classList.contains('hidden') && vidElem.src) {
+        openLightbox(vidElem.src, true);
+      } else if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
         openLightbox(imgElem.src, false);
       }
     }
@@ -1041,27 +1047,56 @@
     function changeDiyPhotoSource() {
       const select = document.getElementById('diy-photo-select');
       const img = document.getElementById('diy-frame-img');
-      if (!select || !img) return;
+      const vid = document.getElementById('diy-frame-video');
+      if (!select || !img || !vid) return;
 
       const val = select.value;
+
+      function setMediaSource(type, src) {
+        if (type === 'video') {
+          img.classList.add('hidden');
+          img.src = '';
+          vid.src = src;
+          vid.classList.remove('hidden');
+          vid.play().catch(e => console.log(e));
+        } else {
+          vid.classList.add('hidden');
+          vid.pause();
+          vid.src = '';
+          img.src = src;
+          img.classList.remove('hidden');
+        }
+      }
 
       if (val === 'cover') {
         const coverOverride = localStorage.getItem('hbd_cover_override');
         if (coverOverride) {
-          img.src = coverOverride;
+          setMediaSource('image', coverOverride);
         } else {
-          img.src = 'hbd2024.JPG';
+          setMediaSource('video', 'cover.mp4');
         }
-      } else if (val === '2024') {
-        img.src = localStorage.getItem('hbd_2024_override') || 'hbd2024.JPG';
+      } else if (val === '2024_vid') {
+        setMediaSource('video', 'hhbd.mp4');
+      } else if (val === '2024' || val === '2024_img') {
+        const override = localStorage.getItem('hbd_2024_override');
+        if (override) {
+          setMediaSource('image', override);
+        } else {
+          setMediaSource('image', 'hbd2024.JPG');
+        }
       } else if (val === '2025') {
-        img.src = localStorage.getItem('hbd_2025_override') || 'hbd2024.JPG';
+        const override = localStorage.getItem('hbd_2025_override');
+        if (override) {
+          setMediaSource('image', override);
+        } else {
+          setMediaSource('video', '2025.mp4');
+        }
       } else if (val.startsWith('slot_')) {
         const idx = parseInt(val.replace('slot_', ''));
         if (userPhotos[idx] && userPhotos[idx].data) {
-          img.src = userPhotos[idx].data;
+          setMediaSource(userPhotos[idx].type || 'image', userPhotos[idx].data);
         } else {
-          img.src = 'hbd2024.JPG';
+          setMediaSource('image', 'hbd2024.JPG');
         }
       }
     }
@@ -1071,8 +1106,22 @@
       if (!file) return;
 
       const reader = new FileReader();
+      const isVideo = file.type.startsWith('video/');
+
       reader.onload = function(e) {
-        document.getElementById('diy-frame-img').src = e.target.result;
+        const img = document.getElementById('diy-frame-img');
+        const vid = document.getElementById('diy-frame-video');
+        if (isVideo) {
+          img.classList.add('hidden');
+          vid.src = e.target.result;
+          vid.classList.remove('hidden');
+          vid.play().catch(err => console.log(err));
+        } else {
+          vid.classList.add('hidden');
+          vid.pause();
+          img.src = e.target.result;
+          img.classList.remove('hidden');
+        }
       };
       reader.readAsDataURL(file);
       event.target.value = '';
@@ -1084,7 +1133,28 @@
 
       openPinModal(() => {
         const photoAreaElem = document.getElementById('diy-photo-area');
+        const vidElem = document.getElementById('diy-frame-video');
+        const imgElem = document.getElementById('diy-frame-img');
+
         if (!photoAreaElem) return;
+
+        // If video is currently displayed, capture its current frame to imgElem for html2canvas
+        let restoredVideo = false;
+        if (vidElem && !vidElem.classList.contains('hidden') && vidElem.videoWidth > 0) {
+          try {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = vidElem.videoWidth;
+            tempCanvas.height = vidElem.videoHeight;
+            const ctx = tempCanvas.getContext('2d');
+            ctx.drawImage(vidElem, 0, 0, tempCanvas.width, tempCanvas.height);
+            imgElem.src = tempCanvas.toDataURL('image/png');
+            imgElem.classList.remove('hidden');
+            vidElem.classList.add('hidden');
+            restoredVideo = true;
+          } catch(e) {
+            console.log("Video frame capture error:", e);
+          }
+        }
 
         html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
           const dataUrl = canvas.toDataURL('image/png');
@@ -1102,7 +1172,7 @@
             localStorage.setItem('hbd_cover_override', dataUrl);
             applyOverrides();
             alert("🎉 บันทึกรูปตกแต่งลงหน้าปก (31oct) เรียบร้อยแล้วค่ะ!");
-          } else if (targetVal === '2024') {
+          } else if (targetVal === '2024' || targetVal === '2024_img' || targetVal === '2024_vid') {
             localStorage.setItem('hbd_2024_override', dataUrl);
             applyOverrides();
             alert("🎉 บันทึกรูปตกแต่งลงหน้าความทรงจำปี 2024 เรียบร้อยแล้วค่ะ!");
@@ -1111,6 +1181,12 @@
             applyOverrides();
             alert("🎉 บันทึกรูปตกแต่งลงหน้าความทรงจำปี 2025 เรียบร้อยแล้วค่ะ!");
           }
+
+          if (restoredVideo) {
+            imgElem.classList.add('hidden');
+            vidElem.classList.remove('hidden');
+          }
+
           clearStickers();
           clearDrawingCanvas();
           changeDiyPhotoSource();
@@ -1126,7 +1202,7 @@
       openPinModal(() => {
         if (targetVal === 'cover') {
           localStorage.removeItem('hbd_cover_override');
-        } else if (targetVal === '2024') {
+        } else if (targetVal === '2024' || targetVal === '2024_img' || targetVal === '2024_vid') {
           localStorage.removeItem('hbd_2024_override');
         } else if (targetVal === '2025') {
           localStorage.removeItem('hbd_2025_override');
