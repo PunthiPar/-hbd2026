@@ -627,7 +627,7 @@
         </div>
       </div>
 
-      <!-- ================= TAB 2026 (REAL 3D CYLINDER CAKE CANVASES ENGINE) ================= -->
+      <!-- ================= TAB 2026 (3D CYLINDER CAKE CANVASES ENGINE) ================= -->
       <div id="tab-2026" class="tab-content hidden p-3 sm:p-6 flex-1 flex flex-col items-center justify-between relative min-h-[560px] overflow-hidden select-none">
         
         <div id="tab-2026-locked-overlay" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 flex flex-col items-center justify-center p-6 text-center">
@@ -739,7 +739,7 @@
 
   </div>
 
-  <!-- JavaScript Complete Logic -->
+  <!-- JavaScript Engine -->
   <script>
     let currentTab = '31oct';
     let flowerProgress = 0;
@@ -1239,7 +1239,7 @@
       switchTab('2026');
     }
 
-    // DIY Canvas Engine Functions
+    // DIY Freehand Drawing Engine
     function initDrawingCanvas() {
       drawCanvas = document.getElementById('diy-drawing-canvas');
       if (!drawCanvas) return;
@@ -1474,7 +1474,7 @@
             clearStickers();
             clearDrawingCanvas();
             changeDiyPhotoSource();
-            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! สติ๊กเกอร์และเส้นวาดจะแปะทับใสแจ๋วไม่บังวิดีโอแล้วนะ ✨");
+            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ!");
           });
         } else {
           html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
