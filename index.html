@@ -138,12 +138,13 @@
     }
     .floating-heart:active { transform: scale(1.4) !important; }
 
-    /* Candle Flame Animation */
-    @keyframes flicker {
-      0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.95; }
-      50% { transform: scale(1.2) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 16px #ff8800); }
+    /* Enhanced Glowing Candle Flame Animation */
+    @keyframes realisticFlame {
+      0% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ff9c1a) drop-shadow(0 0 22px #ff4500); }
+      50% { transform: scale(1.18) rotate(3deg); filter: drop-shadow(0 0 16px #ffbe2e) drop-shadow(0 0 32px #ff3b00); }
+      100% { transform: scale(0.95) rotate(-1deg); filter: drop-shadow(0 0 12px #ffa01a) drop-shadow(0 0 25px #ff5500); }
     }
-    .flame { animation: flicker 0.5s infinite alternate ease-in-out; transform-origin: center bottom; }
+    .flame-real { animation: realisticFlame 0.45s infinite alternate ease-in-out; transform-origin: center bottom; }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -656,8 +657,8 @@
         </div>
       </div>
 
-      <!-- ================= TAB 2026 ================= -->
-      <div id="tab-2026" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col items-center justify-between relative min-h-[480px]">
+      <!-- ================= TAB 2026 (REDESIGNED BEAUTIFUL CAKE) ================= -->
+      <div id="tab-2026" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col items-center justify-between relative min-h-[500px]">
         
         <div id="tab-2026-locked-overlay" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 flex flex-col items-center justify-center p-6 text-center">
           <div class="w-14 h-14 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center text-2xl mb-3 shadow-inner anim-ghost">🔒👻</div>
@@ -671,78 +672,122 @@
         </div>
 
         <div class="text-center z-10">
-          <h2 class="text-2xl sm:text-4xl font-extrabold text-pink-600 font-serif-italic">Happy 25th Birthday!</h2>
-          <p class="text-xs sm:text-sm text-gray-600 mt-1 font-cute">จุดไฟที่เทียน ตั้งจิตอธิษฐานแล้วเป่าเทียนได้เลยนะ ✨🎃</p>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-pink-600 font-serif-italic drop-shadow-sm">Happy 25th Birthday!</h2>
+          <p class="text-xs sm:text-sm text-pink-800/80 mt-1 font-cute">จุดไฟที่เทียน ตั้งจิตอธิษฐานแล้วเป่าเทียนได้เลยนะ ✨🎃</p>
         </div>
 
-        <!-- Adorable Kawaii Cake & Lightable Number Candles -->
-        <div class="relative my-auto flex flex-col items-center justify-center scale-95 sm:scale-110">
+        <!-- NEW HIGH-QUALITY CAKE DESIGN -->
+        <div class="relative my-auto flex flex-col items-center justify-center scale-100 sm:scale-110 py-4">
           
           <!-- Candle Light Hint Banner -->
-          <div id="light-hint" onclick="handleCandleAction()" class="mb-3 bg-amber-100 border-2 border-amber-300 text-amber-800 text-xs font-bold font-cute px-4 py-1.5 rounded-full shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 animate-pulse">
+          <div id="light-hint" onclick="handleCandleAction()" class="mb-4 bg-amber-100/90 backdrop-blur border-2 border-amber-300 text-amber-800 text-xs font-bold font-cute px-4 py-1.5 rounded-full shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 animate-pulse z-30">
             <span>🔥 แตะที่นี่หรือที่เทียนเพื่อจุดไฟก่อนเป่า!</span>
           </div>
 
-          <!-- Interactive Pastel Number Candles (2 & 5) -->
-          <div class="flex space-x-6 z-20 -mb-2 items-end justify-center cursor-pointer group" onclick="lightCandles()" title="แตะเพื่อจุดไฟเทียน 🕯️">
+          <!-- Number Candles (2 & 5) with Glowing Flames -->
+          <div class="flex space-x-5 z-20 -mb-2 items-end justify-center cursor-pointer group" onclick="lightCandles()" title="แตะเพื่อจุดไฟเทียน 🕯️">
             
             <!-- Candle Number 2 -->
             <div class="relative flex flex-col items-center hover:scale-110 transition-transform">
-              <div id="flame-1" class="flame hidden w-4 h-6 bg-gradient-to-t from-yellow-300 via-orange-500 to-red-500 rounded-full blur-[0.5px] -mb-1 shadow-[0_0_12px_#f97316]"></div>
-              <div class="w-8 h-12 bg-gradient-to-b from-pink-300 via-rose-300 to-pink-400 rounded-xl border-2 border-white shadow-md flex items-center justify-center font-black text-white text-xl font-cute select-none relative overflow-hidden">
-                <div class="absolute inset-0 bg-white/25 -skew-x-12"></div>
-                <span class="z-10 drop-shadow">2</span>
+              <!-- Flame 1 -->
+              <div id="flame-1" class="flame-real hidden absolute -top-8 w-6 h-8 bg-gradient-to-t from-yellow-300 via-amber-500 to-red-500 rounded-full z-30">
+                <div class="w-2 h-3 bg-white rounded-full mx-auto mt-3 opacity-90 blur-[0.5px]"></div>
+              </div>
+              <!-- Wick -->
+              <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
+              <!-- 3D Number Candle 2 -->
+              <div class="w-9 h-13 bg-gradient-to-tr from-pink-400 via-rose-300 to-pink-200 rounded-2xl border-2 border-white shadow-[0_4px_10px_rgba(236,72,153,0.3)] flex items-center justify-center font-black text-white text-2xl font-cute select-none relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
+                <span class="z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.2)]">2</span>
               </div>
             </div>
             
             <!-- Candle Number 5 -->
             <div class="relative flex flex-col items-center hover:scale-110 transition-transform">
-              <div id="flame-2" class="flame hidden w-4 h-6 bg-gradient-to-t from-yellow-300 via-orange-500 to-red-500 rounded-full blur-[0.5px] -mb-1 shadow-[0_0_12px_#f97316]"></div>
-              <div class="w-8 h-12 bg-gradient-to-b from-purple-300 via-indigo-300 to-purple-400 rounded-xl border-2 border-white shadow-md flex items-center justify-center font-black text-white text-xl font-cute select-none relative overflow-hidden">
-                <div class="absolute inset-0 bg-white/25 -skew-x-12"></div>
-                <span class="z-10 drop-shadow">5</span>
+              <!-- Flame 2 -->
+              <div id="flame-2" class="flame-real hidden absolute -top-8 w-6 h-8 bg-gradient-to-t from-yellow-300 via-amber-500 to-red-500 rounded-full z-30">
+                <div class="w-2 h-3 bg-white rounded-full mx-auto mt-3 opacity-90 blur-[0.5px]"></div>
+              </div>
+              <!-- Wick -->
+              <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
+              <!-- 3D Number Candle 5 -->
+              <div class="w-9 h-13 bg-gradient-to-tr from-purple-400 via-fuchsia-300 to-purple-200 rounded-2xl border-2 border-white shadow-[0_4px_10px_rgba(168,85,247,0.3)] flex items-center justify-center font-black text-white text-2xl font-cute select-none relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
+                <span class="z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.2)]">5</span>
               </div>
             </div>
 
           </div>
 
-          <!-- Kawaii Cake Body -->
-          <div class="relative flex flex-col items-center filter drop-shadow-lg select-none">
+          <!-- Elegant Pastel Layer Cake Body -->
+          <div class="relative flex flex-col items-center select-none">
             
-            <!-- Top Tier (Cream & Drips & Cute Toppings) -->
-            <div class="w-36 sm:w-44 h-14 sm:h-16 bg-gradient-to-b from-pink-100 to-pink-200 border-2 border-pink-300 rounded-t-3xl relative flex items-center justify-center shadow-inner">
-              <!-- Toppings -->
-              <div class="absolute -top-3 w-full flex justify-around px-2 text-lg">
-                <span class="animate-bounce" style="animation-delay: 0s;">🍓</span>
+            <!-- TOP TIER CAKE -->
+            <div class="w-40 sm:w-48 h-16 sm:h-18 bg-gradient-to-b from-pink-100 via-rose-100 to-pink-200 border-2 border-pink-300/80 rounded-t-3xl relative flex items-center justify-center shadow-md">
+              
+              <!-- Cream Piping Spheres around top edge -->
+              <div class="absolute -top-2.5 w-full flex justify-around px-1 z-10">
+                <div class="w-4 h-4 bg-white rounded-full shadow-sm border border-pink-100"></div>
+                <div class="w-4 h-4 bg-white rounded-full shadow-sm border border-pink-100"></div>
+                <div class="w-4 h-4 bg-white rounded-full shadow-sm border border-pink-100"></div>
+                <div class="w-4 h-4 bg-white rounded-full shadow-sm border border-pink-100"></div>
+                <div class="w-4 h-4 bg-white rounded-full shadow-sm border border-pink-100"></div>
+                <div class="w-4 h-4 bg-white rounded-full shadow-sm border border-pink-100"></div>
+              </div>
+
+              <!-- Top Toppings (Fruit & Halloween treats) -->
+              <div class="absolute -top-4 w-full flex justify-between px-4 text-base z-20">
+                <span class="animate-bounce" style="animation-delay: 0s;">🍒</span>
                 <span class="animate-bounce" style="animation-delay: 0.2s;">🎃</span>
                 <span class="animate-bounce" style="animation-delay: 0.4s;">🍓</span>
               </div>
-              <!-- Cream Drips -->
-              <div class="absolute top-0 w-full flex justify-between px-0.5">
-                <div class="w-4 h-4 bg-white rounded-b-full shadow-sm"></div>
-                <div class="w-5 h-6 bg-white rounded-b-full shadow-sm"></div>
-                <div class="w-4 h-5 bg-white rounded-b-full shadow-sm"></div>
-                <div class="w-6 h-4 bg-white rounded-b-full shadow-sm"></div>
-                <div class="w-4 h-6 bg-white rounded-b-full shadow-sm"></div>
-              </div>
-              <span class="text-[10px] sm:text-xs text-pink-500 font-bold font-cute tracking-widest uppercase mt-3 z-10">Make a Wish ✨</span>
+
+              <!-- Smooth White Cream Drip SVG -->
+              <svg class="absolute top-0 w-full h-7 text-white fill-current drop-shadow-sm" viewBox="0 0 100 25" preserveAspectRatio="none">
+                <path d="M0,0 L100,0 L100,6 C90,18 85,4 75,12 C65,20 60,8 50,16 C40,24 35,6 25,14 C15,22 10,6 0,10 Z"></path>
+              </svg>
+
+              <!-- Cake Banner Text -->
+              <span class="text-[10px] sm:text-xs font-black text-pink-500 font-cute tracking-widest uppercase mt-4 z-10 bg-white/80 px-2.5 py-0.5 rounded-full border border-pink-200 shadow-sm">
+                Make a Wish ✨
+              </span>
             </div>
 
-            <!-- Bottom Tier (Cute Ribbons & Hearts) -->
-            <div class="w-48 sm:w-56 h-16 sm:h-20 bg-gradient-to-b from-purple-200 via-rose-200 to-pink-200 border-2 border-pink-300 rounded-b-2xl relative flex items-center justify-center shadow-md overflow-hidden">
-              <div class="absolute top-0 w-full h-3.5 bg-white/80 rounded-b-xl"></div>
-              <div class="flex items-center space-x-3 text-sm z-10">
-                <span class="hover:scale-125 transition-transform">🎀</span>
-                <span class="hover:scale-125 transition-transform">💖</span>
-                <span class="hover:scale-125 transition-transform">🎃</span>
-                <span class="hover:scale-125 transition-transform">💖</span>
-                <span class="hover:scale-125 transition-transform">🎀</span>
+            <!-- BOTTOM TIER CAKE -->
+            <div class="w-52 sm:w-60 h-20 sm:h-22 bg-gradient-to-b from-purple-100 via-pink-100 to-rose-200 border-2 border-pink-300/80 rounded-b-3xl relative flex items-center justify-center shadow-lg -mt-0.5 overflow-hidden">
+              
+              <!-- Middle Cream Piping Line -->
+              <div class="absolute top-0 w-full h-3 bg-white/90 border-b border-pink-200 flex justify-around items-center px-1">
+                <div class="w-2 h-2 bg-pink-300 rounded-full"></div>
+                <div class="w-2 h-2 bg-pink-300 rounded-full"></div>
+                <div class="w-2 h-2 bg-pink-300 rounded-full"></div>
+                <div class="w-2 h-2 bg-pink-300 rounded-full"></div>
+                <div class="w-2 h-2 bg-pink-300 rounded-full"></div>
+              </div>
+
+              <!-- Cute Cake Ornaments -->
+              <div class="flex items-center space-x-3 text-base z-10 mt-2">
+                <span class="hover:scale-125 transition-transform cursor-pointer">🎀</span>
+                <span class="hover:scale-125 transition-transform cursor-pointer">💖</span>
+                <span class="hover:scale-125 transition-transform cursor-pointer">🎃</span>
+                <span class="hover:scale-125 transition-transform cursor-pointer">💖</span>
+                <span class="hover:scale-125 transition-transform cursor-pointer">🎀</span>
+              </div>
+
+              <!-- Decorative Bottom Cream Drops -->
+              <div class="absolute bottom-1 w-full flex justify-around px-2">
+                <div class="w-3 h-3 bg-white/70 rounded-full"></div>
+                <div class="w-3 h-3 bg-white/70 rounded-full"></div>
+                <div class="w-3 h-3 bg-white/70 rounded-full"></div>
+                <div class="w-3 h-3 bg-white/70 rounded-full"></div>
+                <div class="w-3 h-3 bg-white/70 rounded-full"></div>
+                <div class="w-3 h-3 bg-white/70 rounded-full"></div>
               </div>
             </div>
 
-            <!-- Cake Plate Base -->
-            <div class="w-60 sm:w-72 h-4 sm:h-5 bg-white rounded-full border-2 border-pink-200 shadow-md -mt-1 flex items-center justify-center">
-              <div class="w-52 sm:w-64 h-1.5 bg-pink-100 rounded-full"></div>
+            <!-- Elegant Plate Stand -->
+            <div class="w-64 sm:w-72 h-4 sm:h-5 bg-gradient-to-r from-gray-100 via-white to-gray-200 rounded-full border-2 border-gray-300 shadow-[0_8px_20px_rgba(0,0,0,0.15)] -mt-1 flex items-center justify-center relative">
+              <div class="w-56 sm:w-64 h-1.5 bg-pink-200/60 rounded-full"></div>
             </div>
 
           </div>
@@ -1646,7 +1691,7 @@
 
       const lightHint = document.getElementById('light-hint');
       if (lightHint) {
-        lightHint.className = "mb-3 bg-pink-100 border-2 border-pink-300 text-pink-700 text-xs font-bold font-cute px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5";
+        lightHint.className = "mb-4 bg-pink-100/90 backdrop-blur border-2 border-pink-300 text-pink-700 text-xs font-bold font-cute px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5 z-30";
         lightHint.innerHTML = "<span>✨ เทียนถูกจุดแล้ว! เป่าเทียนได้เลยนะคะ 🌬️</span>";
       }
 
