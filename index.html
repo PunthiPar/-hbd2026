@@ -517,9 +517,9 @@
           <!-- Brush Size -->
           <div class="flex items-center gap-1 text-xs font-cute font-bold text-gray-600">
             <span>เส้น:</span>
-            <button onclick="setBrushSize(3)" class="px-2 py-0.5 rounded bg-white border hover:bg-pink-100">เล็ก</button>
-            <button onclick="setBrushSize(6)" class="px-2 py-0.5 rounded bg-white border hover:bg-pink-100">กลาง</button>
-            <button onclick="setBrushSize(12)" class="px-2 py-0.5 rounded bg-white border hover:bg-pink-100">ใหญ่</button>
+            <button onclick="setBrushSize(4)" class="px-2 py-0.5 rounded bg-white border hover:bg-pink-100">เล็ก</button>
+            <button onclick="setBrushSize(8)" class="px-2 py-0.5 rounded bg-white border hover:bg-pink-100">กลาง</button>
+            <button onclick="setBrushSize(16)" class="px-2 py-0.5 rounded bg-white border hover:bg-pink-100">ใหญ่</button>
           </div>
 
           <button onclick="clearDrawingCanvas()" class="bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold px-2.5 py-1 rounded-xl border border-red-300 transition">
@@ -575,10 +575,10 @@
             
             <!-- Photo Capture Area -->
             <div id="diy-photo-area" class="aspect-[3/4] bg-pink-100 rounded overflow-hidden relative">
-              <img id="diy-frame-img" src="cover.jpg" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none" onerror="this.src='hbd2024.JPG';">
+              <img id="diy-frame-img" src="cover.jpg" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0" onerror="this.src='hbd2024.JPG';">
               
               <!-- Freehand Drawing Canvas Overlay -->
-              <canvas id="diy-drawing-canvas" class="absolute inset-0 z-20 pointer-events-none"></canvas>
+              <canvas id="diy-drawing-canvas" class="absolute inset-0 w-full h-full z-20 pointer-events-none" style="touch-action: none;"></canvas>
 
               <!-- Stickers Container (Overlaid inside photo area) -->
               <div id="stickers-container" class="absolute inset-0 z-30 pointer-events-auto"></div>
@@ -775,12 +775,13 @@
     const SECRET_PIN = '013110';
     let pendingAction = null;
 
-    // DIY Drawing States
+    // DIY Freehand Drawing Engine
     let currentToolMode = 'sticker'; // 'sticker' or 'draw'
     let isDrawing = false;
     let brushColor = '#ec4899';
-    let brushSize = 6;
+    let brushSize = 8;
     let drawCanvas, drawCtx;
+    let isCanvasInited = false;
 
     function enterSite() {
       const inputPass = document.getElementById('site-pass-input').value.trim();
@@ -832,50 +833,61 @@
       }
     }
 
-    // DIY Drawing Canvas Setup
+    // High-Resolution Touch/Mouse Drawing Engine
     function initDrawingCanvas() {
       drawCanvas = document.getElementById('diy-drawing-canvas');
       if (!drawCanvas) return;
-      
-      const photoArea = document.getElementById('diy-photo-area');
-      drawCanvas.width = photoArea.clientWidth || 300;
-      drawCanvas.height = photoArea.clientHeight || 400;
-      
-      drawCtx = drawCanvas.getContext('2d');
-      drawCtx.lineCap = 'round';
-      drawCtx.lineJoin = 'round';
 
-      // Attach Event Listeners
-      const startDraw = (e) => {
-        if (currentToolMode !== 'draw') return;
-        isDrawing = true;
-        const pos = getCanvasPos(e);
-        drawCtx.beginPath();
-        drawCtx.moveTo(pos.x, pos.y);
-        if (e.cancelable) e.preventDefault();
-      };
+      if (!isCanvasInited) {
+        drawCanvas.width = 600;
+        drawCanvas.height = 800;
 
-      const doDraw = (e) => {
-        if (!isDrawing || currentToolMode !== 'draw') return;
-        const pos = getCanvasPos(e);
-        drawCtx.strokeStyle = brushColor;
-        drawCtx.lineWidth = brushSize;
-        drawCtx.lineTo(pos.x, pos.y);
-        drawCtx.stroke();
-        if (e.cancelable) e.preventDefault();
-      };
+        drawCtx = drawCanvas.getContext('2d');
+        drawCtx.lineCap = 'round';
+        drawCtx.lineJoin = 'round';
 
-      const stopDraw = () => {
-        isDrawing = false;
-      };
+        const startDraw = (e) => {
+          if (currentToolMode !== 'draw') return;
+          isDrawing = true;
+          const pos = getCanvasPos(e);
+          drawCtx.beginPath();
+          drawCtx.moveTo(pos.x, pos.y);
+          
+          // Draw single dot on tap
+          drawCtx.arc(pos.x, pos.y, brushSize / 2, 0, Math.PI * 2);
+          drawCtx.fillStyle = brushColor;
+          drawCtx.fill();
+          drawCtx.beginPath();
+          drawCtx.moveTo(pos.x, pos.y);
 
-      drawCanvas.addEventListener('mousedown', startDraw);
-      drawCanvas.addEventListener('mousemove', doDraw);
-      window.addEventListener('mouseup', stopDraw);
+          if (e.cancelable) e.preventDefault();
+        };
 
-      drawCanvas.addEventListener('touchstart', startDraw, { passive: false });
-      drawCanvas.addEventListener('touchmove', doDraw, { passive: false });
-      drawCanvas.addEventListener('touchend', stopDraw);
+        const doDraw = (e) => {
+          if (!isDrawing || currentToolMode !== 'draw') return;
+          const pos = getCanvasPos(e);
+          drawCtx.strokeStyle = brushColor;
+          drawCtx.lineWidth = brushSize;
+          drawCtx.lineTo(pos.x, pos.y);
+          drawCtx.stroke();
+
+          if (e.cancelable) e.preventDefault();
+        };
+
+        const stopDraw = () => {
+          isDrawing = false;
+        };
+
+        drawCanvas.addEventListener('mousedown', startDraw);
+        drawCanvas.addEventListener('mousemove', doDraw);
+        window.addEventListener('mouseup', stopDraw);
+
+        drawCanvas.addEventListener('touchstart', startDraw, { passive: false });
+        drawCanvas.addEventListener('touchmove', doDraw, { passive: false });
+        drawCanvas.addEventListener('touchend', stopDraw);
+
+        isCanvasInited = true;
+      }
     }
 
     function getCanvasPos(e) {
@@ -883,8 +895,8 @@
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
+        x: (clientX - rect.left) * (drawCanvas.width / rect.width),
+        y: (clientY - rect.top) * (drawCanvas.height / rect.height)
       };
     }
 
@@ -894,7 +906,9 @@
       const drawBtn = document.getElementById('btn-mode-draw');
       const stickerToolbar = document.getElementById('sticker-toolbar');
       const drawingToolbar = document.getElementById('drawing-toolbar');
-      const stickersContainer = document.getElementById('stickers-container');
+      const drawCanvasElem = document.getElementById('diy-drawing-canvas');
+
+      initDrawingCanvas();
 
       if (mode === 'draw') {
         drawBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition bg-white text-pink-600 shadow";
@@ -902,18 +916,22 @@
         drawingToolbar.classList.remove('hidden');
         stickerToolbar.classList.add('hidden');
         
-        drawCanvas.classList.remove('pointer-events-none');
-        drawCanvas.classList.add('pointer-events-auto');
-        if (stickersContainer) stickersContainer.classList.add('pointer-events-none');
+        // Move canvas to TOP layer for drawing
+        if (drawCanvasElem) {
+          drawCanvasElem.style.zIndex = '40';
+          drawCanvasElem.style.pointerEvents = 'auto';
+        }
       } else {
         stickerBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition bg-white text-pink-600 shadow";
         drawBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition text-gray-600 hover:text-gray-900";
         stickerToolbar.classList.remove('hidden');
         drawingToolbar.classList.add('hidden');
 
-        drawCanvas.classList.add('pointer-events-none');
-        drawCanvas.classList.remove('pointer-events-auto');
-        if (stickersContainer) stickersContainer.classList.remove('pointer-events-none');
+        // Move canvas to BOTTOM layer for sticker dragging
+        if (drawCanvasElem) {
+          drawCanvasElem.style.zIndex = '20';
+          drawCanvasElem.style.pointerEvents = 'none';
+        }
       }
     }
 
@@ -970,8 +988,6 @@
           img.src = 'hbd2024.JPG';
         }
       }
-
-      setTimeout(initDrawingCanvas, 150);
     }
 
     function handleDiyCustomUpload(event) {
@@ -981,7 +997,6 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         document.getElementById('diy-frame-img').src = e.target.result;
-        setTimeout(initDrawingCanvas, 150);
       };
       reader.readAsDataURL(file);
       event.target.value = '';
@@ -1360,6 +1375,7 @@
 
       if (tabId === 'diy_board') {
         changeDiyPhotoSource();
+        initDrawingCanvas();
       }
     }
 
@@ -1557,7 +1573,6 @@
       initMicrophone();
       initIndexedDB();
       setTimeout(() => document.getElementById('site-pass-input').focus(), 300);
-      window.addEventListener('resize', initDrawingCanvas);
     };
   </script>
 </body>
