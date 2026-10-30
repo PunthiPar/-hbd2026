@@ -1591,7 +1591,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           openPinModal(() => {
-            savePhotoToCloud(index, { type: 'video', data: e.target.result });
+            alert("⏳ กำลังประมวลผลวิดีโอลง Cloud... กรุณารอสักครู่ความไวขึ้นอยู่กับขนาดไฟล์นะคะ ✨"); savePhotoToCloud(index, { type: 'video', data: e.target.result });
           }, `ยืนยันการเพิ่มวิดีโอลงในช่องที่ ${index + 1} ใช่ไหมคะ? (จะอัปเดตลง Cloud ให้ทุกคนเห็นตรงกัน)`);
         };
         reader.readAsDataURL(file);
