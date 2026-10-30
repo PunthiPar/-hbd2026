@@ -495,7 +495,7 @@
             <option value="slot_3">🖼️ ความทรงจำ #4</option>
             <option value="slot_4">🖼️ ความทรงจำ #5</option>
           </select>
-          <input type="file" id="diy-custom-upload" accept="image/*" class="hidden" onchange="handleDiyCustomUpload(event)">
+          <input type="file" id="diy-custom-upload" accept="image/*,video/*" class="hidden" onchange="handleDiyCustomUpload(event)">
           <button onclick="document.getElementById('diy-custom-upload').click()" class="bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold px-2.5 py-1 rounded-xl border border-pink-300 active:scale-95 transition text-xs">
             📁 จากเครื่อง
           </button>
@@ -591,6 +591,13 @@
               <img id="diy-frame-img" src="" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0 hidden">
               <video id="diy-frame-video" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0 hidden" autoplay loop muted playsinline webkit-playsinline></video>
               
+              <!-- Blank State Element for Empty Slots -->
+              <div id="diy-frame-empty" class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center z-10 bg-pink-50/80 border-2 border-dashed border-pink-300 rounded hidden">
+                <span class="text-3xl sm:text-4xl mb-1">🖼️</span>
+                <span class="text-xs sm:text-sm font-bold text-pink-500 font-cute">ยังไม่มีรูปภาพในช่องนี้</span>
+                <span class="text-[10px] text-pink-400 mt-1">อัปเดตช่องนี้ที่หน้า "ความทรงจำ" หรือกดปุ่ม "📁 จากเครื่อง" ได้เลยนะ</span>
+              </div>
+
               <!-- Freehand Drawing Canvas Overlay -->
               <canvas id="diy-drawing-canvas" class="absolute inset-0 w-full h-full z-20 pointer-events-none" style="touch-action: none;"></canvas>
 
@@ -1044,29 +1051,38 @@
     }
 
     // DIY Photo Selection & Syncing Logic
-    function changeDiyPhotoSource() {
-      const select = document.getElementById('diy-photo-select');
+    function setMediaSource(type, src) {
       const img = document.getElementById('diy-frame-img');
       const vid = document.getElementById('diy-frame-video');
-      if (!select || !img || !vid) return;
+      const emptyElem = document.getElementById('diy-frame-empty');
 
-      const val = select.value;
-
-      function setMediaSource(type, src) {
-        if (type === 'video') {
-          img.classList.add('hidden');
-          img.src = '';
+      if (type === 'empty') {
+        if (img) { img.classList.add('hidden'); img.src = ''; }
+        if (vid) { vid.classList.add('hidden'); vid.pause(); vid.src = ''; }
+        if (emptyElem) emptyElem.classList.remove('hidden');
+      } else if (type === 'video') {
+        if (emptyElem) emptyElem.classList.add('hidden');
+        if (img) { img.classList.add('hidden'); img.src = ''; }
+        if (vid) {
           vid.src = src;
           vid.classList.remove('hidden');
           vid.play().catch(e => console.log(e));
-        } else {
-          vid.classList.add('hidden');
-          vid.pause();
-          vid.src = '';
+        }
+      } else {
+        if (emptyElem) emptyElem.classList.add('hidden');
+        if (vid) { vid.classList.add('hidden'); vid.pause(); vid.src = ''; }
+        if (img) {
           img.src = src;
           img.classList.remove('hidden');
         }
       }
+    }
+
+    function changeDiyPhotoSource() {
+      const select = document.getElementById('diy-photo-select');
+      if (!select) return;
+
+      const val = select.value;
 
       if (val === 'cover') {
         const coverOverride = localStorage.getItem('hbd_cover_override');
@@ -1096,7 +1112,7 @@
         if (userPhotos[idx] && userPhotos[idx].data) {
           setMediaSource(userPhotos[idx].type || 'image', userPhotos[idx].data);
         } else {
-          setMediaSource('video', 'cover.mp4');
+          setMediaSource('empty', '');
         }
       }
     }
@@ -1109,19 +1125,7 @@
       const isVideo = file.type.startsWith('video/');
 
       reader.onload = function(e) {
-        const img = document.getElementById('diy-frame-img');
-        const vid = document.getElementById('diy-frame-video');
-        if (isVideo) {
-          img.classList.add('hidden');
-          vid.src = e.target.result;
-          vid.classList.remove('hidden');
-          vid.play().catch(err => console.log(err));
-        } else {
-          vid.classList.add('hidden');
-          vid.pause();
-          img.src = e.target.result;
-          img.classList.remove('hidden');
-        }
+        setMediaSource(isVideo ? 'video' : 'image', e.target.result);
       };
       reader.readAsDataURL(file);
       event.target.value = '';
