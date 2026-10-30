@@ -1475,22 +1475,67 @@
     }
 
     // DIY Drag & Drop Stickers Logic
-    function spawnSticker(emoji) {
+        function spawnSticker(emoji) {
       const container = document.getElementById('stickers-container');
       if (!container) return;
 
       const sticker = document.createElement('div');
-      sticker.className = 'absolute text-4xl sm:text-5xl cursor-grab select-none pointer-events-auto transition-transform hover:scale-125 active:scale-110 filter drop-shadow-md';
-      sticker.innerText = emoji;
+      sticker.className = 'absolute cursor-grab select-none pointer-events-auto filter drop-shadow-md group flex flex-col items-center justify-center';
       sticker.style.left = '40%';
       sticker.style.top = '30%';
+      sticker.style.touchAction = 'none';
+
+      let currentScale = 1.0;
+
+      sticker.innerHTML = `
+        <div class="sticker-controls hidden group-hover:flex absolute -top-9 left-1/2 -translate-x-1/2 bg-black/85 text-white rounded-full px-2 py-0.5 text-xs items-center gap-1.5 z-50 shadow-lg pointer-events-auto border border-white/30">
+          <button class="btn-zoom-in font-bold hover:text-pink-300 active:scale-125 p-0.5">➕</button>
+          <button class="btn-zoom-out font-bold hover:text-pink-300 active:scale-125 p-0.5">➖</button>
+          <button class="btn-delete text-red-400 font-bold hover:text-red-300 active:scale-125 p-0.5">✕</button>
+        </div>
+        <div class="sticker-emoji text-5xl sm:text-6xl transition-transform duration-75 origin-center" style="transform: scale(${currentScale});">
+          ${emoji}
+        </div>
+      `;
+
+      const emojiElem = sticker.querySelector('.sticker-emoji');
+      const controlsElem = sticker.querySelector('.sticker-controls');
+      const btnZoomIn = sticker.querySelector('.btn-zoom-in');
+      const btnZoomOut = sticker.querySelector('.btn-zoom-out');
+      const btnDelete = sticker.querySelector('.btn-delete');
+
+      function updateScale(delta) {
+        currentScale = Math.min(Math.max(0.3, currentScale + delta), 4.0);
+        if (emojiElem) {
+          emojiElem.style.transform = `scale(${currentScale})`;
+        }
+      }
+
+      btnZoomIn.onclick = (e) => { e.stopPropagation(); updateScale(0.25); playPopSound(); };
+      btnZoomOut.onclick = (e) => { e.stopPropagation(); updateScale(-0.25); playPopSound(); };
+      btnDelete.onclick = (e) => { e.stopPropagation(); sticker.remove(); playPopSound(); };
+
+      sticker.onclick = (e) => {
+        if (e.target.closest('.sticker-controls')) return;
+        document.querySelectorAll('.sticker-controls').forEach(c => {
+          if (c !== controlsElem) c.classList.add('hidden');
+        });
+        controlsElem.classList.toggle('hidden');
+      };
+
+      sticker.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        updateScale(e.deltaY < 0 ? 0.15 : -0.15);
+      }, { passive: false });
 
       let isDragging = false;
       let startX, startY, initialLeft, initialTop;
-      let lastTap = 0;
 
       const startDrag = (e) => {
         if (currentToolMode === 'draw') return;
+        if (e.target.closest('.sticker-controls')) return;
+        if (e.touches && e.touches.length > 1) return;
+
         isDragging = true;
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -1526,16 +1571,6 @@
         sticker.style.zIndex = 40;
       };
 
-      const handleDoubleTapDelete = () => {
-        const currentTime = new Date().getTime();
-        const tapLength = currentTime - lastTap;
-        if (tapLength < 300 && tapLength > 0) {
-          sticker.remove();
-          playPopSound();
-        }
-        lastTap = currentTime;
-      };
-
       sticker.addEventListener('mousedown', startDrag);
       window.addEventListener('mousemove', doDrag);
       window.addEventListener('mouseup', stopDrag);
@@ -1543,8 +1578,6 @@
       sticker.addEventListener('touchstart', startDrag, { passive: false });
       sticker.addEventListener('touchmove', doDrag, { passive: false });
       sticker.addEventListener('touchend', stopDrag);
-
-      sticker.addEventListener('click', handleDoubleTapDelete);
 
       container.appendChild(sticker);
       playPopSound();
