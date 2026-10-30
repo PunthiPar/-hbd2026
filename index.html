@@ -157,6 +157,16 @@
 </head>
 <body class="theme-normal min-h-screen flex flex-col items-center justify-start p-2 sm:p-6 relative overflow-x-hidden">
 
+  <!-- Fullscreen Lightbox Modal for Image/Video Zoom -->
+  <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 transition-all duration-300 select-none" onclick="closeLightbox()">
+    <div class="relative max-w-4xl max-h-[90vh] w-full flex flex-col items-center justify-center" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute -top-10 right-0 sm:-top-12 sm:-right-4 text-white hover:text-pink-300 font-bold text-3xl transition-colors bg-black/40 w-10 h-10 rounded-full flex items-center justify-center border border-white/20">✕</button>
+      <img id="lightbox-img" class="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border-4 border-white/90 hidden" alt="Expanded View">
+      <video id="lightbox-video" class="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border-4 border-white/90 hidden" controls autoplay loop muted playsinline></video>
+      <p class="text-white/80 font-cute text-xs sm:text-sm mt-3 text-center">แตะบริเวณด้านนอกเพื่อปิด ✕</p>
+    </div>
+  </div>
+
   <!-- Floating Background Stickers (Halloween Mode) -->
   <div class="halloween-only fixed inset-0 pointer-events-none z-0 overflow-hidden">
     <div class="absolute top-6 left-4 sm:left-12 text-4xl sm:text-6xl anim-ghost sticker-shadow">👻💖</div>
@@ -309,7 +319,7 @@
           <div class="tape absolute -bottom-3 right-6 sm:right-10 w-20 sm:w-24 h-5 sm:h-6 z-20"></div>
 
           <div class="relative z-10 bg-white p-2.5 sm:p-4 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[240px] sm:max-w-sm w-full border border-gray-200">
-            <div class="relative aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center group">
+            <div class="relative aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center group cursor-pointer" onclick="handleCoverClick()">
               <!-- Image placeholder (shown when user decorates and saves a custom cover) -->
               <img id="cover-img-placeholder" class="hidden absolute inset-0 w-full h-full object-cover z-10">
               
@@ -366,7 +376,7 @@
 
         <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0] shadow-inner flex flex-wrap items-center justify-center gap-4 sm:gap-6 min-h-[340px]">
           
-          <div class="bg-white p-2.5 rounded-lg shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative">
+          <div class="bg-white p-2.5 rounded-lg shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative cursor-pointer" onclick="openLightbox('hhbd.mp4', true)">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[4/5] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
               <video class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
@@ -376,7 +386,7 @@
             <div class="mt-2 text-center font-handwriting text-lg text-pink-600 font-bold">Sweet Moment ✨</div>
           </div>
 
-          <div class="bg-white p-2.5 rounded-lg shadow-lg transform rotate-2 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative">
+          <div class="bg-white p-2.5 rounded-lg shadow-lg transform rotate-2 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative cursor-pointer" onclick="openLightbox(document.getElementById('tab-2024-img').src, false)">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[4/5] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
               <img id="tab-2024-img" src="hbd2024.JPG" alt="Memory 2024" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.src='hbd2024.jpg';">
@@ -410,7 +420,7 @@
 
         <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0] shadow-inner flex items-center justify-center min-h-[340px]">
           
-          <div class="bg-white p-2.5 sm:p-3 rounded-lg shadow-lg transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[210px] sm:max-w-[250px] w-full border border-gray-200 relative">
+          <div class="bg-white p-2.5 sm:p-3 rounded-lg shadow-lg transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[210px] sm:max-w-[250px] w-full border border-gray-200 relative cursor-pointer" onclick="handle2025MemClick()">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
               <img id="tab-2025-img-placeholder" class="hidden absolute inset-0 w-full h-full object-cover rounded z-20">
@@ -576,7 +586,7 @@
           <div class="relative z-10 bg-white p-3 rounded-xl shadow-xl transform -rotate-1 max-w-[220px] sm:max-w-xs w-full border border-gray-200 overflow-hidden">
             
             <!-- Photo Capture Area -->
-            <div id="diy-photo-area" class="aspect-[3/4] bg-pink-100 rounded overflow-hidden relative">
+            <div id="diy-photo-area" class="aspect-[3/4] bg-pink-100 rounded overflow-hidden relative group cursor-pointer" onclick="handleDiyFrameClick(event)">
               <img id="diy-frame-img" src="hbd2024.JPG" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0" onerror="this.src='hbd2024.JPG';">
               
               <!-- Freehand Drawing Canvas Overlay -->
@@ -784,6 +794,73 @@
     let brushSize = 8;
     let drawCanvas, drawCtx;
     let isCanvasInited = false;
+
+    // Lightbox Fullscreen Popup Engine
+    function openLightbox(mediaSrc, isVideo = false) {
+      const modal = document.getElementById('lightbox-modal');
+      const imgElem = document.getElementById('lightbox-img');
+      const videoElem = document.getElementById('lightbox-video');
+
+      if (!modal || !mediaSrc) return;
+
+      if (isVideo) {
+        imgElem.classList.add('hidden');
+        videoElem.src = mediaSrc;
+        videoElem.classList.remove('hidden');
+        videoElem.play().catch(e => console.log("Lightbox Video Error:", e));
+      } else {
+        videoElem.classList.add('hidden');
+        videoElem.pause();
+        imgElem.src = mediaSrc;
+        imgElem.classList.remove('hidden');
+      }
+
+      modal.classList.remove('hidden');
+      playPopSound();
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightbox-modal');
+      const videoElem = document.getElementById('lightbox-video');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+      if (videoElem) {
+        videoElem.pause();
+        videoElem.src = '';
+      }
+    }
+
+    function handleCoverClick() {
+      const imgElem = document.getElementById('cover-img-placeholder');
+      const vidElem = document.getElementById('cover-video');
+
+      if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
+        openLightbox(imgElem.src, false);
+      } else if (vidElem) {
+        openLightbox('cover.mp4', true);
+      }
+    }
+
+    function handle2025MemClick() {
+      const imgElem = document.getElementById('tab-2025-img-placeholder');
+      if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
+        openLightbox(imgElem.src, false);
+      } else {
+        openLightbox('2025.mp4', true);
+      }
+    }
+
+    function handleDiyFrameClick(event) {
+      if (currentToolMode === 'draw') return;
+      if (event.target.closest('#stickers-container') && event.target !== document.getElementById('stickers-container')) {
+        return; // Clicked on sticker
+      }
+      const imgElem = document.getElementById('diy-frame-img');
+      if (imgElem && imgElem.src) {
+        openLightbox(imgElem.src, false);
+      }
+    }
 
     function enterSite() {
       const inputPass = document.getElementById('site-pass-input').value.trim();
@@ -1241,8 +1318,8 @@
 
           card.innerHTML = `
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20"></div>
-            <button onclick="requestRemovePhoto(${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md z-30 font-bold active:scale-95">✕</button>
-            <div class="aspect-[4/5] bg-pink-50 rounded overflow-hidden flex items-center justify-center relative">
+            <button onclick="requestRemovePhoto(event, ${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md z-30 font-bold active:scale-95">✕</button>
+            <div class="aspect-[4/5] bg-pink-50 rounded overflow-hidden flex items-center justify-center relative cursor-pointer" onclick="openLightbox('${media.data}', ${media.type === 'video'})">
               ${mediaHtml}
             </div>
             <div class="mt-2 text-center font-handwriting text-base text-pink-600 truncate font-bold">Memory #${index + 1} ✨</div>
@@ -1290,7 +1367,8 @@
       event.target.value = '';
     }
 
-    function requestRemovePhoto(index) {
+    function requestRemovePhoto(e, index) {
+      if (e) e.stopPropagation();
       openPinModal(() => {
         if (confirm(`ต้องการลบความทรงจำที่ ${index + 1} ใช่ไหมคะ?`)) {
           userPhotos[index] = null;
