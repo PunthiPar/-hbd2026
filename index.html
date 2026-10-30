@@ -126,6 +126,24 @@
     </div>
   </div>
 
+  <!-- PIN Verification Modal -->
+  <div id="pin-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl border-2 border-pink-300 relative">
+      <button onclick="closePinModal()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+      <div class="text-4xl mb-2">🔐</div>
+      <h3 class="text-lg font-bold text-gray-800 mb-1">ใส่รหัสผ่าน 6 หลัก</h3>
+      <p class="text-xs text-gray-500 mb-4">ใส่รหัสผ่านเพื่อจัดการอัลบั้มความทรงจำ</p>
+      
+      <input type="password" id="pin-input" maxlength="6" pattern="\d{6}" inputmode="numeric" placeholder="••••••" class="w-full text-center text-2xl font-bold tracking-[0.5em] px-3 py-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:border-pink-500 mb-3" onkeyup="if(event.key==='Enter') verifyPin()">
+      
+      <p id="pin-error" class="text-xs text-red-500 hidden mb-3 font-semibold">❌ รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้งนะ!</p>
+      
+      <button onclick="verifyPin()" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-2.5 rounded-xl shadow active:scale-95 transition text-sm">
+        ยืนยันรหัสผ่าน
+      </button>
+    </div>
+  </div>
+
   <!-- Audio Element -->
   <audio id="bg-music" loop preload="auto" style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
     <source src="me.mp4" type="audio/mp4">
@@ -315,14 +333,14 @@
         </div>
       </div>
 
-      <!-- ================= TAB 🖼️ ความทรงจำ (อัปโหลดรูปภาพ / วิดีโอ 5 ช่อง) ================= -->
+      <!-- ================= TAB 🖼️ ความทรงจำ (อัปโหลดรูปภาพ / วิดีโอ 5 ช่อง ป้องกันด้วย PIN 6 หลัก) ================= -->
       <div id="tab-custom_photos" class="tab-content hidden p-3 sm:p-8 flex-1 flex flex-col justify-between">
         <div class="text-center my-2 select-none">
           <h2 class="text-2xl sm:text-4xl font-serif-italic text-gray-800 tracking-tight leading-none mb-1">
             Our Memory Album 📸
           </h2>
           <p class="text-xs sm:text-sm text-pink-600 font-light">
-            แตะช่องว่างเพื่อเลือกและเซฟรูปภาพหรือวิดีโอสั้นได้เลยนะ (สูงสุด 5 ไฟล์) ✨
+            ใส่รหัสผ่านเพื่อเลือกและเซฟรูปภาพหรือวิดีโอสั้นได้เลยนะ (สูงสุด 5 ไฟล์) 🔐
           </p>
         </div>
 
@@ -498,6 +516,38 @@
     let isMusicPlaying = false;
     let sharedAudioCtx = null;
 
+    // PIN Security Configuration (เปลี่ยนรหัสผ่าน 6 หลักตรงนี้ได้)
+    const SECRET_PIN = '311025';
+    let pendingAction = null; // Stores target slot action callback
+
+    function openPinModal(actionCallback) {
+      pendingAction = actionCallback;
+      document.getElementById('pin-input').value = '';
+      document.getElementById('pin-error').classList.add('hidden');
+      document.getElementById('pin-modal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('pin-input').focus(), 100);
+    }
+
+    function closePinModal() {
+      document.getElementById('pin-modal').classList.add('hidden');
+      pendingAction = null;
+    }
+
+    function verifyPin() {
+      const inputPin = document.getElementById('pin-input').value.trim();
+      if (inputPin === SECRET_PIN) {
+        document.getElementById('pin-modal').classList.add('hidden');
+        if (typeof pendingAction === 'function') {
+          pendingAction();
+        }
+        pendingAction = null;
+      } else {
+        document.getElementById('pin-error').classList.remove('hidden');
+        document.getElementById('pin-input').value = '';
+        document.getElementById('pin-input').focus();
+      }
+    }
+
     // IndexedDB for Storing Photos & Videos locally in browser
     let db;
     let userPhotos = [null, null, null, null, null];
@@ -559,7 +609,7 @@
 
           card.innerHTML = `
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20"></div>
-            <button onclick="removeUserPhoto(${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md z-30 font-bold active:scale-95">✕</button>
+            <button onclick="requestRemovePhoto(${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md z-30 font-bold active:scale-95">✕</button>
             <div class="aspect-[4/5] bg-pink-50 rounded overflow-hidden flex items-center justify-center relative">
               ${mediaHtml}
             </div>
@@ -568,15 +618,32 @@
         } else {
           card.innerHTML = `
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20"></div>
-            <label class="aspect-[4/5] bg-pink-50/70 hover:bg-pink-100/80 border-2 border-dashed border-pink-300 rounded flex flex-col items-center justify-center cursor-pointer transition-colors p-2 text-center group">
+            <button onclick="requestUploadPhoto(${index})" class="aspect-[4/5] bg-pink-50/70 hover:bg-pink-100/80 border-2 border-dashed border-pink-300 rounded flex flex-col items-center justify-center cursor-pointer transition-colors p-2 text-center group w-full">
               <span class="text-2xl text-pink-400 group-hover:scale-125 transition-transform mb-1">➕</span>
               <span class="text-[11px] text-pink-500 font-medium">เพิ่มรูป/วิดีโอที่ ${index + 1}</span>
-              <input type="file" accept="image/*,video/*" class="hidden" onchange="handlePhotoUpload(event, ${index})">
-            </label>
+            </button>
+            <input type="file" id="file-input-${index}" accept="image/*,video/*" class="hidden" onchange="handlePhotoUpload(event, ${index})">
             <div class="mt-2 text-center font-handwriting text-base text-gray-400 font-bold">Empty Slot</div>
           `;
         }
         grid.appendChild(card);
+      });
+    }
+
+    function requestUploadPhoto(index) {
+      openPinModal(() => {
+        const fileInput = document.getElementById(`file-input-${index}`);
+        if (fileInput) fileInput.click();
+      });
+    }
+
+    function requestRemovePhoto(index) {
+      openPinModal(() => {
+        if (confirm(`ต้องการลบความทรงจำที่ ${index + 1} ใช่ไหมคะ?`)) {
+          userPhotos[index] = null;
+          saveMediaToDB();
+          renderUserPhotos();
+        }
       });
     }
 
@@ -598,14 +665,6 @@
       };
 
       reader.readAsDataURL(file);
-    }
-
-    function removeUserPhoto(index) {
-      if (confirm(`ต้องการลบความทรงจำที่ ${index + 1} ใช่ไหมคะ?`)) {
-        userPhotos[index] = null;
-        saveMediaToDB();
-        renderUserPhotos();
-      }
     }
 
     // Web Audio Synthesizer Pop Sound Effect
