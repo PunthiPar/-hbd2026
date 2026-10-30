@@ -605,9 +605,9 @@
               <!-- Dedicated Transparent Overlay Layer (Stickers + Canvas) -->
               <div id="diy-overlay-layer" class="absolute inset-0 z-20 pointer-events-none">
                 <!-- Freehand Drawing Canvas Overlay -->
-                <canvas id="diy-drawing-canvas" class="absolute inset-0 w-full h-full" style="touch-action: none;"></canvas>
+                <canvas id="diy-drawing-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-10" style="touch-action: none;"></canvas>
                 <!-- Stickers Container -->
-                <div id="stickers-container" class="absolute inset-0 pointer-events-auto"></div>
+                <div id="stickers-container" class="absolute inset-0 pointer-events-none z-20"></div>
               </div>
             </div>
 
@@ -1007,11 +1007,13 @@
 
     function getCanvasPos(e) {
       const rect = drawCanvas.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const clientX = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches && e.touches[0] ? e.touches[0].clientY : e.clientY;
+      const width = rect.width || 1;
+      const height = rect.height || 1;
       return {
-        x: (clientX - rect.left) * (drawCanvas.width / rect.width),
-        y: (clientY - rect.top) * (drawCanvas.height / rect.height)
+        x: (clientX - rect.left) * (drawCanvas.width / width),
+        y: (clientY - rect.top) * (drawCanvas.height / height)
       };
     }
 
@@ -1033,6 +1035,7 @@
         
         if (drawCanvasElem) {
           drawCanvasElem.style.pointerEvents = 'auto';
+          drawCanvasElem.style.zIndex = '30';
         }
       } else {
         stickerBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition bg-white text-pink-600 shadow";
@@ -1042,6 +1045,7 @@
 
         if (drawCanvasElem) {
           drawCanvasElem.style.pointerEvents = 'none';
+          drawCanvasElem.style.zIndex = '10';
         }
       }
     }
@@ -1182,7 +1186,7 @@
             clearStickers();
             clearDrawingCanvas();
             changeDiyPhotoSource();
-            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! สติ๊กเกอร์แปะทับใสแจ๋วไม่บังวิดีโอแล้วนะ ✨");
+            alert("🎉 บันทึกตกแต่งวิดีโอเรียบร้อยแล้วค่ะ! สติ๊กเกอร์และเส้นวาดจะแปะทับใสแจ๋วไม่บังวิดีโอแล้วนะ ✨");
           });
         } else {
           // Capture full image with background for static photo
