@@ -998,8 +998,17 @@
     }
 
     function savePhotoToCloud(index, mediaData) {
-      showLoading("☁️ กำลังบันทึกลง Cloud...");
+      showLoading("☁️ กำลังบันทึกข้อมูลลง Cloud...");
       db.ref(`user_photos/${index}`).set(mediaData)
+        .then(() => {
+          hideLoading();
+          alert("🎉 บันทึกความทรงจำลงระบบ Cloud เรียบร้อยแล้ว!");
+        })
+        .catch(err => {
+          hideLoading();
+          alert("เกิดข้อผิดพลาดในการบันทึก: " + err.message);
+        });
+    }`).set(mediaData)
         .then(() => {
           hideLoading();
           alert("🎉 บันทึกความทรงจำลงระบบ Cloud เรียบร้อยแล้ว ทุกเครื่องจะเห็นตรงกันทันที!");
@@ -1322,19 +1331,24 @@
       if (!file) return;
 
       if (file.size > 300 * 1024 * 1024) {
-        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 300MB)\nกรุณาเลือกวิดีโอหรือรูปภาพที่มีขนาดเล็กลงนะคะ");
+        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 300MB)");
         event.target.value = '';
         return;
       }
 
-      showLoading("⏳ กำลังแปลงไฟล์วิดีโอ... กรุณารอสักครู่นะคะ"); const reader = new FileReader();
+      showLoading("⏳ กำลังอ่านไฟล์วิดีโอ...");
       const isVideo = file.type.startsWith('video/');
 
-      reader.onload = function(e) { hideLoading();
-        setMediaSource(isVideo ? 'video' : 'image', e.target.result);
-      };
-      reader.readAsDataURL(file);
-      event.target.value = '';
+      setTimeout(() => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          setMediaSource(isVideo ? 'video' : 'image', e.target.result);
+          hideLoading();
+        };
+        reader.onerror = function() { hideLoading(); alert("เกิดข้อผิดพลาดในการอ่านไฟล์"); };
+        reader.readAsDataURL(file);
+        event.target.value = '';
+      }, 100);
     }
 
     function saveDecoratedPhotoToMemory() {
@@ -1607,49 +1621,54 @@
       const file = event.target.files[0];
       if (!file) return;
 
-      // Restrict file size to max 300MB for Firebase RTDB Base64 string safety
       if (file.size > 300 * 1024 * 1024) {
-        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 300MB)\nกรุณาเลือกไฟล์วิดีโอสั้นๆ (3-5 วินาที) หรือรูปภาพที่มีขนาดเล็กลงนะคะ เพื่อให้เซฟลง Cloud ได้อย่างสมบูรณ์");
+        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 300MB)");
         event.target.value = '';
         return;
       }
 
+      showLoading("⏳ กำลังเตรียมไฟล์วิดีโอ...");
       const isVideo = file.type.startsWith('video/');
 
-      if (isVideo) {
-        showLoading("⏳ กำลังแปลงไฟล์วิดีโอ... กรุณารอสักครู่นะคะ"); const reader = new FileReader();
-        reader.onload = function(e) { hideLoading();
-          openPinModal(() => {
-            alert("⏳ กำลังประมวลผลวิดีโอลง Cloud... กรุณารอสักครู่ความไวขึ้นอยู่กับขนาดไฟล์นะคะ ✨"); savePhotoToCloud(index, { type: 'video', data: e.target.result });
-          }, `ยืนยันการเพิ่มวิดีโอลงในช่องที่ ${index + 1} ใช่ไหมคะ? (จะอัปเดตลง Cloud ให้ทุกคนเห็นตรงกัน)`);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        showLoading("⏳ กำลังแปลงไฟล์วิดีโอ... กรุณารอสักครู่นะคะ"); const reader = new FileReader();
-        reader.onload = function(e) { hideLoading();
-          const img = new Image();
-          img.onload = function() {
-            const canvas = document.createElement('canvas');
-            let w = img.width, h = img.height;
-            const maxDim = 1000;
-            if (w > maxDim || h > maxDim) {
-              if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-              else { w = Math.round((w * maxDim) / h); h = maxDim; }
-            }
-            canvas.width = w; canvas.height = h;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, w, h);
-            const compressedData = canvas.toDataURL('image/jpeg', 0.8);
-
+      setTimeout(() => {
+        if (isVideo) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            hideLoading();
             openPinModal(() => {
-              savePhotoToCloud(index, { type: 'image', data: compressedData });
-            }, `ยืนยันการเพิ่มรูปภาพในช่องที่ ${index + 1} ใช่ไหมคะ? (จะบันทึกลงระบบ Cloud ให้ทุกคนเห็นตรงกัน)`);
+              savePhotoToCloud(index, { type: 'video', data: e.target.result });
+            }, `ยืนยันการเพิ่มวิดีโอลงในช่องที่ ${index + 1} ใช่ไหมคะ?`);
           };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-      event.target.value = '';
+          reader.onerror = function() { hideLoading(); };
+          reader.readAsDataURL(file);
+        } else {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+              const canvas = document.createElement('canvas');
+              let w = img.width, h = img.height;
+              const maxDim = 1000;
+              if (w > maxDim || h > maxDim) {
+                if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                else { w = Math.round((w * maxDim) / h); h = maxDim; }
+              }
+              canvas.width = w; canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, w, h);
+              const compressedData = canvas.toDataURL('image/jpeg', 0.8);
+              hideLoading();
+
+              openPinModal(() => {
+                savePhotoToCloud(index, { type: 'image', data: compressedData });
+              }, `ยืนยันการเพิ่มรูปภาพในช่องที่ ${index + 1} ใช่ไหมคะ?`);
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+        event.target.value = '';
+      }, 100);
     }
 
     function requestRemovePhoto(e, index) {
