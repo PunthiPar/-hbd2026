@@ -586,6 +586,7 @@
             
             <!-- Photo/Video Capture Area -->
             <div id="diy-photo-area" class="aspect-[3/4] bg-pink-100 rounded overflow-hidden relative group cursor-pointer" onclick="handleDiyFrameClick(event)">
+              <div id="diy-frame-bg" class="w-full h-full bg-cover bg-center absolute inset-0 z-10 hidden pointer-events-none"></div>
               <img id="diy-frame-img" src="" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0 hidden">
               <video id="diy-frame-video" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0 hidden" autoplay loop muted playsinline webkit-playsinline></video>
               
@@ -1268,15 +1269,18 @@
     function setMediaSource(type, src) {
       const img = document.getElementById('diy-frame-img');
       const vid = document.getElementById('diy-frame-video');
+      const bg = document.getElementById('diy-frame-bg');
       const emptyElem = document.getElementById('diy-frame-empty');
 
       if (type === 'empty') {
         if (img) { img.classList.add('hidden'); img.src = ''; }
+        if (bg) { bg.classList.add('hidden'); bg.style.backgroundImage = ''; }
         if (vid) { vid.classList.add('hidden'); vid.pause(); vid.src = ''; }
         if (emptyElem) emptyElem.classList.remove('hidden');
       } else if (type === 'video') {
         if (emptyElem) emptyElem.classList.add('hidden');
         if (img) { img.classList.add('hidden'); img.src = ''; }
+        if (bg) { bg.classList.add('hidden'); bg.style.backgroundImage = ''; }
         if (vid) {
           vid.src = src;
           vid.classList.remove('hidden');
@@ -1285,9 +1289,13 @@
       } else {
         if (emptyElem) emptyElem.classList.add('hidden');
         if (vid) { vid.classList.add('hidden'); vid.pause(); vid.src = ''; }
+        if (bg) {
+          bg.style.backgroundImage = `url("${src.replace(/"/g, '\"')}")`;
+          bg.classList.remove('hidden');
+        }
         if (img) {
+          img.classList.add('hidden');
           img.src = src;
-          img.classList.remove('hidden');
         }
       }
     }
