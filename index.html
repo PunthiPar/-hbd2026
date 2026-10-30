@@ -376,16 +376,19 @@
 
         <div class="relative w-full max-w-2xl mx-auto my-2 sm:my-4 p-4 sm:p-6 bg-[#eae1d0]/40 rounded-2xl border border-[#d6c7b0] shadow-inner flex flex-wrap items-center justify-center gap-4 sm:gap-6 min-h-[340px]">
           
-          <div class="bg-white p-2.5 rounded-lg shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative cursor-pointer" onclick="openLightbox('hhbd.mp4', true)">
+          <!-- Card 1: 2024 Video -->
+          <div class="bg-white p-2.5 rounded-lg shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative cursor-pointer" onclick="handle2024VidClick()">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[4/5] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
-              <video class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
+              <img id="tab-2024-vid-placeholder" class="hidden absolute inset-0 w-full h-full object-cover z-10">
+              <video id="tab-2024-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="hhbd.mp4" type="video/mp4">
               </video>
             </div>
             <div class="mt-2 text-center font-handwriting text-lg text-pink-600 font-bold">Sweet Moment ✨</div>
           </div>
 
+          <!-- Card 2: 2024 Image -->
           <div class="bg-white p-2.5 rounded-lg shadow-lg transform rotate-2 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative cursor-pointer" onclick="openLightbox(document.getElementById('tab-2024-img').src, false)">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[4/5] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
@@ -424,7 +427,7 @@
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
               <img id="tab-2025-img-placeholder" class="hidden absolute inset-0 w-full h-full object-cover rounded z-20">
-              <video class="w-full h-full object-cover rounded" autoplay loop muted playsinline webkit-playsinline preload="auto">
+              <video id="tab-2025-video" class="w-full h-full object-cover rounded z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="2025.mp4" type="video/mp4">
               </video>
             </div>
@@ -851,6 +854,15 @@
       }
     }
 
+    function handle2024VidClick() {
+      const imgElem = document.getElementById('tab-2024-vid-placeholder');
+      if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
+        openLightbox(imgElem.src, false);
+      } else {
+        openLightbox('hhbd.mp4', true);
+      }
+    }
+
     function handle2025MemClick() {
       const imgElem = document.getElementById('tab-2025-img-placeholder');
       if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
@@ -1092,9 +1104,14 @@
           setMediaSource('video', 'cover.mp4');
         }
       } else if (val === '2024_vid') {
-        setMediaSource('video', 'hhbd.mp4');
+        const override = localStorage.getItem('hbd_2024_vid_override');
+        if (override) {
+          setMediaSource('image', override);
+        } else {
+          setMediaSource('video', 'hhbd.mp4');
+        }
       } else if (val === '2024' || val === '2024_img') {
-        const override = localStorage.getItem('hbd_2024_override');
+        const override = localStorage.getItem('hbd_2024_img_override');
         if (override) {
           setMediaSource('image', override);
         } else {
@@ -1176,10 +1193,14 @@
             localStorage.setItem('hbd_cover_override', dataUrl);
             applyOverrides();
             alert("🎉 บันทึกรูปตกแต่งลงหน้าปก (31oct) เรียบร้อยแล้วค่ะ!");
-          } else if (targetVal === '2024' || targetVal === '2024_img' || targetVal === '2024_vid') {
-            localStorage.setItem('hbd_2024_override', dataUrl);
+          } else if (targetVal === '2024_vid') {
+            localStorage.setItem('hbd_2024_vid_override', dataUrl);
             applyOverrides();
-            alert("🎉 บันทึกรูปตกแต่งลงหน้าความทรงจำปี 2024 เรียบร้อยแล้วค่ะ!");
+            alert("🎉 บันทึกรูปตกแต่งลงวิดีโอปี 2024 เรียบร้อยแล้วค่ะ!");
+          } else if (targetVal === '2024_img' || targetVal === '2024') {
+            localStorage.setItem('hbd_2024_img_override', dataUrl);
+            applyOverrides();
+            alert("🎉 บันทึกรูปตกแต่งลงรูปภาพปี 2024 เรียบร้อยแล้วค่ะ!");
           } else if (targetVal === '2025') {
             localStorage.setItem('hbd_2025_override', dataUrl);
             applyOverrides();
@@ -1206,8 +1227,10 @@
       openPinModal(() => {
         if (targetVal === 'cover') {
           localStorage.removeItem('hbd_cover_override');
-        } else if (targetVal === '2024' || targetVal === '2024_img' || targetVal === '2024_vid') {
-          localStorage.removeItem('hbd_2024_override');
+        } else if (targetVal === '2024_vid') {
+          localStorage.removeItem('hbd_2024_vid_override');
+        } else if (targetVal === '2024_img' || targetVal === '2024') {
+          localStorage.removeItem('hbd_2024_img_override');
         } else if (targetVal === '2025') {
           localStorage.removeItem('hbd_2025_override');
         } else if (targetVal.startsWith('slot_')) {
@@ -1221,7 +1244,7 @@
         applyOverrides();
         renderUserPhotos();
         changeDiyPhotoSource();
-        alert("🔄 รีเซ็ตกลับเป็นวิดีโอหน้าปก/รูปภาพเดิมเรียบร้อยแล้วค่ะ!");
+        alert("🔄 รีเซ็ตกลับเป็นวิดีโอ/รูปภาพเดิมเรียบร้อยแล้วค่ะ!");
       });
     }
 
@@ -1653,6 +1676,7 @@
     }
 
     function applyOverrides() {
+      // 1. Cover Override
       const coverOverride = localStorage.getItem('hbd_cover_override');
       const coverImg = document.getElementById('cover-img-placeholder');
       const coverVid = document.getElementById('cover-video');
@@ -1667,7 +1691,22 @@
         coverVid.play().catch(e => console.log(e));
       }
 
-      const img2024Override = localStorage.getItem('hbd_2024_override');
+      // 2. 2024 Vid Override (Card 1)
+      const vid2024Override = localStorage.getItem('hbd_2024_vid_override');
+      const vid2024Img = document.getElementById('tab-2024-vid-placeholder');
+      const vid2024Vid = document.getElementById('tab-2024-video');
+      if (vid2024Override && vid2024Img && vid2024Vid) {
+        vid2024Img.src = vid2024Override;
+        vid2024Img.classList.remove('hidden');
+        vid2024Vid.classList.add('hidden');
+      } else if (vid2024Img && vid2024Vid) {
+        vid2024Img.classList.add('hidden');
+        vid2024Vid.classList.remove('hidden');
+        vid2024Vid.play().catch(e => console.log(e));
+      }
+
+      // 3. 2024 Img Override (Card 2)
+      const img2024Override = localStorage.getItem('hbd_2024_img_override');
       const img2024 = document.getElementById('tab-2024-img');
       if (img2024Override && img2024) {
         img2024.src = img2024Override;
@@ -1675,14 +1714,19 @@
         img2024.src = 'hbd2024.JPG';
       }
 
+      // 4. 2025 Override
       const img2025Override = localStorage.getItem('hbd_2025_override');
       const img2025 = document.getElementById('tab-2025-img-placeholder');
-      if (img2025Override && img2025) {
+      const vid2025 = document.getElementById('tab-2025-video');
+      if (img2025Override && img2025 && vid2025) {
         img2025.src = img2025Override;
         img2025.classList.remove('hidden');
-      } else if (img2025) {
+        vid2025.classList.add('hidden');
+      } else if (img2025 && vid2025) {
         img2025.src = '';
         img2025.classList.add('hidden');
+        vid2025.classList.remove('hidden');
+        vid2025.play().catch(e => console.log(e));
       }
     }
 
