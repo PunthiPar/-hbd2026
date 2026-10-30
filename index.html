@@ -16,7 +16,7 @@
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <!-- html2canvas for Saving DIY Board -->
+  <!-- html2canvas for Saving Decorated Canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <!-- Dynamic Theme Styles -->
@@ -78,7 +78,7 @@
     body.theme-halloween .win-content { background-color: #fffdfa; }
     body.theme-halloween .tape { background-color: rgba(254, 215, 170, 0.85); }
 
-    /* Typography */
+    /* Fonts */
     .font-kawaii { font-family: 'Mochiy Pop One', cursive; }
     .font-cute { font-family: 'Fredoka', cursive; }
     .font-serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
@@ -138,14 +138,6 @@
     }
     .floating-heart:active { transform: scale(1.4) !important; }
 
-    /* Glowing Candle Flame Animation */
-    @keyframes realisticFlame {
-      0% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ff9c1a) drop-shadow(0 0 22px #ff4500); }
-      50% { transform: scale(1.18) rotate(3deg); filter: drop-shadow(0 0 16px #ffbe2e) drop-shadow(0 0 32px #ff3b00); }
-      100% { transform: scale(0.95) rotate(-1deg); filter: drop-shadow(0 0 12px #ffa01a) drop-shadow(0 0 25px #ff5500); }
-    }
-    .flame-real { animation: realisticFlame 0.45s infinite alternate ease-in-out; transform-origin: center bottom; }
-
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 4px; }
@@ -153,24 +145,6 @@
     .color-btn-active {
       transform: scale(1.25);
       box-shadow: 0 0 0 3px #ec4899;
-    }
-
-    /* 3D CAKE STAGE STYLING */
-    .cake-3d-stage {
-      perspective: 1200px;
-      touch-action: none;
-      user-select: none;
-    }
-
-    .cake-3d-wrapper {
-      transform-style: preserve-3d;
-      transition: transform 0.05s linear;
-    }
-
-    .cake-layer {
-      position: absolute;
-      border-radius: 50%;
-      transform-style: preserve-3d;
     }
 
     .candle-draggable {
@@ -181,7 +155,7 @@
     }
     .candle-draggable:active {
       cursor: grabbing;
-      transform: scale(1.2);
+      transform: scale(1.15);
       filter: drop-shadow(0 8px 15px rgba(236,72,153,0.5));
     }
   </style>
@@ -201,7 +175,7 @@
     </div>
   </div>
 
-  <!-- Background Stickers (Halloween Mode) -->
+  <!-- Floating Background Stickers (Halloween Mode) -->
   <div class="halloween-only fixed inset-0 pointer-events-none z-0 overflow-hidden">
     <div class="absolute top-6 left-4 sm:left-12 text-4xl sm:text-6xl anim-ghost sticker-shadow">👻💖</div>
     <div class="absolute top-20 right-6 sm:right-16 text-3xl sm:text-5xl anim-bat sticker-shadow">🦇✨</div>
@@ -234,6 +208,7 @@
   <!-- Audio Element -->
   <audio id="bg-music" loop preload="auto" style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
     <source src="me.mp4" type="audio/mp4">
+    <source src="me.mov" type="video/quicktime">
   </audio>
 
   <!-- Controls: Theme Switcher & Music Buttons -->
@@ -556,16 +531,6 @@
             <button onclick="spawnSticker('🍫')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🍫</button>
             <button onclick="spawnSticker('🧁')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🧁</button>
             <button onclick="spawnSticker('🍿')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🍿</button>
-            <button onclick="spawnSticker('🦄')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🦄</button>
-            <button onclick="spawnSticker('🐱')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🐱</button>
-            <button onclick="spawnSticker('🐶')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🐶</button>
-            <button onclick="spawnSticker('💘')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">💘</button>
-            <button onclick="spawnSticker('💝')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">💝</button>
-            <button onclick="spawnSticker('⭐️')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">⭐️</button>
-            <button onclick="spawnSticker('💎')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">💎</button>
-            <button onclick="spawnSticker('🌈')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🌈</button>
-            <button onclick="spawnSticker('⚡')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">⚡</button>
-            <button onclick="spawnSticker('🕯️')" class="p-1 hover:scale-125 active:scale-90 transition-transform bg-pink-50 rounded-xl border border-pink-200">🕯️</button>
           </div>
         </div>
 
@@ -607,7 +572,7 @@
             <span>💾 เซฟรูปอัปเดตลงอัลบั้ม</span>
           </button>
 
-          <button onclick="switchTab('2025')" class="inline-flex items-center gap-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-cute text-xs sm:text-sm px-3.5 py-2 rounded-xl transition active:scale-95 shadow-lg">
+          <button onclick="switchTab('2025')" class="inline-flex items-center gap-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-cute text-xs sm:text-sm px-3.5 py-2 rounded-xl transition active:scale-95 shadow-lg font-cute">
             <span>ไปหน้า 💖 Next</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </button>
@@ -662,7 +627,7 @@
         </div>
       </div>
 
-      <!-- ================= TAB 2026 (360° ROTATABLE 3D CAKE + cake.jpg TOP) ================= -->
+      <!-- ================= TAB 2026 (REAL 3D CYLINDER CAKE CANVASES ENGINE) ================= -->
       <div id="tab-2026" class="tab-content hidden p-3 sm:p-6 flex-1 flex flex-col items-center justify-between relative min-h-[560px] overflow-hidden select-none">
         
         <div id="tab-2026-locked-overlay" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 flex flex-col items-center justify-center p-6 text-center">
@@ -681,72 +646,20 @@
           <p class="text-xs sm:text-sm text-pink-800/80 mt-1 font-cute">ลากเทียน 2 และ 5 ด้านล่างมาปักบนเค้ก แล้วลากหมุนเค้กได้ 360° เลยนะ ✨🎃</p>
         </div>
 
-        <!-- Hint Banner Elevated Higher Up -->
-        <div id="light-hint" onclick="handleCandleAction()" class="my-1.5 bg-amber-100/95 backdrop-blur border-2 border-amber-300 text-amber-800 text-xs sm:text-sm font-bold font-cute px-5 py-2 rounded-full shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 animate-pulse z-30">
+        <!-- Hint Banner -->
+        <div id="light-hint" onclick="handleCandleAction()" class="my-1 bg-amber-100/95 backdrop-blur border-2 border-amber-300 text-amber-800 text-xs sm:text-sm font-bold font-cute px-5 py-2 rounded-full shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 animate-pulse z-30">
           <span id="hint-text">🕯️ 1. ลากหรือแตะเทียนเลข 2 และ 5 มาปักบนเค้กก่อนน้า!</span>
         </div>
 
-        <!-- 3D INTERACTIVE CAKE STAGE (ROTATABLE 360 DEGREES) -->
-        <div id="cake-3d-stage" class="cake-3d-stage relative my-auto flex items-center justify-center w-full max-w-md h-[260px] sm:h-[300px] cursor-grab active:cursor-grabbing">
-          
-          <!-- 3D Rotating Wrapper -->
-          <div id="cake-3d-wrapper" class="cake-3d-wrapper relative w-60 sm:w-72 h-60 sm:h-72 flex items-center justify-center" style="transform: rotateX(-18deg) rotateY(0deg);">
-            
-            <!-- TOP CAP / PHOTO SURFACE (cake.jpg) -->
-            <div id="cake-top-surface" class="cake-layer absolute top-4 w-52 sm:w-64 h-52 sm:h-64 rounded-full border-4 border-pink-200 shadow-2xl flex items-center justify-center overflow-hidden" 
-                 style="transform: translateZ(45px); background: url('cake.jpg') center/cover no-repeat, #fbcfe8;">
-              
-              <!-- Cream Piping Pearls around Top Rim -->
-              <div class="absolute inset-0 rounded-full border-8 border-dashed border-white/80 pointer-events-none z-10"></div>
-              
-              <!-- Placed 3D Candles Layer on Top Surface -->
-              <div id="placed-candles-layer" class="absolute inset-0 z-20 pointer-events-auto">
-                <!-- Placed Candle 2 -->
-                <div id="cake-candle-2" class="hidden absolute flex-col items-center transition-transform cursor-pointer" style="top: 30%; left: 32%; transform: translate(-50%, -100%) rotateX(18deg) scale(0.95);" onclick="toggleCandleFlame('2')">
-                  <div id="flame-1" class="flame-real hidden absolute -top-8 w-6 h-8 bg-gradient-to-t from-yellow-300 via-amber-500 to-red-500 rounded-full z-30">
-                    <div class="w-2 h-3 bg-white rounded-full mx-auto mt-3 opacity-90 blur-[0.5px]"></div>
-                  </div>
-                  <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
-                  <div class="w-9 h-12 bg-gradient-to-tr from-pink-400 via-rose-300 to-pink-200 rounded-2xl border-2 border-white shadow-[0_4px_12px_rgba(236,72,153,0.4)] flex items-center justify-center font-black text-white text-xl font-cute select-none relative overflow-hidden">
-                    <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
-                    <span class="z-10">2</span>
-                  </div>
-                </div>
-
-                <!-- Placed Candle 5 -->
-                <div id="cake-candle-5" class="hidden absolute flex-col items-center transition-transform cursor-pointer" style="top: 30%; left: 68%; transform: translate(-50%, -100%) rotateX(18deg) scale(0.95);" onclick="toggleCandleFlame('5')">
-                  <div id="flame-2" class="flame-real hidden absolute -top-8 w-6 h-8 bg-gradient-to-t from-yellow-300 via-amber-500 to-red-500 rounded-full z-30">
-                    <div class="w-2 h-3 bg-white rounded-full mx-auto mt-3 opacity-90 blur-[0.5px]"></div>
-                  </div>
-                  <div class="w-1 h-3 bg-gray-700 rounded-t -mb-0.5"></div>
-                  <div class="w-9 h-12 bg-gradient-to-tr from-purple-400 via-fuchsia-300 to-purple-200 rounded-2xl border-2 border-white shadow-[0_4px_12px_rgba(168,85,247,0.4)] flex items-center justify-center font-black text-white text-xl font-cute select-none relative overflow-hidden">
-                    <div class="absolute inset-0 bg-white/30 -skew-x-12 transform -translate-x-2"></div>
-                    <span class="z-10">5</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cake Tier Middle Layer 1 -->
-            <div class="cake-layer absolute top-4 w-52 sm:w-64 h-52 sm:h-64 rounded-full bg-gradient-to-b from-pink-200 to-pink-300 border-2 border-pink-300 shadow-md" style="transform: translateZ(30px);"></div>
-            <div class="cake-layer absolute top-4 w-52 sm:w-64 h-52 sm:h-64 rounded-full bg-gradient-to-b from-rose-200 to-pink-300 border-2 border-pink-300 shadow-md" style="transform: translateZ(15px);"></div>
-            
-            <!-- Bottom Cake Tier Layer -->
-            <div class="cake-layer absolute top-2 w-58 sm:w-70 h-58 sm:h-70 rounded-full bg-gradient-to-b from-purple-200 via-pink-200 to-rose-300 border-4 border-white shadow-xl" style="transform: translateZ(0px);">
-              <div class="absolute inset-0 rounded-full border-4 border-dashed border-pink-300/50"></div>
-            </div>
-
-            <!-- Golden Shiny Cake Stand -->
-            <div class="cake-layer absolute -top-1 w-64 sm:w-78 h-64 sm:h-78 rounded-full bg-gradient-to-tr from-amber-300 via-yellow-100 to-amber-400 border-4 border-amber-300 shadow-[0_15px_35px_rgba(0,0,0,0.25)]" style="transform: translateZ(-15px);"></div>
-
-          </div>
-
+        <!-- 3D CANVAS REAL CYLINDER CAKE -->
+        <div class="relative my-auto flex items-center justify-center w-full max-w-md h-[270px] sm:h-[310px]">
+          <canvas id="cake-3d-canvas" class="w-full h-full cursor-grab active:cursor-grabbing z-20" width="600" height="420"></canvas>
         </div>
 
-        <!-- 360 Rotation Hint Badge -->
+        <!-- Rotation & Auto Controls -->
         <div class="flex items-center gap-2 mb-1 z-10">
           <span class="text-[11px] font-bold text-gray-500 font-cute bg-white/80 px-3 py-1 rounded-full border shadow-sm">
-            👆 ลากที่ตัวเค้กเพื่อหมุนดูได้ 360°
+            👆 ใช้นิ้วลากที่เค้กเพื่อหมุนดูได้ 360°
           </span>
           <button onclick="toggleAutoRotate()" id="auto-rotate-btn" class="bg-pink-100 hover:bg-pink-200 text-pink-700 text-xs font-bold px-3 py-1 rounded-full border border-pink-300 transition active:scale-95 shadow font-cute">
             🔄 หมุนเค้กอัตโนมัติ: ปิด
@@ -787,7 +700,7 @@
           <p class="text-[10px] sm:text-xs text-gray-500 mt-1 font-cute">(เมื่อปักเทียนและจุดไฟเรียบร้อย สามารถเป่า หรือส่งเสียงเป่าใส่ไมโครโฟนได้เลย)</p>
         </div>
 
-        <!-- Sweet Birthday Letter Modal -->
+        <!-- Birthday Letter Modal -->
         <div id="letter-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div class="bg-[#fefcf8] border-4 border-pink-200 rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-2xl relative text-left">
             <button onclick="closeLetter()" class="absolute top-3 right-4 text-gray-400 active:text-gray-600 text-xl font-bold">✕</button>
@@ -826,7 +739,7 @@
 
   </div>
 
-  <!-- JavaScript Full Complete Logic -->
+  <!-- JavaScript Complete Logic -->
   <script>
     let currentTab = '31oct';
     let flowerProgress = 0;
@@ -840,16 +753,24 @@
     let isMusicPlaying = false;
     let sharedAudioCtx = null;
     let currentTheme = 'normal';
-
     let pendingAction = null;
 
-    // 3D Cake Rotation State
-    let cakeRotY = 0;
-    let cakeRotX = -18;
-    let isRotatingCake = false;
-    let lastMouseX = 0, lastMouseY = 0;
+    // 3D REAL CAKE CANVAS ENGINE VARIABLES
+    let cakeCanvas, cakeCtx;
+    let cakeAngle = 0;
+    let isDraggingCake = false;
+    let lastMouseX = 0;
     let isAutoRotate = false;
-    let autoRotateTimer = null;
+    let autoRotateInterval = null;
+
+    let topCakeImg = new Image();
+    let topImgLoaded = false;
+    topCakeImg.src = 'cake.jpg';
+    topCakeImg.onload = function() { topImgLoaded = true; };
+    topCakeImg.onerror = function() {
+      topCakeImg.src = 'cake.png';
+      topCakeImg.onload = function() { topImgLoaded = true; };
+    };
 
     // DIY Freehand Drawing Engine
     let currentToolMode = 'sticker';
@@ -859,7 +780,301 @@
     let drawCanvas, drawCtx;
     let isCanvasInited = false;
 
-    // Lightbox Fullscreen Popup Engine
+    // IndexedDB & Photos Memory State
+    let db;
+    let userPhotos = [null, null, null, null, null];
+
+    function init3DCakeCanvas() {
+      cakeCanvas = document.getElementById('cake-3d-canvas');
+      if (!cakeCanvas) return;
+      cakeCtx = cakeCanvas.getContext('2d');
+
+      const startDrag = (e) => {
+        isDraggingCake = true;
+        lastMouseX = e.touches ? e.touches[0].clientX : e.clientX;
+      };
+
+      const doDrag = (e) => {
+        if (!isDraggingCake) return;
+        const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+        const delta = currentX - lastMouseX;
+        cakeAngle += delta * 0.015;
+        lastMouseX = currentX;
+      };
+
+      const stopDrag = () => { isDraggingCake = false; };
+
+      cakeCanvas.addEventListener('mousedown', startDrag);
+      window.addEventListener('mousemove', doDrag);
+      window.addEventListener('mouseup', stopDrag);
+
+      cakeCanvas.addEventListener('touchstart', startDrag, { passive: true });
+      window.addEventListener('touchmove', doDrag, { passive: true });
+      window.addEventListener('touchend', stopDrag);
+
+      cakeCanvas.addEventListener('click', (e) => {
+        if (!isCandle2Placed) placeCandleOnCake('2');
+        else if (!isCandle5Placed) placeCandleOnCake('5');
+      });
+
+      function renderLoop() {
+        draw3DCake();
+        requestAnimationFrame(renderLoop);
+      }
+      requestAnimationFrame(renderLoop);
+    }
+
+    function draw3DCake() {
+      if (!cakeCtx || !cakeCanvas) return;
+      const w = cakeCanvas.width;
+      const h = cakeCanvas.height;
+      cakeCtx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2 + 30;
+      const rx = 170; // Cake radius X
+      const ry = 55;  // Cake radius Y
+      const cakeHeight = 110;
+
+      // 1. Draw Golden Cake Plate Base
+      cakeCtx.save();
+      cakeCtx.beginPath();
+      cakeCtx.ellipse(cx, cy + cakeHeight + 15, rx + 25, ry + 12, 0, 0, Math.PI * 2);
+      const goldGrad = cakeCtx.createLinearGradient(cx - rx, 0, cx + rx, 0);
+      goldGrad.addColorStop(0, '#f59e0b');
+      goldGrad.addColorStop(0.5, '#fef08a');
+      goldGrad.addColorStop(1, '#d97706');
+      cakeCtx.fillStyle = goldGrad;
+      cakeCtx.fill();
+      cakeCtx.lineWidth = 4;
+      cakeCtx.strokeStyle = '#f59e0b';
+      cakeCtx.stroke();
+      cakeCtx.restore();
+
+      // 2. Draw Cake Cylinder Side Wall
+      cakeCtx.save();
+      const sideGrad = cakeCtx.createLinearGradient(cx - rx, 0, cx + rx, 0);
+      sideGrad.addColorStop(0, '#f472b6');
+      sideGrad.addColorStop(0.3, '#fbcfe8');
+      sideGrad.addColorStop(0.7, '#f472b6');
+      sideGrad.addColorStop(1, '#db2777');
+
+      cakeCtx.fillStyle = sideGrad;
+      cakeCtx.beginPath();
+      cakeCtx.ellipse(cx, cy + cakeHeight, rx, ry, 0, 0, Math.PI);
+      cakeCtx.lineTo(cx - rx, cy);
+      cakeCtx.ellipse(cx, cy, rx, ry, 0, Math.PI, 0, true);
+      cakeCtx.lineTo(cx + rx, cy + cakeHeight);
+      cakeCtx.closePath();
+      cakeCtx.fill();
+
+      // Side Drips & Decorative Cream Lines
+      cakeCtx.strokeStyle = '#ffffff';
+      cakeCtx.lineWidth = 6;
+      cakeCtx.beginPath();
+      cakeCtx.ellipse(cx, cy + 8, rx, ry, 0, 0, Math.PI);
+      cakeCtx.stroke();
+      cakeCtx.restore();
+
+      // 3. Draw Top Surface Circle (Projected cake.jpg Texture with 360 Angle)
+      cakeCtx.save();
+      cakeCtx.beginPath();
+      cakeCtx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      cakeCtx.clip();
+
+      if (topImgLoaded) {
+        cakeCtx.translate(cx, cy);
+        cakeCtx.scale(1, ry / rx);
+        cakeCtx.rotate(cakeAngle);
+        cakeCtx.drawImage(topCakeImg, -rx, -rx, rx * 2, rx * 2);
+      } else {
+        cakeCtx.fillStyle = '#fbcfe8';
+        cakeCtx.fill();
+      }
+      cakeCtx.restore();
+
+      // Cream Piping Pearls around Edge
+      cakeCtx.save();
+      const pearlsCount = 20;
+      for (let i = 0; i < pearlsCount; i++) {
+        let pAngle = (i / pearlsCount) * Math.PI * 2;
+        let px = cx + Math.cos(pAngle) * rx;
+        let py = cy + Math.sin(pAngle) * ry;
+        cakeCtx.beginPath();
+        cakeCtx.arc(px, py, 7, 0, Math.PI * 2);
+        cakeCtx.fillStyle = '#ffffff';
+        cakeCtx.fill();
+        cakeCtx.strokeStyle = '#f472b6';
+        cakeCtx.lineWidth = 1;
+        cakeCtx.stroke();
+      }
+      cakeCtx.restore();
+
+      // 4. Draw Placed Candles in 3D Perspective
+      if (isCandle2Placed) drawCandleOnCanvas(cx, cy, rx, ry, '2', -0.35);
+      if (isCandle5Placed) drawCandleOnCanvas(cx, cy, rx, ry, '5', 0.35);
+    }
+
+    function drawCandleOnCanvas(cx, cy, rx, ry, label, offsetRatio) {
+      let baseRad = offsetRatio * Math.PI + cakeAngle;
+      let candleX = cx + Math.cos(baseRad) * (rx * 0.55);
+      let candleY = cy + Math.sin(baseRad) * (ry * 0.55);
+
+      cakeCtx.save();
+      cakeCtx.translate(candleX, candleY - 35);
+
+      const cGrad = cakeCtx.createLinearGradient(-15, 0, 15, 0);
+      if (label === '2') {
+        cGrad.addColorStop(0, '#ec4899'); cGrad.addColorStop(1, '#f472b6');
+      } else {
+        cGrad.addColorStop(0, '#a855f7'); cGrad.addColorStop(1, '#c084fc');
+      }
+
+      cakeCtx.fillStyle = cGrad;
+      cakeCtx.beginPath();
+      cakeCtx.roundRect(-16, -20, 32, 40, 8);
+      cakeCtx.fill();
+      cakeCtx.lineWidth = 2;
+      cakeCtx.strokeStyle = '#ffffff';
+      cakeCtx.stroke();
+
+      cakeCtx.fillStyle = '#ffffff';
+      cakeCtx.font = 'bold 20px Fredoka, sans-serif';
+      cakeCtx.textAlign = 'center';
+      cakeCtx.textBaseline = 'middle';
+      cakeCtx.fillText(label, 0, 0);
+
+      cakeCtx.fillStyle = '#374151';
+      cakeCtx.fillRect(-1.5, -28, 3, 8);
+
+      if (isCandleLit && !isCandleBlown) {
+        let flick = Math.sin(Date.now() * 0.01) * 3;
+        cakeCtx.beginPath();
+        cakeCtx.ellipse(0, -42 + flick * 0.3, 8 + flick * 0.3, 15 + flick * 0.5, 0, 0, Math.PI * 2);
+        const flameGrad = cakeCtx.createRadialGradient(0, -42, 2, 0, -42, 14);
+        flameGrad.addColorStop(0, '#ffffff');
+        flameGrad.addColorStop(0.3, '#fef08a');
+        flameGrad.addColorStop(0.7, '#f97316');
+        flameGrad.addColorStop(1, '#ef4444');
+        cakeCtx.fillStyle = flameGrad;
+        cakeCtx.fill();
+      }
+
+      cakeCtx.restore();
+    }
+
+    function toggleAutoRotate() {
+      isAutoRotate = !isAutoRotate;
+      const btn = document.getElementById('auto-rotate-btn');
+      if (isAutoRotate) {
+        if (btn) btn.innerText = "🔄 หมุนเค้กอัตโนมัติ: เปิด ✨";
+        autoRotateInterval = setInterval(() => {
+          if (!isDraggingCake) cakeAngle += 0.02;
+        }, 30);
+      } else {
+        if (btn) btn.innerText = "🔄 หมุนเค้กอัตโนมัติ: ปิด";
+        clearInterval(autoRotateInterval);
+      }
+      playPopSound();
+    }
+
+    function placeCandleOnCake(num) {
+      if (num === '2') {
+        if (isCandle2Placed) return;
+        isCandle2Placed = true;
+        document.getElementById('tray-candle-2').classList.add('opacity-30', 'pointer-events-none');
+      } else if (num === '5') {
+        if (isCandle5Placed) return;
+        isCandle5Placed = true;
+        document.getElementById('tray-candle-5').classList.add('opacity-30', 'pointer-events-none');
+      }
+      playPopSound();
+      checkAllCandlesPlaced();
+    }
+
+    function checkAllCandlesPlaced() {
+      const hintText = document.getElementById('hint-text');
+      const actionBtnText = document.getElementById('action-btn-text');
+
+      if (isCandle2Placed && isCandle5Placed) {
+        const tray = document.getElementById('candle-tray');
+        if (tray) tray.classList.add('hidden');
+
+        if (!isCandleLit) {
+          if (hintText) hintText.innerHTML = "🔥 ปักเทียนเรียบร้อยแล้ว! แตะที่นี่เพื่อจุดไฟนะคะ";
+          if (actionBtnText) actionBtnText.innerText = "แตะเพื่อจุดไฟเทียนวันเกิด 🕯️🔥";
+        }
+      }
+    }
+
+    function initCandleDrag() {
+      ['2', '5'].forEach(num => {
+        const trayItem = document.getElementById(`tray-candle-${num}`);
+        if (!trayItem) return;
+
+        let isDragging = false;
+        const startDrag = () => { isDragging = true; };
+        const stopDrag = (e) => {
+          if (!isDragging) return;
+          isDragging = false;
+          placeCandleOnCake(num);
+        };
+
+        trayItem.addEventListener('mousedown', startDrag);
+        window.addEventListener('mouseup', stopDrag);
+        trayItem.addEventListener('touchstart', startDrag, { passive: true });
+        window.addEventListener('touchend', stopDrag);
+      });
+    }
+
+    function lightCandles() {
+      if (!isCandle2Placed || !isCandle5Placed) {
+        alert("🕯️ กรุณาปักเทียนเลข 2 และ 5 บนหน้าเค้กให้ครบก่อนนะคะ!");
+        return;
+      }
+      if (isCandleLit || isCandleBlown) return;
+
+      isCandleLit = true;
+      const hintText = document.getElementById('hint-text');
+      if (hintText) hintText.innerHTML = "<span>✨ เทียนถูกจุดเรียบร้อยแล้ว! เป่าเทียนได้เลยนะคะ 🌬️</span>";
+
+      const actionBtnText = document.getElementById('action-btn-text');
+      if (actionBtnText) actionBtnText.innerText = "กดเพื่อเป่าเทียนวันเกิด 🌬️✨";
+
+      playPopSound();
+    }
+
+    function handleCandleAction() {
+      if (!isCandle2Placed || !isCandle5Placed) {
+        alert("🕯️ กรุณาปักเทียนเลข 2 และ 5 บนหน้าเค้กให้ครบก่อนนะคะ!");
+        return;
+      }
+      if (!isCandleLit) lightCandles();
+      else blowCandles();
+    }
+
+    function blowCandles() {
+      if (!isCandleLit || isCandleBlown) return;
+
+      isCandleBlown = true;
+      triggerConfetti();
+
+      const actionBtnText = document.getElementById('action-btn-text');
+      const actionBtn = document.getElementById('action-candle-btn');
+      if (actionBtnText) actionBtnText.innerText = 'เป่าเทียนเรียบร้อยแล้ว ✨';
+      if (actionBtn) actionBtn.className = 'bg-gray-400 text-white font-bold text-xs sm:text-base px-6 py-2.5 rounded-full cursor-default mx-auto font-cute';
+
+      setTimeout(() => {
+        document.getElementById('letter-modal').classList.remove('hidden');
+      }, 800);
+    }
+
+    function closeLetter() { document.getElementById('letter-modal').classList.add('hidden'); }
+
+    function triggerConfetti() {
+      confetti({ particleCount: 110, spread: 80, origin: { y: 0.6 }, colors: ['#ff8800', '#a855f7', '#ec4899', '#fde047'] });
+    }
+
     function openLightbox(mediaSrc, isVideo = false, overlaySrc = null) {
       const modal = document.getElementById('lightbox-modal');
       const imgElem = document.getElementById('lightbox-img');
@@ -872,22 +1087,17 @@
         imgElem.classList.add('hidden');
         videoElem.src = mediaSrc;
         videoElem.classList.remove('hidden');
-        videoElem.play().catch(e => console.log("Lightbox Video Error:", e));
-
+        videoElem.play().catch(e => console.log(e));
         if (overlaySrc && overlayElem) {
           overlayElem.src = overlaySrc;
           overlayElem.classList.remove('hidden');
         } else if (overlayElem) {
           overlayElem.classList.add('hidden');
-          overlayElem.src = '';
         }
       } else {
         videoElem.classList.add('hidden');
         videoElem.pause();
-        if (overlayElem) {
-          overlayElem.classList.add('hidden');
-          overlayElem.src = '';
-        }
+        if (overlayElem) overlayElem.classList.add('hidden');
         imgElem.src = mediaSrc;
         imgElem.classList.remove('hidden');
       }
@@ -899,34 +1109,13 @@
     function closeLightbox() {
       const modal = document.getElementById('lightbox-modal');
       const videoElem = document.getElementById('lightbox-video');
-      const overlayElem = document.getElementById('lightbox-overlay');
-      if (modal) {
-        modal.classList.add('hidden');
-      }
-      if (videoElem) {
-        videoElem.pause();
-        videoElem.src = '';
-      }
-      if (overlayElem) {
-        overlayElem.classList.add('hidden');
-        overlayElem.src = '';
-      }
+      if (modal) modal.classList.add('hidden');
+      if (videoElem) { videoElem.pause(); videoElem.src = ''; }
     }
 
-    function handleCoverClick() {
-      const overlay = localStorage.getItem('hbd_cover_overlay');
-      openLightbox('cover.mp4', true, overlay);
-    }
-
-    function handle2024VidClick() {
-      const overlay = localStorage.getItem('hbd_2024_vid_overlay');
-      openLightbox('hhbd.mp4', true, overlay);
-    }
-
-    function handle2025MemClick() {
-      const overlay = localStorage.getItem('hbd_2025_overlay');
-      openLightbox('2025.mp4', true, overlay);
-    }
+    function handleCoverClick() { openLightbox('cover.mp4', true, localStorage.getItem('hbd_cover_overlay')); }
+    function handle2024VidClick() { openLightbox('hhbd.mp4', true, localStorage.getItem('hbd_2024_vid_overlay')); }
+    function handle2025MemClick() { openLightbox('2025.mp4', true, localStorage.getItem('hbd_2025_overlay')); }
 
     function handleDiyFrameClick(event) {
       if (currentToolMode === 'draw') return;
@@ -951,11 +1140,7 @@
     }
 
     function toggleTheme() {
-      if (currentTheme === 'normal') {
-        setTheme('halloween');
-      } else {
-        setTheme('normal');
-      }
+      setTheme(currentTheme === 'normal' ? 'halloween' : 'normal');
     }
 
     function setTheme(theme) {
@@ -975,265 +1160,86 @@
       }
     }
 
-    // 3D CAKE ROTATION ENGINE (360 DEGREES)
-    function init3DCakeControls() {
-      const stage = document.getElementById('cake-3d-stage');
-      const wrapper = document.getElementById('cake-3d-wrapper');
-      if (!stage || !wrapper) return;
-
-      const updateTransform = () => {
-        wrapper.style.transform = `rotateX(${cakeRotX}deg) rotateY(${cakeRotY}deg)`;
-      };
-
-      const startRotate = (e) => {
-        isRotatingCake = true;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        lastMouseX = clientX;
-        lastMouseY = clientY;
-      };
-
-      const doRotate = (e) => {
-        if (!isRotatingCake) return;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-        const deltaX = clientX - lastMouseX;
-        const deltaY = clientY - lastMouseY;
-
-        cakeRotY += deltaX * 0.8;
-        cakeRotX = Math.max(-45, Math.min(10, cakeRotX - deltaY * 0.4));
-
-        lastMouseX = clientX;
-        lastMouseY = clientY;
-
-        updateTransform();
-      };
-
-      const stopRotate = () => {
-        isRotatingCake = false;
-      };
-
-      stage.addEventListener('mousedown', startRotate);
-      window.addEventListener('mousemove', doRotate);
-      window.addEventListener('mouseup', stopRotate);
-
-      stage.addEventListener('touchstart', startRotate, { passive: true });
-      window.addEventListener('touchmove', doRotate, { passive: true });
-      window.addEventListener('touchend', stopRotate);
-
-      // Tap on top surface directly to place candle
-      const topSurface = document.getElementById('cake-top-surface');
-      if (topSurface) {
-        topSurface.addEventListener('click', (e) => {
-          if (!isCandle2Placed) {
-            placeCandleOnCake('2', e);
-          } else if (!isCandle5Placed) {
-            placeCandleOnCake('5', e);
-          }
-        });
+    function switchTab(tabId) {
+      if (tabId === '2026' && !is2026Unlocked) {
+        document.getElementById('tab-2026-locked-overlay').classList.remove('hidden');
       }
-    }
-
-    function toggleAutoRotate() {
-      isAutoRotate = !isAutoRotate;
-      const btn = document.getElementById('auto-rotate-btn');
-      const wrapper = document.getElementById('cake-3d-wrapper');
-
-      if (isAutoRotate) {
-        if (btn) btn.innerText = "🔄 หมุนเค้กอัตโนมัติ: เปิด ✨";
-        autoRotateTimer = setInterval(() => {
-          if (!isRotatingCake) {
-            cakeRotY = (cakeRotY + 1.5) % 360;
-            if (wrapper) wrapper.style.transform = `rotateX(${cakeRotX}deg) rotateY(${cakeRotY}deg)`;
-          }
-        }, 30);
-      } else {
-        if (btn) btn.innerText = "🔄 หมุนเค้กอัตโนมัติ: ปิด";
-        clearInterval(autoRotateTimer);
-      }
-      playPopSound();
-    }
-
-    // CANDLE PLACING ON 3D CAKE SURFACE
-    function placeCandleOnCake(num, event = null) {
-      const surface = document.getElementById('cake-top-surface');
-      let clickXPercent = 50, clickYPercent = 35;
-
-      if (event && surface) {
-        const rect = surface.getBoundingClientRect();
-        clickXPercent = Math.max(20, Math.min(80, ((event.clientX - rect.left) / rect.width) * 100));
-        clickYPercent = Math.max(20, Math.min(70, ((event.clientY - rect.top) / rect.height) * 100));
-      }
-
-      if (num === '2') {
-        if (isCandle2Placed) return;
-        isCandle2Placed = true;
-        const elem2 = document.getElementById('cake-candle-2');
-        if (elem2) {
-          if (event) {
-            elem2.style.left = `${clickXPercent}%`;
-            elem2.style.top = `${clickYPercent}%`;
-          }
-          elem2.classList.remove('hidden');
-          elem2.classList.add('flex');
-        }
-        document.getElementById('tray-candle-2').classList.add('opacity-30', 'pointer-events-none');
-      } else if (num === '5') {
-        if (isCandle5Placed) return;
-        isCandle5Placed = true;
-        const elem5 = document.getElementById('cake-candle-5');
-        if (elem5) {
-          if (event) {
-            elem5.style.left = `${clickXPercent}%`;
-            elem5.style.top = `${clickYPercent}%`;
-          }
-          elem5.classList.remove('hidden');
-          elem5.classList.add('flex');
-        }
-        document.getElementById('tray-candle-5').classList.add('opacity-30', 'pointer-events-none');
-      }
-
-      playPopSound();
-      checkAllCandlesPlaced();
-    }
-
-    function checkAllCandlesPlaced() {
-      const hintText = document.getElementById('hint-text');
-      const lightHint = document.getElementById('light-hint');
-      const actionBtnText = document.getElementById('action-btn-text');
-
-      if (isCandle2Placed && isCandle5Placed) {
-        const tray = document.getElementById('candle-tray');
-        if (tray) tray.classList.add('hidden');
-
-        if (!isCandleLit) {
-          if (hintText) hintText.innerHTML = "🔥 ปักเทียนเรียบร้อยแล้ว! แตะที่นี่หรือกดปุ่มด้านล่างเพื่อจุดไฟนะคะ";
-          if (lightHint) lightHint.className = "my-1.5 bg-amber-100/95 backdrop-blur border-2 border-amber-300 text-amber-800 text-xs sm:text-sm font-bold font-cute px-5 py-2 rounded-full shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 animate-bounce z-30";
-          if (actionBtnText) actionBtnText.innerText = "แตะเพื่อจุดไฟเทียนวันเกิด 🕯️🔥";
-        }
-      } else {
-        const remaining = !isCandle2Placed && !isCandle5Placed ? "เลข 2 และ 5" : (!isCandle2Placed ? "เลข 2" : "เลข 5");
-        if (hintText) hintText.innerText = `🕯️ 1. ลากหรือแตะเทียน${remaining} มาปักบนเค้กให้ครบนะ!`;
-      }
-    }
-
-    function initCandleDrag() {
-      ['2', '5'].forEach(num => {
-        const trayItem = document.getElementById(`tray-candle-${num}`);
-        if (!trayItem) return;
-
-        let isDragging = false;
-
-        const startDrag = () => {
-          if ((num === '2' && isCandle2Placed) || (num === '5' && isCandle5Placed)) return;
-          isDragging = true;
-        };
-
-        const stopDrag = (e) => {
-          if (!isDragging) return;
-          isDragging = false;
-          
-          const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-          const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-
-          const stage = document.getElementById('cake-3d-stage');
-          if (stage) {
-            const rect = stage.getBoundingClientRect();
-            if (clientX >= rect.left - 40 && clientX <= rect.right + 40 && clientY >= rect.top - 40 && clientY <= rect.bottom + 40) {
-              placeCandleOnCake(num);
-            }
-          }
-        };
-
-        trayItem.addEventListener('mousedown', startDrag);
-        window.addEventListener('mouseup', stopDrag);
-
-        trayItem.addEventListener('touchstart', startDrag, { passive: true });
-        window.addEventListener('touchend', stopDrag);
+      currentTab = tabId;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('tab-btn-active', 'font-semibold');
+        btn.classList.add('tab-btn-inactive');
       });
-    }
-
-    function lightCandles() {
-      if (!isCandle2Placed || !isCandle5Placed) {
-        alert("🕯️ กรุณาปักเทียนเลข 2 และ 5 บนหน้าเค้กให้ครบก่อนนะคะ!");
-        return;
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('tab-btn-active', 'font-semibold');
+        activeBtn.classList.remove('tab-btn-inactive');
       }
+      if (tabId === '2025') startHeartSpawning();
+      else stopHeartSpawning();
 
-      if (isCandleLit || isCandleBlown) return;
-
-      isCandleLit = true;
-      document.getElementById('flame-1').classList.remove('hidden');
-      document.getElementById('flame-2').classList.remove('hidden');
-
-      const hintText = document.getElementById('hint-text');
-      const lightHint = document.getElementById('light-hint');
-      if (lightHint) {
-        lightHint.className = "my-1.5 bg-pink-100/95 backdrop-blur border-2 border-pink-300 text-pink-700 text-xs sm:text-sm font-bold font-cute px-5 py-2 rounded-full shadow-md flex items-center gap-1.5 z-30";
-      }
-      if (hintText) {
-        hintText.innerHTML = "<span>✨ เทียนถูกจุดเรียบร้อยแล้ว! เป่าเทียนได้เลยนะคะ 🌬️</span>";
-      }
-
-      const actionBtn = document.getElementById('action-candle-btn');
-      const actionBtnText = document.getElementById('action-btn-text');
-      if (actionBtn) {
-        actionBtn.className = "bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-xl active:scale-95 transition-all flex items-center gap-2 mx-auto font-cute";
-      }
-      if (actionBtnText) {
-        actionBtnText.innerText = "กดเพื่อเป่าเทียนวันเกิด 🌬️✨";
-      }
-
-      playPopSound();
-    }
-
-    function handleCandleAction() {
-      if (!isCandle2Placed || !isCandle5Placed) {
-        alert("🕯️ กรุณาปักเทียนเลข 2 และ 5 บนหน้าเค้กให้ครบก่อนนะคะ!");
-        return;
-      }
-
-      if (!isCandleLit) {
-        lightCandles();
-      } else {
-        blowCandles();
+      if (tabId === 'diy_board') {
+        changeDiyPhotoSource();
+        initDrawingCanvas();
       }
     }
 
-    function blowCandles() {
-      if (!isCandleLit || isCandleBlown) return;
+    function startHeartSpawning() {
+      if (heartInterval) return;
+      heartInterval = setInterval(() => createFloatingHeart(), 600);
+    }
+    function stopHeartSpawning() { clearInterval(heartInterval); heartInterval = null; }
 
-      isCandleBlown = true;
-      document.getElementById('flame-1').style.display = 'none';
-      document.getElementById('flame-2').style.display = 'none';
+    function createFloatingHeart() {
+      const container = document.getElementById('hearts-container');
+      if (!container || currentTab !== '2025') return;
+      const heart = document.createElement('div');
+      heart.className = 'floating-heart text-4xl';
+      heart.innerText = '💖';
+      heart.style.left = Math.random() * 80 + 5 + '%';
+      heart.style.bottom = '-20px';
+      heart.style.animationDuration = (Math.random() * 2 + 4.5) + 's';
 
-      triggerConfetti();
+      let isPopped = false;
+      const handleTouch = (e) => {
+        if (isPopped) return; isPopped = true;
+        if (e.cancelable) e.preventDefault();
+        playPopSound(); addFlowerProgress(10);
+        heart.style.transform = 'scale(1.8)'; heart.style.opacity = '0';
+        setTimeout(() => heart.remove(), 150);
+      };
+      heart.addEventListener('touchstart', handleTouch, { passive: false });
+      heart.addEventListener('click', handleTouch);
+      container.appendChild(heart);
+      setTimeout(() => { if (heart.parentNode) heart.remove(); }, 7000);
+    }
 
-      const actionBtnText = document.getElementById('action-btn-text');
-      const actionBtn = document.getElementById('action-candle-btn');
-      if (actionBtnText) actionBtnText.innerText = 'เป่าเทียนเรียบร้อยแล้ว ✨';
-      if (actionBtn) {
-        actionBtn.className = 'bg-gray-400 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full cursor-default mx-auto font-cute';
+    function addFlowerProgress(amount) {
+      if (flowerProgress >= 100) return;
+      flowerProgress = Math.min(100, flowerProgress + amount);
+      document.getElementById('progress-text').innerText = `${flowerProgress}%`;
+      document.getElementById('progress-bar').style.width = `${flowerProgress}%`;
+      const flowerImg = document.getElementById('flower-img');
+      flowerImg.style.filter = `grayscale(${100 - flowerProgress}%) opacity(${0.3 + (flowerProgress * 0.007)})`;
+      if (flowerProgress >= 100) {
+        setTimeout(() => {
+          document.getElementById('game-complete-modal').classList.remove('hidden');
+          triggerConfetti();
+        }, 300);
       }
-
-      setTimeout(() => {
-        document.getElementById('letter-modal').classList.remove('hidden');
-      }, 800);
     }
 
-    function closeLetter() {
-      document.getElementById('letter-modal').classList.add('hidden');
+    function unlockAndGo2026() {
+      is2026Unlocked = true;
+      document.getElementById('game-complete-modal').classList.add('hidden');
+      document.getElementById('lock-icon-2026').innerText = '✨';
+      document.getElementById('lock-icon-2026').className = 'text-[10px] bg-green-100 text-green-600 px-1 py-0.5 rounded-full';
+      document.getElementById('tab-2026-locked-overlay').classList.add('hidden');
+      switchTab('2026');
     }
 
-    function triggerConfetti() {
-      confetti({
-        particleCount: 110,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ['#ff8800', '#a855f7', '#ec4899', '#fde047']
-      });
-    }
-
+    // DIY Canvas Engine Functions
     function initDrawingCanvas() {
       drawCanvas = document.getElementById('diy-drawing-canvas');
       if (!drawCanvas) return;
@@ -1646,9 +1652,6 @@
       pendingAction = null;
     }
 
-    let db;
-    let userPhotos = [null, null, null, null, null];
-
     function initIndexedDB() {
       const request = indexedDB.open('HbdMemoriesDB', 1);
       request.onupgradeneeded = function(e) {
@@ -1767,169 +1770,6 @@
       }, `ยืนยันการลบความทรงจำที่ ${index + 1} ใช่ไหมคะ?`);
     }
 
-    function playPopSound() {
-      try {
-        if (!sharedAudioCtx) {
-          sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (sharedAudioCtx.state === 'suspended') {
-          sharedAudioCtx.resume();
-        }
-
-        const osc = sharedAudioCtx.createOscillator();
-        const gain = sharedAudioCtx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(800, sharedAudioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(300, sharedAudioCtx.currentTime + 0.08);
-
-        gain.gain.setValueAtTime(0.4, sharedAudioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, sharedAudioCtx.currentTime + 0.08);
-
-        osc.connect(gain);
-        gain.connect(sharedAudioCtx.destination);
-
-        osc.start();
-        osc.stop(sharedAudioCtx.currentTime + 0.08);
-      } catch (err) {
-        console.log("Audio Pop error:", err);
-      }
-    }
-
-    function toggleMusic(e) {
-      if (e) e.stopPropagation();
-      const audio = document.getElementById('bg-music');
-      const icon = document.getElementById('music-icon');
-      
-      if (isMusicPlaying) {
-        audio.pause();
-        isMusicPlaying = false;
-        icon.innerText = '🔇';
-      } else {
-        audio.play().then(() => {
-          isMusicPlaying = true;
-          icon.innerText = '🎵';
-        });
-      }
-    }
-
-    function switchTab(tabId) {
-      if (tabId === '2026' && !is2026Unlocked) {
-        document.getElementById('tab-2026-locked-overlay').classList.remove('hidden');
-      }
-
-      currentTab = tabId;
-
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('tab-btn-active', 'font-semibold', 'shadow-sm');
-        btn.classList.add('tab-btn-inactive');
-      });
-
-      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
-      if (activeBtn) {
-        activeBtn.classList.add('tab-btn-active', 'font-semibold', 'shadow-sm');
-        activeBtn.classList.remove('tab-btn-inactive');
-      }
-
-      if (tabId === '2025') {
-        startHeartSpawning();
-      } else {
-        stopHeartSpawning();
-      }
-
-      if (tabId === 'diy_board') {
-        changeDiyPhotoSource();
-        initDrawingCanvas();
-      }
-    }
-
-    function startHeartSpawning() {
-      if (heartInterval) return;
-      heartInterval = setInterval(() => {
-        createFloatingHeart();
-      }, 600);
-    }
-
-    function stopHeartSpawning() {
-      clearInterval(heartInterval);
-      heartInterval = null;
-    }
-
-    function createFloatingHeart() {
-      const container = document.getElementById('hearts-container');
-      if (!container || currentTab !== '2025') return;
-
-      const heart = document.createElement('div');
-      const heartTypes = currentTheme === 'halloween' ? ['💖', '🎃', '👻', '💕', '🍭'] : ['💖', '💕', '💗', '🌸', '💖'];
-      const randomType = heartTypes[Math.floor(Math.random() * heartTypes.length)];
-      
-      heart.className = 'floating-heart text-4xl sm:text-5xl';
-      heart.innerText = randomType;
-      heart.style.left = Math.random() * 80 + 5 + '%';
-      heart.style.bottom = '-20px';
-      heart.style.animationDuration = (Math.random() * 2 + 4.5) + 's';
-
-      let isPopped = false;
-      const handleTouchOrClick = (e) => {
-        if (isPopped) return;
-        isPopped = true;
-        if (e.cancelable) e.preventDefault();
-        e.stopPropagation();
-        
-        playPopSound();
-        addFlowerProgress(10);
-        
-        heart.style.transform = 'scale(1.8)';
-        heart.style.opacity = '0';
-        setTimeout(() => heart.remove(), 150);
-      };
-
-      heart.addEventListener('touchstart', handleTouchOrClick, { passive: false });
-      heart.addEventListener('click', handleTouchOrClick);
-
-      container.appendChild(heart);
-
-      setTimeout(() => {
-        if (heart.parentNode) heart.remove();
-      }, 7000);
-    }
-
-    function addFlowerProgress(amount) {
-      if (flowerProgress >= 100) return;
-
-      flowerProgress = Math.min(100, flowerProgress + amount);
-      
-      document.getElementById('progress-text').innerText = `${flowerProgress}%`;
-      document.getElementById('progress-bar').style.width = `${flowerProgress}%`;
-
-      const flowerImg = document.getElementById('flower-img');
-      const flowerGlow = document.getElementById('flower-glow');
-      
-      const grayscaleVal = 100 - flowerProgress;
-      const opacityVal = 0.3 + (flowerProgress * 0.007);
-      
-      flowerImg.style.filter = `grayscale(${grayscaleVal}%) opacity(${opacityVal})`;
-      flowerGlow.style.backgroundColor = `rgba(244, 114, 182, ${flowerProgress / 200})`;
-
-      if (flowerProgress >= 100) {
-        setTimeout(() => {
-          document.getElementById('game-complete-modal').classList.remove('hidden');
-          triggerConfetti();
-        }, 300);
-      }
-    }
-
-    function unlockAndGo2026() {
-      is2026Unlocked = true;
-      document.getElementById('game-complete-modal').classList.add('hidden');
-      document.getElementById('lock-icon-2026').innerText = '✨';
-      document.getElementById('lock-icon-2026').className = 'text-[10px] sm:text-xs bg-green-100 text-green-600 px-1 py-0.5 rounded-full';
-      document.getElementById('tab-2026-locked-overlay').classList.add('hidden');
-      switchTab('2026');
-    }
-
     function applyOverrides() {
       const coverOverlay = localStorage.getItem('hbd_cover_overlay');
       const coverVid = document.getElementById('cover-video');
@@ -1994,55 +1834,61 @@
       }
     }
 
+    function playPopSound() {
+      try {
+        if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume();
+        const osc = sharedAudioCtx.createOscillator();
+        const gain = sharedAudioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, sharedAudioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, sharedAudioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.4, sharedAudioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, sharedAudioCtx.currentTime + 0.08);
+        osc.connect(gain); gain.connect(sharedAudioCtx.destination);
+        osc.start(); osc.stop(sharedAudioCtx.currentTime + 0.08);
+      } catch (err) {}
+    }
+
+    function toggleMusic(e) {
+      if (e) e.stopPropagation();
+      const audio = document.getElementById('bg-music');
+      const icon = document.getElementById('music-icon');
+      if (isMusicPlaying) {
+        audio.pause(); isMusicPlaying = false; icon.innerText = '🔇';
+      } else {
+        audio.play().then(() => { isMusicPlaying = true; icon.innerText = '🎵'; });
+      }
+    }
+
     async function initMicrophone() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
-        const unlockAudio = () => {
-          if (audioContext.state === 'suspended') {
-            audioContext.resume();
-          }
-          document.removeEventListener('touchstart', unlockAudio);
-          document.removeEventListener('click', unlockAudio);
-        };
-        document.addEventListener('touchstart', unlockAudio);
-        document.addEventListener('click', unlockAudio);
-
         const analyser = audioContext.createAnalyser();
         const microphone = audioContext.createMediaStreamSource(stream);
-        microphone.connect(analyser);
-        analyser.fftSize = 256;
+        microphone.connect(analyser); analyser.fftSize = 256;
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
         function checkBlow() {
           if (isCandleBlown) return;
           analyser.getByteFrequencyData(dataArray);
           let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            sum += dataArray[i];
-          }
-          let average = sum / dataArray.length;
-          
-          if (average > 65 && currentTab === '2026' && isCandleLit) {
-            blowCandles();
-          }
+          for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+          if ((sum / dataArray.length) > 65 && currentTab === '2026' && isCandleLit) blowCandles();
           requestAnimationFrame(checkBlow);
         }
         checkBlow();
-      } catch (err) {
-        // Fallback for mic
-      }
+      } catch (err) {}
     }
 
     window.onload = function() {
-      const savedTheme = localStorage.getItem('hbd_theme') || 'normal';
-      setTheme(savedTheme);
+      setTheme(localStorage.getItem('hbd_theme') || 'normal');
       applyOverrides();
-      initMicrophone();
       initIndexedDB();
+      initMicrophone();
       initCandleDrag();
-      init3DCakeControls();
+      init3DCakeCanvas();
     };
   </script>
 </body>
