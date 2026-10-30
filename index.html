@@ -627,7 +627,7 @@
         </div>
       </div>
 
-      <!-- ================= TAB 2026 (3D CYLINDER CAKE CANVASES ENGINE) ================= -->
+      <!-- ================= TAB 2026 (HIGH-DETAIL 3D CAKE ENGINE) ================= -->
       <div id="tab-2026" class="tab-content hidden p-3 sm:p-6 flex-1 flex flex-col items-center justify-between relative min-h-[560px] overflow-hidden select-none">
         
         <div id="tab-2026-locked-overlay" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 flex flex-col items-center justify-center p-6 text-center">
@@ -643,7 +643,7 @@
 
         <div class="text-center z-10">
           <h2 class="text-2xl sm:text-4xl font-extrabold text-pink-600 font-serif-italic drop-shadow-sm">Happy 25th Birthday!</h2>
-          <p class="text-xs sm:text-sm text-pink-800/80 mt-1 font-cute">ลากเทียน 2 และ 5 ด้านล่างมาปักบนเค้ก แล้วลากหมุนเค้กได้ 360° เลยนะ ✨🎃</p>
+          <p class="text-xs sm:text-sm text-pink-800/80 mt-1 font-cute">ลากเทียน 2 และ 5 ด้านล่างมาปักบนเค้ก แล้วหมุนดูเค้กสตรอว์เบอร์รี่ 360° ได้เลยน้า 🍓✨</p>
         </div>
 
         <!-- Hint Banner -->
@@ -651,9 +651,9 @@
           <span id="hint-text">🕯️ 1. ลากหรือแตะเทียนเลข 2 และ 5 มาปักบนเค้กก่อนน้า!</span>
         </div>
 
-        <!-- 3D CANVAS REAL CYLINDER CAKE -->
-        <div class="relative my-auto flex items-center justify-center w-full max-w-md h-[270px] sm:h-[310px]">
-          <canvas id="cake-3d-canvas" class="w-full h-full cursor-grab active:cursor-grabbing z-20" width="600" height="420"></canvas>
+        <!-- 3D CANVAS REALISTIC CAKE ENGINE -->
+        <div class="relative my-auto flex items-center justify-center w-full max-w-md h-[280px] sm:h-[320px]">
+          <canvas id="cake-3d-canvas" class="w-full h-full cursor-grab active:cursor-grabbing z-20" width="600" height="440"></canvas>
         </div>
 
         <!-- Rotation & Auto Controls -->
@@ -755,7 +755,7 @@
     let currentTheme = 'normal';
     let pendingAction = null;
 
-    // 3D REAL CAKE CANVAS ENGINE VARIABLES
+    // HIGH-DETAIL 3D REALISTIC CAKE CANVAS ENGINE
     let cakeCanvas, cakeCtx;
     let cakeAngle = 0;
     let isDraggingCake = false;
@@ -831,35 +831,47 @@
       cakeCtx.clearRect(0, 0, w, h);
 
       const cx = w / 2;
-      const cy = h / 2 + 30;
-      const rx = 170; // Cake radius X
-      const ry = 55;  // Cake radius Y
-      const cakeHeight = 110;
+      const cy = h / 2 + 25;
+      const rx = 165; // Cake radius X
+      const ry = 52;  // Cake radius Y
+      const cakeHeight = 115;
 
-      // 1. Draw Golden Cake Plate Base
+      // 0. Ambient Drop Shadow Under Plate
+      cakeCtx.save();
+      cakeCtx.beginPath();
+      cakeCtx.ellipse(cx, cy + cakeHeight + 25, rx + 30, ry + 15, 0, 0, Math.PI * 2);
+      cakeCtx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+      cakeCtx.filter = 'blur(12px)';
+      cakeCtx.fill();
+      cakeCtx.restore();
+
+      // 1. Elegant Gold/Marble Stand Base
       cakeCtx.save();
       cakeCtx.beginPath();
       cakeCtx.ellipse(cx, cy + cakeHeight + 15, rx + 25, ry + 12, 0, 0, Math.PI * 2);
       const goldGrad = cakeCtx.createLinearGradient(cx - rx, 0, cx + rx, 0);
-      goldGrad.addColorStop(0, '#f59e0b');
-      goldGrad.addColorStop(0.5, '#fef08a');
-      goldGrad.addColorStop(1, '#d97706');
+      goldGrad.addColorStop(0, '#d97706');
+      goldGrad.addColorStop(0.3, '#fef08a');
+      goldGrad.addColorStop(0.6, '#f59e0b');
+      goldGrad.addColorStop(1, '#b45309');
       cakeCtx.fillStyle = goldGrad;
       cakeCtx.fill();
-      cakeCtx.lineWidth = 4;
-      cakeCtx.strokeStyle = '#f59e0b';
+      cakeCtx.lineWidth = 3;
+      cakeCtx.strokeStyle = '#fef08a';
       cakeCtx.stroke();
       cakeCtx.restore();
 
-      // 2. Draw Cake Cylinder Side Wall
+      // 2. Multi-tier Cream Cake Side Wall with Pastel Gradient & Cream Layer
       cakeCtx.save();
-      const sideGrad = cakeCtx.createLinearGradient(cx - rx, 0, cx + rx, 0);
-      sideGrad.addColorStop(0, '#f472b6');
-      sideGrad.addColorStop(0.3, '#fbcfe8');
-      sideGrad.addColorStop(0.7, '#f472b6');
-      sideGrad.addColorStop(1, '#db2777');
+      const cakeSideGrad = cakeCtx.createLinearGradient(cx - rx, 0, cx + rx, 0);
+      cakeSideGrad.addColorStop(0, '#f43f5e');   // Deep strawberry pink shadow
+      cakeSideGrad.addColorStop(0.25, '#fda4af'); // Soft strawberry pink
+      cakeSideGrad.addColorStop(0.55, '#fff1f2'); // Vanilla cream highlight
+      cakeSideGrad.addColorStop(0.85, '#f472b6'); // Rose pink
+      cakeSideGrad.addColorStop(1, '#e11d48');   // Right shadow
 
-      cakeCtx.fillStyle = sideGrad;
+      // Outer Cake Cylinder Shape
+      cakeCtx.fillStyle = cakeSideGrad;
       cakeCtx.beginPath();
       cakeCtx.ellipse(cx, cy + cakeHeight, rx, ry, 0, 0, Math.PI);
       cakeCtx.lineTo(cx - rx, cy);
@@ -868,15 +880,29 @@
       cakeCtx.closePath();
       cakeCtx.fill();
 
-      // Side Drips & Decorative Cream Lines
-      cakeCtx.strokeStyle = '#ffffff';
-      cakeCtx.lineWidth = 6;
+      // Cream Filling Middle Layer Line
       cakeCtx.beginPath();
-      cakeCtx.ellipse(cx, cy + 8, rx, ry, 0, 0, Math.PI);
+      cakeCtx.ellipse(cx, cy + (cakeHeight / 2), rx + 0.5, ry + 0.5, 0, 0, Math.PI);
+      cakeCtx.strokeStyle = '#fffaf0';
+      cakeCtx.lineWidth = 6;
       cakeCtx.stroke();
+
+      // Cream Drips (Wavy Scalloped Drips around top edge)
+      cakeCtx.fillStyle = '#ffffff';
+      const dripCount = 18;
+      for (let i = 0; i < dripCount; i++) {
+        let dripAngle = (i / dripCount) * Math.PI;
+        let dx = cx + Math.cos(dripAngle) * rx;
+        let dy = cy + Math.sin(dripAngle) * ry;
+        let dripLen = 12 + Math.sin(i * 2.5 + cakeAngle) * 8;
+
+        cakeCtx.beginPath();
+        cakeCtx.arc(dx, dy + dripLen / 2, 9, 0, Math.PI);
+        cakeCtx.fill();
+      }
       cakeCtx.restore();
 
-      // 3. Draw Top Surface Circle (Projected cake.jpg Texture with 360 Angle)
+      // 3. Top Surface Cream Disk with Pattern / Photo
       cakeCtx.save();
       cakeCtx.beginPath();
       cakeCtx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
@@ -888,72 +914,158 @@
         cakeCtx.rotate(cakeAngle);
         cakeCtx.drawImage(topCakeImg, -rx, -rx, rx * 2, rx * 2);
       } else {
-        cakeCtx.fillStyle = '#fbcfe8';
+        const topGrad = cakeCtx.createRadialGradient(cx, cy, 10, cx, cy, rx);
+        topGrad.addColorStop(0, '#fff5f7');
+        topGrad.addColorStop(1, '#fbcfe8');
+        cakeCtx.fillStyle = topGrad;
         cakeCtx.fill();
       }
       cakeCtx.restore();
 
-      // Cream Piping Pearls around Edge
-      cakeCtx.save();
-      const pearlsCount = 20;
-      for (let i = 0; i < pearlsCount; i++) {
-        let pAngle = (i / pearlsCount) * Math.PI * 2;
-        let px = cx + Math.cos(pAngle) * rx;
-        let py = cy + Math.sin(pAngle) * ry;
-        cakeCtx.beginPath();
-        cakeCtx.arc(px, py, 7, 0, Math.PI * 2);
-        cakeCtx.fillStyle = '#ffffff';
-        cakeCtx.fill();
-        cakeCtx.strokeStyle = '#f472b6';
-        cakeCtx.lineWidth = 1;
-        cakeCtx.stroke();
-      }
-      cakeCtx.restore();
+      // 4. Render 3D Rotating Decor Elements (Depth Sorted)
+      // Items list: Cream Piping Rosettes, Strawberries, Sprinkles, Candies & Candles
+      let renderList = [];
 
-      // 4. Draw Placed Candles in 3D Perspective
-      if (isCandle2Placed) drawCandleOnCanvas(cx, cy, rx, ry, '2', -0.35);
-      if (isCandle5Placed) drawCandleOnCanvas(cx, cy, rx, ry, '5', 0.35);
+      // A. Cream Piping Swirls & Strawberries around top perimeter
+      const decorCount = 10;
+      for (let i = 0; i < decorCount; i++) {
+        let angle = (i / decorCount) * Math.PI * 2 + cakeAngle;
+        let x = cx + Math.cos(angle) * (rx * 0.88);
+        let y = cy + Math.sin(angle) * (ry * 0.88);
+        let z = Math.sin(angle); // Depth factor (-1 back, 1 front)
+
+        renderList.push({
+          type: 'rosette_strawberry',
+          x: x, y: y, z: z,
+          isStrawberry: (i % 2 === 0)
+        });
+      }
+
+      // B. Rainbow Sprinkles on Top
+      for (let i = 0; i < 12; i++) {
+        let angle = (i * 0.52) + cakeAngle;
+        let distRatio = 0.3 + (i % 4) * 0.15;
+        let x = cx + Math.cos(angle) * (rx * distRatio);
+        let y = cy + Math.sin(angle) * (ry * distRatio);
+        let z = Math.sin(angle) * distRatio;
+
+        renderList.push({
+          type: 'sprinkle',
+          x: x, y: y, z: z,
+          color: ['#ff8800', '#ec4899', '#a855f7', '#22c55e', '#3b82f6'][i % 5]
+        });
+      }
+
+      // C. Placed Candles
+      if (isCandle2Placed) {
+        let baseRad = -0.35 * Math.PI + cakeAngle;
+        let x = cx + Math.cos(baseRad) * (rx * 0.5);
+        let y = cy + Math.sin(baseRad) * (ry * 0.5);
+        let z = Math.sin(baseRad);
+        renderList.push({ type: 'candle', label: '2', x: x, y: y, z: z });
+      }
+
+      if (isCandle5Placed) {
+        let baseRad = 0.35 * Math.PI + cakeAngle;
+        let x = cx + Math.cos(baseRad) * (rx * 0.5);
+        let y = cy + Math.sin(baseRad) * (ry * 0.5);
+        let z = Math.sin(baseRad);
+        renderList.push({ type: 'candle', label: '5', x: x, y: y, z: z });
+      }
+
+      // SORT BY Z (DEPTH) so back items render first!
+      renderList.sort((a, b) => a.z - b.z);
+
+      // DRAW ALL SORTED 3D DECORATIONS
+      renderList.forEach(item => {
+        if (item.type === 'sprinkle') {
+          cakeCtx.save();
+          cakeCtx.translate(item.x, item.y);
+          cakeCtx.fillStyle = item.color;
+          cakeCtx.beginPath();
+          cakeCtx.ellipse(0, 0, 4, 2, item.z, 0, Math.PI * 2);
+          cakeCtx.fill();
+          cakeCtx.restore();
+        } 
+        else if (item.type === 'rosette_strawberry') {
+          cakeCtx.save();
+          cakeCtx.translate(item.x, item.y);
+          
+          // Cream Rosette Base
+          cakeCtx.beginPath();
+          cakeCtx.arc(0, 0, 9, 0, Math.PI * 2);
+          cakeCtx.fillStyle = '#ffffff';
+          cakeCtx.shadowColor = 'rgba(0,0,0,0.15)';
+          cakeCtx.shadowBlur = 4;
+          cakeCtx.fill();
+
+          // Strawberry Top Emoji / Shape
+          if (item.isStrawberry) {
+            cakeCtx.font = '16px sans-serif';
+            cakeCtx.textAlign = 'center';
+            cakeCtx.textBaseline = 'middle';
+            cakeCtx.fillText('🍓', 0, -5);
+          } else {
+            cakeCtx.font = '14px sans-serif';
+            cakeCtx.textAlign = 'center';
+            cakeCtx.textBaseline = 'middle';
+            cakeCtx.fillText('🍒', 0, -5);
+          }
+          cakeCtx.restore();
+        } 
+        else if (item.type === 'candle') {
+          drawCandle3D(item.x, item.y, item.label);
+        }
+      });
     }
 
-    function drawCandleOnCanvas(cx, cy, rx, ry, label, offsetRatio) {
-      let baseRad = offsetRatio * Math.PI + cakeAngle;
-      let candleX = cx + Math.cos(baseRad) * (rx * 0.55);
-      let candleY = cy + Math.sin(baseRad) * (ry * 0.55);
-
+    function drawCandle3D(candleX, candleY, label) {
       cakeCtx.save();
-      cakeCtx.translate(candleX, candleY - 35);
+      cakeCtx.translate(candleX, candleY - 38);
 
-      const cGrad = cakeCtx.createLinearGradient(-15, 0, 15, 0);
+      // 3D Candle Pill Body Gradient
+      const cGrad = cakeCtx.createLinearGradient(-16, 0, 16, 0);
       if (label === '2') {
-        cGrad.addColorStop(0, '#ec4899'); cGrad.addColorStop(1, '#f472b6');
+        cGrad.addColorStop(0, '#f43f5e'); cGrad.addColorStop(0.5, '#fbcfe8'); cGrad.addColorStop(1, '#e11d48');
       } else {
-        cGrad.addColorStop(0, '#a855f7'); cGrad.addColorStop(1, '#c084fc');
+        cGrad.addColorStop(0, '#9333ea'); cGrad.addColorStop(0.5, '#e9d5ff'); cGrad.addColorStop(1, '#7e22ce');
       }
 
       cakeCtx.fillStyle = cGrad;
       cakeCtx.beginPath();
-      cakeCtx.roundRect(-16, -20, 32, 40, 8);
+      cakeCtx.roundRect(-16, -20, 32, 42, 10);
       cakeCtx.fill();
-      cakeCtx.lineWidth = 2;
+      cakeCtx.lineWidth = 2.5;
       cakeCtx.strokeStyle = '#ffffff';
       cakeCtx.stroke();
 
+      // Number Label
       cakeCtx.fillStyle = '#ffffff';
-      cakeCtx.font = 'bold 20px Fredoka, sans-serif';
+      cakeCtx.font = 'bold 22px Fredoka, sans-serif';
       cakeCtx.textAlign = 'center';
       cakeCtx.textBaseline = 'middle';
-      cakeCtx.fillText(label, 0, 0);
+      cakeCtx.fillText(label, 0, 1);
 
+      // Candle Wick
       cakeCtx.fillStyle = '#374151';
       cakeCtx.fillRect(-1.5, -28, 3, 8);
 
+      // Realistic Animated Flame
       if (isCandleLit && !isCandleBlown) {
-        let flick = Math.sin(Date.now() * 0.01) * 3;
+        let flick = Math.sin(Date.now() * 0.012) * 3;
+        
+        // Outer Aura Glow
         cakeCtx.beginPath();
-        cakeCtx.ellipse(0, -42 + flick * 0.3, 8 + flick * 0.3, 15 + flick * 0.5, 0, 0, Math.PI * 2);
-        const flameGrad = cakeCtx.createRadialGradient(0, -42, 2, 0, -42, 14);
+        cakeCtx.ellipse(0, -42 + flick * 0.3, 16, 24, 0, 0, Math.PI * 2);
+        cakeCtx.fillStyle = 'rgba(251, 146, 60, 0.25)';
+        cakeCtx.fill();
+
+        // Flame Body
+        cakeCtx.beginPath();
+        cakeCtx.ellipse(0, -42 + flick * 0.3, 8 + flick * 0.3, 16 + flick * 0.5, 0, 0, Math.PI * 2);
+        const flameGrad = cakeCtx.createRadialGradient(0, -42, 2, 0, -42, 15);
         flameGrad.addColorStop(0, '#ffffff');
-        flameGrad.addColorStop(0.3, '#fef08a');
+        flameGrad.addColorStop(0.35, '#fef08a');
         flameGrad.addColorStop(0.7, '#f97316');
         flameGrad.addColorStop(1, '#ef4444');
         cakeCtx.fillStyle = flameGrad;
@@ -969,7 +1081,7 @@
       if (isAutoRotate) {
         if (btn) btn.innerText = "🔄 หมุนเค้กอัตโนมัติ: เปิด ✨";
         autoRotateInterval = setInterval(() => {
-          if (!isDraggingCake) cakeAngle += 0.02;
+          if (!isDraggingCake) cakeAngle += 0.018;
         }, 30);
       } else {
         if (btn) btn.innerText = "🔄 หมุนเค้กอัตโนมัติ: ปิด";
