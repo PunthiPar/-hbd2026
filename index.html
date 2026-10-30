@@ -160,9 +160,12 @@
   <!-- Fullscreen Lightbox Modal for Image/Video Zoom -->
   <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 transition-all duration-300 select-none" onclick="closeLightbox()">
     <div class="relative max-w-4xl max-h-[90vh] w-full flex flex-col items-center justify-center" onclick="event.stopPropagation()">
-      <button onclick="closeLightbox()" class="absolute -top-10 right-0 sm:-top-12 sm:-right-4 text-white hover:text-pink-300 font-bold text-3xl transition-colors bg-black/40 w-10 h-10 rounded-full flex items-center justify-center border border-white/20">✕</button>
-      <img id="lightbox-img" class="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border-4 border-white/90 hidden" alt="Expanded View">
-      <video id="lightbox-video" class="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border-4 border-white/90 hidden" controls autoplay loop muted playsinline></video>
+      <button onclick="closeLightbox()" class="absolute -top-10 right-0 sm:-top-12 sm:-right-4 text-white hover:text-pink-300 font-bold text-3xl transition-colors bg-black/40 w-10 h-10 rounded-full flex items-center justify-center border border-white/20 z-30">✕</button>
+      <div class="relative max-w-full max-h-[80vh] flex items-center justify-center overflow-hidden rounded-2xl border-4 border-white/90 shadow-2xl">
+        <img id="lightbox-img" class="max-w-full max-h-[80vh] object-contain hidden" alt="Expanded View">
+        <video id="lightbox-video" class="max-w-full max-h-[80vh] object-contain hidden" controls autoplay loop muted playsinline></video>
+        <img id="lightbox-overlay" class="absolute inset-0 w-full h-full object-contain pointer-events-none hidden z-20" alt="Overlay">
+      </div>
       <p class="text-white/80 font-cute text-xs sm:text-sm mt-3 text-center">แตะบริเวณด้านนอกเพื่อปิด ✕</p>
     </div>
   </div>
@@ -320,7 +323,6 @@
 
           <div class="relative z-10 bg-white p-2.5 sm:p-4 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[240px] sm:max-w-sm w-full border border-gray-200">
             <div class="relative aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center group cursor-pointer" onclick="handleCoverClick()">
-              <img id="cover-img-placeholder" class="hidden absolute inset-0 w-full h-full object-cover z-10">
               <video id="cover-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="cover.mp4" type="video/mp4">
               </video>
@@ -378,7 +380,6 @@
           <div class="bg-white p-2.5 rounded-lg shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300 max-w-[170px] sm:max-w-[200px] w-full border border-gray-200 relative cursor-pointer" onclick="handle2024VidClick()">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[4/5] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
-              <img id="tab-2024-vid-placeholder" class="hidden absolute inset-0 w-full h-full object-cover z-10">
               <video id="tab-2024-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="hhbd.mp4" type="video/mp4">
               </video>
@@ -425,7 +426,6 @@
           <div class="bg-white p-2.5 sm:p-3 rounded-lg shadow-lg transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[210px] sm:max-w-[250px] w-full border border-gray-200 relative cursor-pointer" onclick="handle2025MemClick()">
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 z-20"></div>
             <div class="aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center relative">
-              <img id="tab-2025-img-placeholder" class="hidden absolute inset-0 w-full h-full object-cover rounded z-20">
               <video id="tab-2025-video" class="w-full h-full object-cover rounded z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="2025.mp4" type="video/mp4">
               </video>
@@ -808,10 +808,11 @@
     let isCanvasInited = false;
 
     // Lightbox Fullscreen Popup Engine
-    function openLightbox(mediaSrc, isVideo = false) {
+    function openLightbox(mediaSrc, isVideo = false, overlaySrc = null) {
       const modal = document.getElementById('lightbox-modal');
       const imgElem = document.getElementById('lightbox-img');
       const videoElem = document.getElementById('lightbox-video');
+      const overlayElem = document.getElementById('lightbox-overlay');
 
       if (!modal || !mediaSrc) return;
 
@@ -820,9 +821,21 @@
         videoElem.src = mediaSrc;
         videoElem.classList.remove('hidden');
         videoElem.play().catch(e => console.log("Lightbox Video Error:", e));
+
+        if (overlaySrc && overlayElem) {
+          overlayElem.src = overlaySrc;
+          overlayElem.classList.remove('hidden');
+        } else if (overlayElem) {
+          overlayElem.classList.add('hidden');
+          overlayElem.src = '';
+        }
       } else {
         videoElem.classList.add('hidden');
         videoElem.pause();
+        if (overlayElem) {
+          overlayElem.classList.add('hidden');
+          overlayElem.src = '';
+        }
         imgElem.src = mediaSrc;
         imgElem.classList.remove('hidden');
       }
@@ -834,6 +847,7 @@
     function closeLightbox() {
       const modal = document.getElementById('lightbox-modal');
       const videoElem = document.getElementById('lightbox-video');
+      const overlayElem = document.getElementById('lightbox-overlay');
       if (modal) {
         modal.classList.add('hidden');
       }
@@ -841,35 +855,25 @@
         videoElem.pause();
         videoElem.src = '';
       }
+      if (overlayElem) {
+        overlayElem.classList.add('hidden');
+        overlayElem.src = '';
+      }
     }
 
     function handleCoverClick() {
-      const imgElem = document.getElementById('cover-img-placeholder');
-      const vidElem = document.getElementById('cover-video');
-
-      if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
-        openLightbox(imgElem.src, false);
-      } else if (vidElem) {
-        openLightbox('cover.mp4', true);
-      }
+      const overlay = localStorage.getItem('hbd_cover_overlay');
+      openLightbox('cover.mp4', true, overlay);
     }
 
     function handle2024VidClick() {
-      const imgElem = document.getElementById('tab-2024-vid-placeholder');
-      if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
-        openLightbox(imgElem.src, false);
-      } else {
-        openLightbox('hhbd.mp4', true);
-      }
+      const overlay = localStorage.getItem('hbd_2024_vid_overlay');
+      openLightbox('hhbd.mp4', true, overlay);
     }
 
     function handle2025MemClick() {
-      const imgElem = document.getElementById('tab-2025-img-placeholder');
-      if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
-        openLightbox(imgElem.src, false);
-      } else {
-        openLightbox('2025.mp4', true);
-      }
+      const overlay = localStorage.getItem('hbd_2025_overlay');
+      openLightbox('2025.mp4', true, overlay);
     }
 
     function handleDiyFrameClick(event) {
@@ -881,7 +885,14 @@
       const vidElem = document.getElementById('diy-frame-video');
 
       if (vidElem && !vidElem.classList.contains('hidden') && vidElem.src) {
-        openLightbox(vidElem.src, true);
+        const select = document.getElementById('diy-photo-select');
+        const val = select ? select.value : '';
+        let overlay = null;
+        if (val === 'cover') overlay = localStorage.getItem('hbd_cover_overlay');
+        else if (val === '2024_vid') overlay = localStorage.getItem('hbd_2024_vid_overlay');
+        else if (val === '2025') overlay = localStorage.getItem('hbd_2025_overlay');
+
+        openLightbox(vidElem.src, true, overlay);
       } else if (imgElem && !imgElem.classList.contains('hidden') && imgElem.src) {
         openLightbox(imgElem.src, false);
       }
@@ -957,7 +968,6 @@
           drawCtx.beginPath();
           drawCtx.moveTo(pos.x, pos.y);
           
-          // Draw single dot on tap
           drawCtx.arc(pos.x, pos.y, brushSize / 2, 0, Math.PI * 2);
           drawCtx.fillStyle = brushColor;
           drawCtx.fill();
@@ -1095,19 +1105,9 @@
       const val = select.value;
 
       if (val === 'cover') {
-        const coverOverride = localStorage.getItem('hbd_cover_override');
-        if (coverOverride) {
-          setMediaSource('image', coverOverride);
-        } else {
-          setMediaSource('video', 'cover.mp4');
-        }
+        setMediaSource('video', 'cover.mp4');
       } else if (val === '2024_vid') {
-        const override = localStorage.getItem('hbd_2024_vid_override');
-        if (override) {
-          setMediaSource('image', override);
-        } else {
-          setMediaSource('video', 'hhbd.mp4');
-        }
+        setMediaSource('video', 'hhbd.mp4');
       } else if (val === '2024' || val === '2024_img') {
         const override = localStorage.getItem('hbd_2024_img_override');
         if (override) {
@@ -1116,12 +1116,7 @@
           setMediaSource('image', 'hbd2024.JPG');
         }
       } else if (val === '2025') {
-        const override = localStorage.getItem('hbd_2025_override');
-        if (override) {
-          setMediaSource('image', override);
-        } else {
-          setMediaSource('video', '2025.mp4');
-        }
+        setMediaSource('video', '2025.mp4');
       } else if (val.startsWith('slot_')) {
         const idx = parseInt(val.replace('slot_', ''));
         if (userPhotos[idx] && userPhotos[idx].data) {
@@ -1445,7 +1440,7 @@
           card.innerHTML = `
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20"></div>
             <button onclick="requestRemovePhoto(event, ${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md z-30 font-bold active:scale-95">✕</button>
-            <div class="aspect-[4/5] bg-pink-50 rounded overflow-hidden flex items-center justify-center relative cursor-pointer" onclick="openLightbox('${media.data}', ${media.type === 'video'})">
+            <div class="aspect-[4/5] bg-pink-50 rounded overflow-hidden flex items-center justify-center relative cursor-pointer" onclick="openLightbox('${media.data}', ${media.type === 'video'}, '${media.overlay || ''}')">
               ${mediaHtml}
             </div>
             <div class="mt-2 text-center font-handwriting text-base text-pink-600 truncate font-bold">Memory #${index + 1} ✨</div>
@@ -1701,56 +1696,40 @@
     function applyOverrides() {
       // 1. Cover
       const coverOverlay = localStorage.getItem('hbd_cover_overlay');
-      const coverOverride = localStorage.getItem('hbd_cover_override');
-      const coverImg = document.getElementById('cover-img-placeholder');
       const coverVid = document.getElementById('cover-video');
       const coverVidOverlay = document.getElementById('cover-video-overlay');
 
-      if (coverOverlay && coverVid) {
-        coverImg.classList.add('hidden');
+      if (coverVid) {
         coverVid.classList.remove('hidden');
         coverVid.play().catch(e => console.log(e));
         if (coverVidOverlay) {
-          coverVidOverlay.src = coverOverlay;
-          coverVidOverlay.classList.remove('hidden');
+          if (coverOverlay) {
+            coverVidOverlay.src = coverOverlay;
+            coverVidOverlay.classList.remove('hidden');
+          } else {
+            coverVidOverlay.classList.add('hidden');
+            coverVidOverlay.src = '';
+          }
         }
-      } else if (coverOverride && coverImg && coverVid) {
-        coverImg.src = coverOverride;
-        coverImg.classList.remove('hidden');
-        coverVid.classList.add('hidden');
-        if (coverVidOverlay) coverVidOverlay.classList.add('hidden');
-      } else if (coverImg && coverVid) {
-        coverImg.classList.add('hidden');
-        coverVid.classList.remove('hidden');
-        coverVid.play().catch(e => console.log(e));
-        if (coverVidOverlay) coverVidOverlay.classList.add('hidden');
       }
 
       // 2. 2024 Vid
       const vid2024Overlay = localStorage.getItem('hbd_2024_vid_overlay');
-      const vid2024Override = localStorage.getItem('hbd_2024_vid_override');
-      const vid2024Img = document.getElementById('tab-2024-vid-placeholder');
       const vid2024Vid = document.getElementById('tab-2024-video');
       const vid2024VidOverlay = document.getElementById('tab-2024-vid-overlay');
 
-      if (vid2024Overlay && vid2024Vid) {
-        vid2024Img.classList.add('hidden');
+      if (vid2024Vid) {
         vid2024Vid.classList.remove('hidden');
         vid2024Vid.play().catch(e => console.log(e));
         if (vid2024VidOverlay) {
-          vid2024VidOverlay.src = vid2024Overlay;
-          vid2024VidOverlay.classList.remove('hidden');
+          if (vid2024Overlay) {
+            vid2024VidOverlay.src = vid2024Overlay;
+            vid2024VidOverlay.classList.remove('hidden');
+          } else {
+            vid2024VidOverlay.classList.add('hidden');
+            vid2024VidOverlay.src = '';
+          }
         }
-      } else if (vid2024Override && vid2024Img && vid2024Vid) {
-        vid2024Img.src = vid2024Override;
-        vid2024Img.classList.remove('hidden');
-        vid2024Vid.classList.add('hidden');
-        if (vid2024VidOverlay) vid2024VidOverlay.classList.add('hidden');
-      } else if (vid2024Img && vid2024Vid) {
-        vid2024Img.classList.add('hidden');
-        vid2024Vid.classList.remove('hidden');
-        vid2024Vid.play().catch(e => console.log(e));
-        if (vid2024VidOverlay) vid2024VidOverlay.classList.add('hidden');
       }
 
       // 3. 2024 Img
@@ -1764,30 +1743,21 @@
 
       // 4. 2025 Vid
       const vid2025Overlay = localStorage.getItem('hbd_2025_overlay');
-      const img2025Override = localStorage.getItem('hbd_2025_override');
-      const img2025 = document.getElementById('tab-2025-img-placeholder');
       const vid2025 = document.getElementById('tab-2025-video');
       const vid2025OverlayElem = document.getElementById('tab-2025-video-overlay');
 
-      if (vid2025Overlay && vid2025) {
-        img2025.classList.add('hidden');
+      if (vid2025) {
         vid2025.classList.remove('hidden');
         vid2025.play().catch(e => console.log(e));
         if (vid2025OverlayElem) {
-          vid2025OverlayElem.src = vid2025Overlay;
-          vid2025OverlayElem.classList.remove('hidden');
+          if (vid2025Overlay) {
+            vid2025OverlayElem.src = vid2025Overlay;
+            vid2025OverlayElem.classList.remove('hidden');
+          } else {
+            vid2025OverlayElem.classList.add('hidden');
+            vid2025OverlayElem.src = '';
+          }
         }
-      } else if (img2025Override && img2025 && vid2025) {
-        img2025.src = img2025Override;
-        img2025.classList.remove('hidden');
-        vid2025.classList.add('hidden');
-        if (vid2025OverlayElem) vid2025OverlayElem.classList.add('hidden');
-      } else if (img2025 && vid2025) {
-        img2025.src = '';
-        img2025.classList.add('hidden');
-        vid2025.classList.remove('hidden');
-        vid2025.play().catch(e => console.log(e));
-        if (vid2025OverlayElem) vid2025OverlayElem.classList.add('hidden');
       }
     }
 
@@ -1834,6 +1804,11 @@
     }
 
     window.onload = function() {
+      // Clear legacy static image overrides for videos
+      localStorage.removeItem('hbd_2024_vid_override');
+      localStorage.removeItem('hbd_cover_override');
+      localStorage.removeItem('hbd_2025_override');
+
       const savedTheme = localStorage.getItem('hbd_theme') || 'normal';
       setTheme(savedTheme);
       applyOverrides();
