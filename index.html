@@ -174,6 +174,15 @@
 </head>
 <body class="theme-normal min-h-screen flex flex-col items-center justify-start p-2 sm:p-6 relative overflow-x-hidden">
 
+  <!-- Global Loading Overlay -->
+  <div id="loading-overlay" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] flex flex-col items-center justify-center p-6 text-center select-none">
+    <div class="bg-white rounded-2xl p-6 max-w-xs w-full shadow-2xl border-2 border-pink-300 flex flex-col items-center">
+      <div class="w-12 h-12 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin mb-3"></div>
+      <h3 id="loading-text-main" class="text-base font-bold text-gray-800 font-cute mb-1">⏳ กำลังประมวลผลวิดีโอ...</h3>
+      <p class="text-xs text-pink-600 font-medium font-cute">กำลังอ่านไฟล์และอัปโหลดลง Cloud<br>กรุณารอสักครู่นะคะ 💕</p>
+    </div>
+  </div>
+
   <!-- Fullscreen Lightbox Modal for Image/Video Zoom -->
   <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 transition-all duration-300 select-none" onclick="closeLightbox()">
     <div class="relative max-w-4xl max-h-[90vh] w-full flex flex-col items-center justify-center" onclick="event.stopPropagation()">
@@ -196,16 +205,6 @@
     <div class="absolute top-1/2 left-3 text-3xl sm:text-4xl anim-star opacity-80">✨</div>
     <div class="absolute top-1/3 right-4 text-3xl sm:text-5xl anim-ghost sticker-shadow" style="animation-delay: -1.8s;">🧙‍♀️💖</div>
     <div class="absolute bottom-1/3 left-8 text-2xl sm:text-4xl anim-star opacity-80" style="animation-delay: -1s;">🌟</div>
-  </div>
-
-  
-  <!-- Global Loading Modal Overlay -->
-  <div id="loading-overlay" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-[300] flex flex-col items-center justify-center p-6 text-center select-none">
-    <div class="bg-white rounded-2xl p-6 max-w-xs w-full shadow-2xl border-2 border-pink-300 flex flex-col items-center">
-      <div class="w-12 h-12 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin mb-3"></div>
-      <h3 id="loading-text-main" class="text-base font-bold text-gray-800 font-cute mb-1">⏳ กำลังประมวลผลวิดีโอ...</h3>
-      <p id="loading-text-sub" class="text-xs text-pink-600 font-medium font-cute">กำลังอัปโหลดลง Cloud กรุณารอสักครู่นะคะ 💕</p>
-    </div>
   </div>
 
   <!-- Confirmation Modal -->
@@ -947,6 +946,19 @@
     let drawCanvas, drawCtx;
     let isCanvasInited = false;
 
+    // Loading Modal Control Functions
+    function showLoading(msg = "⏳ กำลังประมวลผล...") {
+      const el = document.getElementById('loading-overlay');
+      const txt = document.getElementById('loading-text-main');
+      if (txt && msg) txt.innerText = msg;
+      if (el) el.classList.remove('hidden');
+    }
+
+    function hideLoading() {
+      const el = document.getElementById('loading-overlay');
+      if (el) el.classList.add('hidden');
+    }
+
     // Helper: Check if media data is video
     function isMediaVideo(media) {
       if (!media) return false;
@@ -985,30 +997,9 @@
       });
     }
 
-    
-    function showLoading(msg = "⏳ กำลังประมวลผลและอัปโหลด...") {
-      const modal = document.getElementById('loading-overlay');
-      const text = document.getElementById('loading-text-main');
-      if (text) text.innerText = msg;
-      if (modal) modal.classList.remove('hidden');
-    }
-    function hideLoading() {
-      const modal = document.getElementById('loading-overlay');
-      if (modal) modal.classList.add('hidden');
-    }
-
     function savePhotoToCloud(index, mediaData) {
       showLoading("☁️ กำลังบันทึกข้อมูลลง Cloud...");
       db.ref(`user_photos/${index}`).set(mediaData)
-        .then(() => {
-          hideLoading();
-          alert("🎉 บันทึกความทรงจำลงระบบ Cloud เรียบร้อยแล้ว!");
-        })
-        .catch(err => {
-          hideLoading();
-          alert("เกิดข้อผิดพลาดในการบันทึก: " + err.message);
-        });
-    }`).set(mediaData)
         .then(() => {
           hideLoading();
           alert("🎉 บันทึกความทรงจำลงระบบ Cloud เรียบร้อยแล้ว ทุกเครื่องจะเห็นตรงกันทันที!");
@@ -1020,9 +1011,16 @@
     }
 
     function removePhotoFromCloud(index) {
+      showLoading("🗑️ กำลังลบข้อมูลออกจาก Cloud...");
       db.ref(`user_photos/${index}`).remove()
-        .then(() => alert("🗑️ ลบความทรงจำออกจากระบบ Cloud เรียบร้อยแล้ว"))
-        .catch(err => alert("เกิดข้อผิดพลาดในการลบ: " + err.message));
+        .then(() => {
+          hideLoading();
+          alert("🗑️ ลบความทรงจำออกจากระบบ Cloud เรียบร้อยแล้ว");
+        })
+        .catch(err => {
+          hideLoading();
+          alert("เกิดข้อผิดพลาดในการลบ: " + err.message);
+        });
     }
 
     // Lightbox Fullscreen Popup Engine
@@ -1331,12 +1329,12 @@
       if (!file) return;
 
       if (file.size > 300 * 1024 * 1024) {
-        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 300MB)");
+        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 300MB)\nกรุณาเลือกวิดีโอหรือรูปภาพที่มีขนาดเล็กลงนะคะ");
         event.target.value = '';
         return;
       }
 
-      showLoading("⏳ กำลังอ่านไฟล์วิดีโอ...");
+      showLoading("⏳ กำลังอ่านและประมวลผลวิดีโอ...");
       const isVideo = file.type.startsWith('video/');
 
       setTimeout(() => {
@@ -1345,10 +1343,13 @@
           setMediaSource(isVideo ? 'video' : 'image', e.target.result);
           hideLoading();
         };
-        reader.onerror = function() { hideLoading(); alert("เกิดข้อผิดพลาดในการอ่านไฟล์"); };
+        reader.onerror = function() {
+          hideLoading();
+          alert("เกิดข้อผิดพลาดในการอ่านไฟล์");
+        };
         reader.readAsDataURL(file);
         event.target.value = '';
-      }, 100);
+      }, 150);
     }
 
     function saveDecoratedPhotoToMemory() {
@@ -1356,77 +1357,83 @@
       const targetVal = select ? select.value : 'slot_0';
 
       openPinModal(() => {
-        const photoAreaElem = document.getElementById('diy-photo-area');
-        const overlayLayer = document.getElementById('diy-overlay-layer');
-        const vidElem = document.getElementById('diy-frame-video');
-        const isVideoActive = vidElem && !vidElem.classList.contains('hidden');
+        showLoading("🎨 กำลังประมวลผลรูปตกแต่ง...");
+        setTimeout(() => {
+          const photoAreaElem = document.getElementById('diy-photo-area');
+          const overlayLayer = document.getElementById('diy-overlay-layer');
+          const vidElem = document.getElementById('diy-frame-video');
+          const isVideoActive = vidElem && !vidElem.classList.contains('hidden');
 
-        if (!photoAreaElem || !overlayLayer) return;
+          if (!photoAreaElem || !overlayLayer) {
+            hideLoading();
+            return;
+          }
 
-        if (isVideoActive) {
-          html2canvas(overlayLayer, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(canvas => {
-            const overlayDataUrl = canvas.toDataURL('image/png');
+          if (isVideoActive) {
+            html2canvas(overlayLayer, { backgroundColor: null, scale: 2, useCORS: true, logging: false }).then(canvas => {
+              const overlayDataUrl = canvas.toDataURL('image/png');
 
-            if (targetVal === 'cover') {
-              localStorage.setItem('hbd_cover_overlay', overlayDataUrl);
-              localStorage.removeItem('hbd_cover_override');
-            } else if (targetVal === '2024_vid') {
-              localStorage.setItem('hbd_2024_vid_overlay', overlayDataUrl);
-              localStorage.removeItem('hbd_2024_vid_override');
-            } else if (targetVal === '2025') {
-              localStorage.setItem('hbd_2025_overlay', overlayDataUrl);
-              localStorage.removeItem('hbd_2025_override');
-            } else if (targetVal.startsWith('slot_')) {
-              const idx = parseInt(targetVal.replace('slot_', ''));
-              const currentMedia = userPhotos[idx] || {};
-              savePhotoToCloud(idx, {
-                type: 'video',
-                data: vidElem.src || (getMediaSrc(currentMedia) || ''),
-                overlay: overlayDataUrl
-              });
-            }
+              if (targetVal === 'cover') {
+                localStorage.setItem('hbd_cover_overlay', overlayDataUrl);
+                localStorage.removeItem('hbd_cover_override');
+                hideLoading();
+              } else if (targetVal === '2024_vid') {
+                localStorage.setItem('hbd_2024_vid_overlay', overlayDataUrl);
+                localStorage.removeItem('hbd_2024_vid_override');
+                hideLoading();
+              } else if (targetVal === '2025') {
+                localStorage.setItem('hbd_2025_overlay', overlayDataUrl);
+                localStorage.removeItem('hbd_2025_override');
+                hideLoading();
+              } else if (targetVal.startsWith('slot_')) {
+                const idx = parseInt(targetVal.replace('slot_', ''));
+                const currentMedia = userPhotos[idx] || {};
+                savePhotoToCloud(idx, {
+                  type: 'video',
+                  data: vidElem.src || (getMediaSrc(currentMedia) || ''),
+                  overlay: overlayDataUrl
+                });
+              }
 
-            applyOverrides();
-            clearStickers();
-            clearDrawingCanvas();
-            changeDiyPhotoSource();
-          });
-        } else {
-          html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
-            const dataUrl = canvas.toDataURL('image/png');
-
-            if (targetVal.startsWith('slot_')) {
-              const idx = parseInt(targetVal.replace('slot_', ''));
-              savePhotoToCloud(idx, {
-                type: 'image',
-                data: dataUrl
-              });
-            } else if (targetVal === 'cover') {
-              localStorage.setItem('hbd_cover_override', dataUrl);
-              localStorage.removeItem('hbd_cover_overlay');
               applyOverrides();
-              alert("🎉 บันทึกรูปตกแต่งลงหน้าปก (31oct) เรียบร้อยแล้วค่ะ!");
-            } else if (targetVal === '2024_vid') {
-              localStorage.setItem('hbd_2024_vid_override', dataUrl);
-              localStorage.removeItem('hbd_2024_vid_overlay');
-              applyOverrides();
-              alert("🎉 บันทึกรูปตกแต่งเรียบร้อยแล้วค่ะ!");
-            } else if (targetVal === '2024_img' || targetVal === '2024') {
-              localStorage.setItem('hbd_2024_img_override', dataUrl);
-              applyOverrides();
-              alert("🎉 บันทึกรูปตกแต่งลงรูปภาพปี 2024 เรียบร้อยแล้วค่ะ!");
-            } else if (targetVal === '2025') {
-              localStorage.setItem('hbd_2025_override', dataUrl);
-              localStorage.removeItem('hbd_2025_overlay');
-              applyOverrides();
-              alert("🎉 บันทึกรูปตกแต่งลงหน้าความทรงจำปี 2025 เรียบร้อยแล้วค่ะ!");
-            }
+              clearStickers();
+              clearDrawingCanvas();
+              changeDiyPhotoSource();
+            });
+          } else {
+            html2canvas(photoAreaElem, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+              const dataUrl = canvas.toDataURL('image/png');
 
-            clearStickers();
-            clearDrawingCanvas();
-            changeDiyPhotoSource();
-          });
-        }
+              if (targetVal.startsWith('slot_')) {
+                const idx = parseInt(targetVal.replace('slot_', ''));
+                savePhotoToCloud(idx, {
+                  type: 'image',
+                  data: dataUrl
+                });
+              } else {
+                if (targetVal === 'cover') {
+                  localStorage.setItem('hbd_cover_override', dataUrl);
+                  localStorage.removeItem('hbd_cover_overlay');
+                } else if (targetVal === '2024_vid') {
+                  localStorage.setItem('hbd_2024_vid_override', dataUrl);
+                  localStorage.removeItem('hbd_2024_vid_overlay');
+                } else if (targetVal === '2024_img' || targetVal === '2024') {
+                  localStorage.setItem('hbd_2024_img_override', dataUrl);
+                } else if (targetVal === '2025') {
+                  localStorage.setItem('hbd_2025_override', dataUrl);
+                  localStorage.removeItem('hbd_2025_overlay');
+                }
+                hideLoading();
+                alert("🎉 บันทึกรูปตกแต่งเรียบร้อยแล้วค่ะ!");
+              }
+
+              clearStickers();
+              clearDrawingCanvas();
+              applyOverrides();
+              changeDiyPhotoSource();
+            });
+          }
+        }, 150);
       }, "ยืนยันการบันทึกภาพตกแต่งลงในระบบใช่ไหมคะ? ✨");
     }
 
@@ -1622,12 +1629,12 @@
       if (!file) return;
 
       if (file.size > 300 * 1024 * 1024) {
-        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 300MB)");
+        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 300MB)\nกรุณาเลือกวิดีโอหรือรูปภาพที่มีขนาดเล็กลงนะคะ");
         event.target.value = '';
         return;
       }
 
-      showLoading("⏳ กำลังเตรียมไฟล์วิดีโอ...");
+      showLoading("⏳ กำลังแปลงวิดีโอ/รูปภาพ...");
       const isVideo = file.type.startsWith('video/');
 
       setTimeout(() => {
@@ -1637,9 +1644,12 @@
             hideLoading();
             openPinModal(() => {
               savePhotoToCloud(index, { type: 'video', data: e.target.result });
-            }, `ยืนยันการเพิ่มวิดีโอลงในช่องที่ ${index + 1} ใช่ไหมคะ?`);
+            }, `ยืนยันการเพิ่มวิดีโอลงในช่องที่ ${index + 1} ใช่ไหมคะ? (จะอัปเดตลง Cloud ให้ทุกคนเห็นตรงกัน)`);
           };
-          reader.onerror = function() { hideLoading(); };
+          reader.onerror = function() {
+            hideLoading();
+            alert("เกิดข้อผิดพลาดในการอ่านไฟล์");
+          };
           reader.readAsDataURL(file);
         } else {
           const reader = new FileReader();
@@ -1661,14 +1671,14 @@
 
               openPinModal(() => {
                 savePhotoToCloud(index, { type: 'image', data: compressedData });
-              }, `ยืนยันการเพิ่มรูปภาพในช่องที่ ${index + 1} ใช่ไหมคะ?`);
+              }, `ยืนยันการเพิ่มรูปภาพในช่องที่ ${index + 1} ใช่ไหมคะ? (จะบันทึกลงระบบ Cloud ให้ทุกคนเห็นตรงกัน)`);
             };
             img.src = e.target.result;
           };
           reader.readAsDataURL(file);
         }
         event.target.value = '';
-      }, 100);
+      }, 150);
     }
 
     function requestRemovePhoto(e, index) {
