@@ -305,9 +305,9 @@
 
           <div class="relative z-10 bg-white p-2.5 sm:p-4 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[240px] sm:max-w-sm w-full border border-gray-200">
             <div class="relative aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center group">
-              <img id="cover-img-placeholder" src="cover.jpg" alt="Cover Memory" class="absolute inset-0 w-full h-full object-cover z-0" onerror="this.style.display='none';">
+              <img id="cover-img-placeholder" src="cover.jpg" alt="Cover Memory" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.src='cover.jpg';">
               
-              <video id="cover-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
+              <video id="cover-video" class="absolute inset-0 w-full h-full object-cover z-0 hidden" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="cover.mp4" type="video/mp4">
               </video>
             </div>
@@ -512,7 +512,7 @@
           <!-- Card Polaroid Frame -->
           <div class="relative z-10 bg-white p-3 rounded-xl shadow-xl transform -rotate-1 max-w-[220px] sm:max-w-xs w-full border border-gray-200 overflow-hidden">
             
-            <!-- Photo Capture Area (Excludes the text below from double rendering) -->
+            <!-- Photo Capture Area (Excludes bottom text from html2canvas capture) -->
             <div id="diy-photo-area" class="aspect-[3/4] bg-pink-100 rounded overflow-hidden relative">
               <img id="diy-frame-img" src="cover.jpg" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none" onerror="this.src='hbd2024.JPG';">
               <!-- Stickers Container (Overlaid inside photo area) -->
@@ -760,7 +760,7 @@
       }
     }
 
-    // DIY Photo Selection & Saving Logic
+    // DIY Photo Selection & Syncing Logic
     function changeDiyPhotoSource() {
       const select = document.getElementById('diy-photo-select');
       const img = document.getElementById('diy-frame-img');
@@ -769,7 +769,15 @@
       const val = select.value;
 
       if (val === 'cover') {
-        img.src = localStorage.getItem('hbd_cover_override') || 'cover.jpg';
+        const coverOverride = localStorage.getItem('hbd_cover_override');
+        const coverImg = document.getElementById('cover-img-placeholder');
+        if (coverOverride) {
+          img.src = coverOverride;
+        } else if (coverImg && coverImg.src) {
+          img.src = coverImg.src;
+        } else {
+          img.src = 'cover.jpg';
+        }
       } else if (val === '2024') {
         img.src = localStorage.getItem('hbd_2024_override') || 'hbd2024.JPG';
       } else if (val === '2025') {
@@ -817,27 +825,20 @@
             renderUserPhotos();
             alert(`🎉 บันทึกรูปตกแต่งเรียบร้อยแล้วใน อัลบั้มความทรงจำ #${idx + 1} ค่ะ!`);
           } else if (targetVal === 'cover') {
-            const coverImg = document.getElementById('cover-img-placeholder');
-            if (coverImg) {
-              coverImg.src = dataUrl;
-              coverImg.style.display = 'block';
-            }
             localStorage.setItem('hbd_cover_override', dataUrl);
+            applyOverrides();
             alert("🎉 บันทึกรูปตกแต่งลงหน้าปก (31oct) เรียบร้อยแล้วค่ะ!");
           } else if (targetVal === '2024') {
-            const img2024 = document.getElementById('tab-2024-img');
-            if (img2024) img2024.src = dataUrl;
             localStorage.setItem('hbd_2024_override', dataUrl);
+            applyOverrides();
             alert("🎉 บันทึกรูปตกแต่งลงหน้าความทรงจำปี 2024 เรียบร้อยแล้วค่ะ!");
           } else if (targetVal === '2025') {
-            const img2025 = document.getElementById('tab-2025-img-placeholder');
-            if (img2025) {
-              img2025.src = dataUrl;
-              img2025.classList.remove('hidden');
-            }
             localStorage.setItem('hbd_2025_override', dataUrl);
+            applyOverrides();
             alert("🎉 บันทึกรูปตกแต่งลงหน้าความทรงจำปี 2025 เรียบร้อยแล้วค่ะ!");
           }
+          clearStickers();
+          changeDiyPhotoSource();
         });
       });
     }
@@ -850,31 +851,19 @@
       openPinModal(() => {
         if (targetVal === 'cover') {
           localStorage.removeItem('hbd_cover_override');
-          const coverImg = document.getElementById('cover-img-placeholder');
-          if (coverImg) {
-            coverImg.src = 'cover.jpg';
-          }
         } else if (targetVal === '2024') {
           localStorage.removeItem('hbd_2024_override');
-          const img2024 = document.getElementById('tab-2024-img');
-          if (img2024) {
-            img2024.src = 'hbd2024.JPG';
-          }
         } else if (targetVal === '2025') {
           localStorage.removeItem('hbd_2025_override');
-          const img2025 = document.getElementById('tab-2025-img-placeholder');
-          if (img2025) {
-            img2025.src = '';
-            img2025.classList.add('hidden');
-          }
         } else if (targetVal.startsWith('slot_')) {
           const idx = parseInt(targetVal.replace('slot_', ''));
           userPhotos[idx] = null;
           saveMediaToDB();
-          renderUserPhotos();
         }
 
         clearStickers();
+        applyOverrides();
+        renderUserPhotos();
         changeDiyPhotoSource();
         alert("🔄 รีเซ็ตกลับเป็นรูปภาพเดิมเรียบร้อยแล้วค่ะ!");
       });
