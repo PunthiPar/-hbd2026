@@ -310,9 +310,11 @@
 
           <div class="relative z-10 bg-white p-2.5 sm:p-4 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-[240px] sm:max-w-sm w-full border border-gray-200">
             <div class="relative aspect-[3/4] bg-pink-100 rounded overflow-hidden flex items-center justify-center group">
-              <img id="cover-img-placeholder" src="cover.jpg" alt="Cover Memory" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.src='cover.jpg';">
+              <!-- Image placeholder (shown when user decorates and saves a custom cover) -->
+              <img id="cover-img-placeholder" class="hidden absolute inset-0 w-full h-full object-cover z-10">
               
-              <video id="cover-video" class="absolute inset-0 w-full h-full object-cover z-0 hidden" autoplay loop muted playsinline webkit-playsinline preload="auto">
+              <!-- Cover Video (Default) -->
+              <video id="cover-video" class="absolute inset-0 w-full h-full object-cover z-10" autoplay loop muted playsinline webkit-playsinline preload="auto">
                 <source src="cover.mp4" type="video/mp4">
               </video>
             </div>
@@ -575,7 +577,7 @@
             
             <!-- Photo Capture Area -->
             <div id="diy-photo-area" class="aspect-[3/4] bg-pink-100 rounded overflow-hidden relative">
-              <img id="diy-frame-img" src="cover.jpg" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0" onerror="this.src='hbd2024.JPG';">
+              <img id="diy-frame-img" src="hbd2024.JPG" alt="DIY Memory Frame" class="w-full h-full object-cover pointer-events-none z-10 absolute inset-0" onerror="this.src='hbd2024.JPG';">
               
               <!-- Freehand Drawing Canvas Overlay -->
               <canvas id="diy-drawing-canvas" class="absolute inset-0 w-full h-full z-20 pointer-events-none" style="touch-action: none;"></canvas>
@@ -968,18 +970,15 @@
 
       if (val === 'cover') {
         const coverOverride = localStorage.getItem('hbd_cover_override');
-        const coverImg = document.getElementById('cover-img-placeholder');
         if (coverOverride) {
           img.src = coverOverride;
-        } else if (coverImg && coverImg.src) {
-          img.src = coverImg.src;
         } else {
-          img.src = 'cover.jpg';
+          img.src = 'hbd2024.JPG';
         }
       } else if (val === '2024') {
         img.src = localStorage.getItem('hbd_2024_override') || 'hbd2024.JPG';
       } else if (val === '2025') {
-        img.src = localStorage.getItem('hbd_2025_override') || 'cover.jpg';
+        img.src = localStorage.getItem('hbd_2025_override') || 'hbd2024.JPG';
       } else if (val.startsWith('slot_')) {
         const idx = parseInt(val.replace('slot_', ''));
         if (userPhotos[idx] && userPhotos[idx].data) {
@@ -1498,11 +1497,16 @@
     function applyOverrides() {
       const coverOverride = localStorage.getItem('hbd_cover_override');
       const coverImg = document.getElementById('cover-img-placeholder');
-      if (coverOverride && coverImg) {
+      const coverVid = document.getElementById('cover-video');
+
+      if (coverOverride && coverImg && coverVid) {
         coverImg.src = coverOverride;
-        coverImg.style.display = 'block';
-      } else if (coverImg) {
-        coverImg.src = 'cover.jpg';
+        coverImg.classList.remove('hidden');
+        coverVid.classList.add('hidden');
+      } else if (coverImg && coverVid) {
+        coverImg.classList.add('hidden');
+        coverVid.classList.remove('hidden');
+        coverVid.play().catch(e => console.log(e));
       }
 
       const img2024Override = localStorage.getItem('hbd_2024_override');
