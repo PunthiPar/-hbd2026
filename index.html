@@ -899,7 +899,7 @@
     // 1. FIREBASE CONFIGURATION (Connected to 'flimflim-hbd' Project)
     // =============================================================
     const firebaseConfig = {
-      apiKey: "AIzaSy_YOUR_API_KEY_HERE", // หากมี API Key จาก Firebase สามารถนำมาวางตรงนี้ได้ครับ
+      apiKey: "AIzaSy_YOUR_API_KEY_HERE",
       authDomain: "flimflim-hbd.firebaseapp.com",
       databaseURL: "https://flimflim-hbd-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "flimflim-hbd",
@@ -937,6 +937,24 @@
     let drawCanvas, drawCtx;
     let isCanvasInited = false;
 
+    // Helper: Check if media data is video
+    function isMediaVideo(media) {
+      if (!media) return false;
+      if (typeof media === 'object' && media.type === 'video') return true;
+      const src = typeof media === 'string' ? media : (media.data || '');
+      return src.startsWith('data:video') || 
+             src.endsWith('.mp4') || 
+             src.endsWith('.mov') || 
+             src.endsWith('.webm') || 
+             src.endsWith('.avi');
+    }
+
+    // Helper: Extract source URL/data
+    function getMediaSrc(media) {
+      if (!media) return '';
+      return typeof media === 'string' ? media : (media.data || '');
+    }
+
     // =============================================================
     // 2. FIREBASE REALTIME CLOUD SYNC ENGINE
     // =============================================================
@@ -959,7 +977,7 @@
 
     function savePhotoToCloud(index, mediaData) {
       db.ref(`user_photos/${index}`).set(mediaData)
-        .then(() => alert("🎉 บันทึกรูปภาพลงระบบ Cloud เรียบร้อยแล้ว ทุกเครื่องจะเห็นรูปนี้ทันที!"))
+        .then(() => alert("🎉 บันทึกความทรงจำลงระบบ Cloud เรียบร้อยแล้ว ทุกเครื่องจะเห็นตรงกันทันที!"))
         .catch(err => alert("เกิดข้อผิดพลาดในการบันทึก: " + err.message));
     }
 
@@ -1259,8 +1277,11 @@
         setMediaSource('video', '2025.mp4');
       } else if (val.startsWith('slot_')) {
         const idx = parseInt(val.replace('slot_', ''));
-        if (userPhotos[idx] && userPhotos[idx].data) {
-          setMediaSource(userPhotos[idx].type || 'image', userPhotos[idx].data);
+        const media = userPhotos[idx];
+        const src = getMediaSrc(media);
+        if (src) {
+          const isVideo = isMediaVideo(media);
+          setMediaSource(isVideo ? 'video' : 'image', src);
         } else {
           setMediaSource('empty', '');
         }
@@ -1270,6 +1291,12 @@
     function handleDiyCustomUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
+
+      if (file.size > 3.5 * 1024 * 1024) {
+        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 3.5MB)\nกรุณาเลือกวิดีโอหรือรูปภาพที่มีขนาดเล็กลงนะคะ");
+        event.target.value = '';
+        return;
+      }
 
       const reader = new FileReader();
       const isVideo = file.type.startsWith('video/');
@@ -1311,7 +1338,7 @@
               const currentMedia = userPhotos[idx] || {};
               savePhotoToCloud(idx, {
                 type: 'video',
-                data: vidElem.src || (currentMedia.data || ''),
+                data: vidElem.src || (getMediaSrc(currentMedia) || ''),
                 overlay: overlayDataUrl
               });
             }
@@ -1493,6 +1520,7 @@
       pendingAction = null;
     }
 
+    // RENDER MEDIA SLOTS (WITH AUTOMATIC VIDEO DETECTOR)
     function renderUserPhotos() {
       const grid = document.getElementById('custom-photos-grid');
       if (!grid) return;
@@ -1503,21 +1531,25 @@
         const rotateClass = index % 2 === 0 ? '-rotate-2' : 'rotate-2';
         card.className = `bg-white p-2.5 rounded-lg shadow-md transform ${rotateClass} hover:rotate-0 transition-all duration-300 w-[140px] sm:w-[170px] border border-gray-200 relative`;
 
-        if (media && media.data) {
+        const src = getMediaSrc(media);
+        const overlay = (media && typeof media === 'object') ? media.overlay : null;
+        const isVideo = isMediaVideo(media);
+
+        if (src) {
           let mediaHtml = '';
-          if (media.type === 'video') {
-            mediaHtml = `<video src="${media.data}" autoplay loop muted playsinline class="w-full h-full object-cover rounded"></video>`;
-            if (media.overlay) {
-              mediaHtml += `<img src="${media.overlay}" class="absolute inset-0 w-full h-full object-cover rounded pointer-events-none z-20">`;
+          if (isVideo) {
+            mediaHtml = `<video src="${src}" autoplay loop muted playsinline class="w-full h-full object-cover rounded"></video>`;
+            if (overlay) {
+              mediaHtml += `<img src="${overlay}" class="absolute inset-0 w-full h-full object-cover rounded pointer-events-none z-20">`;
             }
           } else {
-            mediaHtml = `<img src="${media.data}" class="w-full h-full object-cover rounded" alt="Memory Photo ${index + 1}">`;
+            mediaHtml = `<img src="${src}" class="w-full h-full object-cover rounded" alt="Memory Photo ${index + 1}">`;
           }
 
           card.innerHTML = `
             <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-4 z-20 bg-white/70"></div>
             <button onclick="requestRemovePhoto(event, ${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md z-30 font-bold active:scale-95">✕</button>
-            <div class="aspect-[4/5] bg-pink-50 rounded overflow-hidden flex items-center justify-center relative cursor-pointer" onclick="openLightbox('${media.data}', ${media.type === 'video'}, '${media.overlay || ''}')">
+            <div class="aspect-[4/5] bg-pink-50 rounded overflow-hidden flex items-center justify-center relative cursor-pointer" onclick="openLightbox('${src}', ${isVideo}, '${overlay || ''}')">
               ${mediaHtml}
             </div>
             <div class="mt-2 text-center font-handwriting text-base text-pink-600 truncate font-bold">Memory #${index + 1} ✨</div>
@@ -1545,6 +1577,13 @@
     function handlePhotoUpload(event, index) {
       const file = event.target.files[0];
       if (!file) return;
+
+      // Restrict file size to max 3.5MB for Firebase RTDB Base64 string safety
+      if (file.size > 3.5 * 1024 * 1024) {
+        alert("⚠️ ไฟล์มีขนาดใหญ่เกินไป (เกิน 3.5MB)\nกรุณาเลือกไฟล์วิดีโอสั้นๆ (3-5 วินาที) หรือรูปภาพที่มีขนาดเล็กลงนะคะ เพื่อให้เซฟลง Cloud ได้อย่างสมบูรณ์");
+        event.target.value = '';
+        return;
+      }
 
       const isVideo = file.type.startsWith('video/');
 
