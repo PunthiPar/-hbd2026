@@ -8,7 +8,7 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Google Fonts (Added Kawaii Round Fonts) -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Mochiy+Pop+One&family=Playfair+Display:ital,wght@1,500;1,700&family=Prompt:ital,wght@0,300;0,400;0,600;1,300&family=Sacramento&display=swap" rel="stylesheet">
@@ -81,7 +81,7 @@
     .font-serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
     .font-handwriting { font-family: 'Sacramento', cursive; }
 
-    /* Keyframe Animations for Cute Floating Characters */
+    /* Keyframe Animations */
     @keyframes floatKawaiiGhost {
       0%, 100% { transform: translateY(0px) rotate(-4deg) scale(1); }
       50% { transform: translateY(-18px) rotate(5deg) scale(1.05); }
@@ -149,7 +149,7 @@
 </head>
 <body class="theme-normal min-h-screen flex flex-col items-center justify-start p-2 sm:p-6 relative overflow-x-hidden">
 
-  <!-- Cute Floating Background Stickers (Halloween Mode Only) -->
+  <!-- Floating Background Stickers (Halloween Mode) -->
   <div class="halloween-only fixed inset-0 pointer-events-none z-0 overflow-hidden">
     <div class="absolute top-6 left-4 sm:left-12 text-4xl sm:text-6xl anim-ghost sticker-shadow">👻💖</div>
     <div class="absolute top-20 right-6 sm:right-16 text-3xl sm:text-5xl anim-bat sticker-shadow">🦇✨</div>
@@ -160,31 +160,38 @@
     <div class="absolute bottom-1/3 left-8 text-2xl sm:text-4xl anim-star opacity-80" style="animation-delay: -1s;">🌟</div>
   </div>
 
-  <!-- Welcome / Start Overlay -->
+  <!-- Welcome / Password Lock Overlay -->
   <div id="welcome-overlay" class="fixed inset-0 bg-[#170e24]/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4 text-center">
     <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border-4 border-pink-200 flex flex-col items-center space-y-4 text-gray-800 relative overflow-hidden">
       
       <div class="halloween-only absolute -top-2 -right-2 text-4xl anim-ghost">👻</div>
       
       <div class="text-5xl sm:text-6xl animate-bounce flex items-center gap-1">
-        <span class="normal-only">💌</span>
+        <span class="normal-only">🔐</span>
         <span class="halloween-only anim-pumpkin">🎃</span>
-        <span class="halloween-only">💌</span>
+        <span class="halloween-only">🔐</span>
         <span class="halloween-only anim-ghost">👻</span>
       </div>
 
       <h2 class="text-2xl sm:text-3xl font-bold text-pink-600 font-serif-italic">Happy Birthday!</h2>
       <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium">
-        มีความทรงจำและเสียงเพลงพิเศษรอเธออยู่ข้างในนะ ✨🎃
+        กรุณาใส่รหัสผ่านเพื่อเข้าสู่การ์ดวันเกิดสุดพิเศษ ✨
       </p>
 
+      <div class="w-full space-y-2">
+        <input type="password" id="site-pass-input" placeholder="พิมพ์รหัสผ่านเข้าเว็บ..." 
+               class="w-full text-center text-lg font-bold px-3 py-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:border-purple-500 bg-white" 
+               onkeyup="if(event.key==='Enter') enterSite()">
+        <p id="site-pass-error" class="text-xs text-red-500 hidden font-semibold">❌ รหัสผ่านไม่ถูกต้อง ลองอีกครั้งนะ!</p>
+      </div>
+
       <button onclick="enterSite()" class="w-full bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg active:scale-95 transition text-sm sm:text-base flex items-center justify-center gap-2 font-cute">
-        <span>แตะเพื่อเปิดการ์ดวันเกิด 💖✨</span>
+        <span>ปลดล็อกเข้าสู่หน้าเว็บ 💖✨</span>
       </button>
     </div>
   </div>
 
-  <!-- PIN Verification Modal -->
+  <!-- PIN Verification Modal (For Photos) -->
   <div id="pin-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl border-2 border-pink-300 relative">
       <button onclick="closePinModal()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
@@ -208,15 +215,13 @@
     <source src="me.mov" type="video/quicktime">
   </audio>
 
-  <!-- Floating Controls: Theme Switcher & Music Buttons -->
+  <!-- Controls: Theme Switcher & Music Buttons -->
   <div class="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 flex items-center gap-2">
-    <!-- Theme Switch Button -->
     <button onclick="toggleTheme()" class="bg-white/95 backdrop-blur border-2 border-pink-300 text-purple-950 px-3.5 py-2 rounded-full shadow-lg flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all text-xs sm:text-sm font-bold font-cute">
       <span id="theme-btn-icon">🎃</span>
       <span id="theme-btn-text" class="hidden sm:inline">โหมดฮาโลวีน</span>
     </button>
 
-    <!-- Music Button -->
     <button id="music-btn" onclick="toggleMusic(event)" class="bg-white/95 backdrop-blur border-2 border-pink-300 text-pink-500 p-2 sm:p-2.5 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
       <span id="music-icon" class="text-lg sm:text-xl">🎵</span>
     </button>
@@ -306,12 +311,10 @@
             </div>
           </div>
 
-          <!-- Normal Mode Scrapbook Stickers -->
           <div class="normal-only absolute top-2 right-2 sm:right-6 text-3xl sm:text-6xl text-gray-700 transform rotate-12 sticker-shadow cursor-pointer">🎧</div>
           <div class="normal-only absolute right-1 sm:right-4 bottom-12 sm:bottom-16 text-3xl sm:text-5xl transform -rotate-12 sticker-shadow cursor-pointer">🌹</div>
           <div class="normal-only absolute -bottom-3 right-8 sm:right-12 text-3xl sm:text-5xl transform rotate-12 sticker-shadow">💋</div>
           
-          <!-- Cute Halloween Mode Animated Stickers -->
           <div class="halloween-only absolute top-2 right-2 sm:right-6 text-3xl sm:text-5xl anim-ghost sticker-shadow">👻💖</div>
           <div class="halloween-only absolute right-1 sm:right-4 bottom-12 sm:bottom-16 text-3xl sm:text-5xl anim-pumpkin sticker-shadow">🎃🎀</div>
           <div class="halloween-only absolute -bottom-3 right-8 sm:right-12 text-3xl sm:text-5xl anim-bat sticker-shadow">🦇✨</div>
@@ -558,7 +561,7 @@
 
             <div class="text-center mb-3">
               <span class="text-2xl sm:text-3xl anim-ghost">💌🎃</span>
-              <h3 class="text-xl sm:text-2xl font-bold text-pink-600 font-serif-italic">ถึงเธอที่รักที่สุดในโลก</h3>
+              <h3 class="text-xl sm:text-2xl font-bold text-pink-600 font-serif-italic">ถึงฟิมๆ</h3>
             </div>
 
             <div class="space-y-2.5 text-xs sm:text-base text-gray-700 leading-relaxed font-light max-h-[55vh] overflow-y-auto pr-1">
@@ -566,7 +569,7 @@
               <p>ขอบคุณที่ก้าวเข้ามาเป็นเรื่องราวที่ดีที่สุดในทุกๆ วัน ขอบคุณรอยยิ้ม ความสดใส และความน่ารักที่เติมเต็มโลกใบนี้ให้น่าอยู่เสมอ</p>
               <p>ขอให้ปีนี้เป็นปีที่มีแต่ความสุข สมหวังในทุกๆ สิ่งที่ตั้งใจไว้ มีสุขภาพร่างกายที่แข็งแรง ไม่ปวดหลัง ไม่เหนื่อยเกินไปนะ!</p>
               <p class="font-semibold text-pink-600 text-right mt-3">
-                รักเธอที่สุดเลยนะ 💕🎃<br>
+                 💕🎃<br>
                 31 ตุลาคม • Halloween Night
               </p>
             </div>
@@ -602,9 +605,36 @@
     let sharedAudioCtx = null;
     let currentTheme = 'normal';
 
-    // PIN Security Configuration
+    // Website Entry Password Configuration
+    const SITE_PASSWORD = 'toropakdee';
+
+    // Photo Security PIN Configuration
     const SECRET_PIN = '013110';
     let pendingAction = null;
+
+    function enterSite() {
+      const inputPass = document.getElementById('site-pass-input').value.trim();
+      const errorMsg = document.getElementById('site-pass-error');
+
+      if (inputPass === SITE_PASSWORD) {
+        errorMsg.classList.add('hidden');
+        const audio = document.getElementById('bg-music');
+        if (audio) {
+          audio.muted = false;
+          audio.play().then(() => {
+            isMusicPlaying = true;
+            document.getElementById('music-icon').innerText = '🎵';
+          }).catch((err) => {
+            console.log("Audio Play Error:", err);
+          });
+        }
+        document.getElementById('welcome-overlay').style.display = 'none';
+      } else {
+        errorMsg.classList.remove('hidden');
+        document.getElementById('site-pass-input').value = '';
+        document.getElementById('site-pass-input').focus();
+      }
+    }
 
     // Theme Switcher Logic
     function toggleTheme() {
@@ -660,7 +690,7 @@
       }
     }
 
-    // IndexedDB for Storing Photos & Videos locally in browser
+    // IndexedDB for Storing Photos & Videos locally
     let db;
     let userPhotos = [null, null, null, null, null];
 
@@ -807,20 +837,6 @@
       } catch (err) {
         console.log("Audio Pop error:", err);
       }
-    }
-
-    function enterSite() {
-      const audio = document.getElementById('bg-music');
-      if (audio) {
-        audio.muted = false;
-        audio.play().then(() => {
-          isMusicPlaying = true;
-          document.getElementById('music-icon').innerText = '🎵';
-        }).catch((err) => {
-          console.log("Audio Play Error:", err);
-        });
-      }
-      document.getElementById('welcome-overlay').style.display = 'none';
     }
 
     function toggleMusic(e) {
@@ -1030,6 +1046,7 @@
       setTheme(savedTheme);
       initMicrophone();
       initIndexedDB();
+      setTimeout(() => document.getElementById('site-pass-input').focus(), 300);
     };
   </script>
 </body>
